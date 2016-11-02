@@ -1,0 +1,27 @@
+git status
+
+git add <file>
+
+Stage all changes in <file> for the next commit.
+
+git add <directory>
+
+Stage all changes in <directory> for the next commit.
+
+git add -p
+
+begin an interactive staging session that lets you choose portions of a file to add to the next commit. 
+
+git add .
+git commit
+
+Once you’ve got your project up-and-running, new files can be added by passing the path to git add:
+
+git add hello.py
+git commit
+
+The above commands can also be used to record changes to existing files. Again, Git doesn’t differentiate between staging changes in new files vs. changes in files that have already been added to the repository.
+
+git commit -a
+
+Commit a snapshot of all changes in the working directory. This only includes modifications to tracked files (those that have been added with git add at some point in their history).
