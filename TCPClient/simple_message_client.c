@@ -17,7 +17,7 @@
 #include <stdlib.h> /* Include Standard Library Functions */
 #include <string.h> /* Include String Functions */
 
-#include "simple_message_client_commandline_handling.h" /* Include external Parser Functions */
+#include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
 
 static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail) {
