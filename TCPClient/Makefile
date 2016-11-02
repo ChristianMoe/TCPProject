@@ -42,7 +42,7 @@ EXCLUDE_PATTERN=footrulewidth
 all: simple_message_client
 
 simple_message_client: $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ 
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) 
 
 .PHONY: clean
 clean:
