@@ -13,7 +13,7 @@
 ## ------------------------------------------------------------- variables --
 ##
 
-CC=gcc
+CC=gcc52
 CFLAGS=-Wall -Werror -Wextra -Wstrict-prototypes -pedantic -fno-common -O3 -g -std=gnu11
 LDFLAGS=-lsimple_message_client_commandline_handling
 CP=cp
