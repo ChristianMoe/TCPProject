@@ -1,0 +1,76 @@
+simple_message_client(1)          VCS TCP/IP          simple_message_client(1)
+
+
+
+NNAAMMEE
+       simple_message_client - The VCS TCP/IP message bulletin board client.
+
+
+SSYYNNOOPPSSIISS
+       ssiimmppllee__mmeessssaaggee__cclliieenntt  -s _s_e_r_v_e_r -p _p_o_r_t -u _u_s_e_r [--ii _i_m_a_g_e _U_R_L] -m _m_e_s_-
+       _s_a_g_e [--vv] [--hh]
+
+DDEESSCCRRIIPPTTIIOONN
+       ssiimmppllee__mmeessssaaggee__cclliieenntt - Send a _m_e_s_s_a_g_e to the VCS TCP/IP  message  bul-
+       letin board server ssiimmppllee__mmeessssaaggee__sseerrvveerr(1).
+
+       The  _m_e_s_s_a_g_e  may contain the following HTML tags: <strong>, </strong>,
+       <em>, </em>, <br/>.
+
+       For the server either the IPV4 or IPV6 address or a  hostname  must  be
+       provided via the _s_e_r_v_e_r option. The TCP port to connect to is given via
+       the _p_o_r_t option, which can either be a port number of a service name as
+       listed in _/_e_t_c_/_s_e_r_v_i_c_e_s.
+
+       The  user  name  of the message submitter must be provided via the _u_s_e_r
+       option. Optionally the URL of an image for the user can be provided via
+       the _i_m_a_g_e _U_R_L option.
+
+       In  case the _-_v commandline option is provided, execution trace message
+       are written to _s_t_d_o_u_t.
+
+       Providing the _-_h commandline option causes a usage message to be  writ-
+       ten to _s_t_d_o_u_t.
+
+OOPPTTIIOONNSS
+       The following options are supported:
+
+
+       --ss,, ----sseerrvveerr  _s_e_r_v_e_r
+              Use _s_e_r_v_e_r (which is either an IPV4 address, an IPV6 address, or
+              a hostname) as the server to connect to.
+
+
+       --pp,, ----ppoorrtt _p_o_r_t
+              Use _p_o_r_t (which is either a port number or a  service  name)  as
+              the TCP port to connect to. - The range for port numbers is lim-
+              ited to [0..65535].
+
+
+       --uu,, ----uusseerr _u_s_e_r
+              Use _u_s_e_r as user name for the message submission.
+
+
+       --ii,, ----iimmaaggee _i_m_a_g_e _U_R_L
+              Use _i_m_a_g_e _U_R_L as URL of an image for the submitting user.
+
+
+       --mm,, ----mmeessssaaggee _m_e_s_s_a_g_e
+              Use _m_e_s_s_a_g_e as message to submit to the bulletin board.
+
+
+       --vv,, ----vveerrbboossee
+              Write execution trace information to _s_t_d_o_u_t
+
+       --hh,, ----hheellpp
+              Write usage information to _s_t_d_o_u_t.
+
+SSEEEE AALLSSOO
+       sseerrvviicceess(5), ssiimmppllee__mmeessssaaggee__sseerrvveerr(1), ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc(1)
+
+AAUUTTHHOORRSS
+       Thomas M. Galla <_g_a_l_l_a_@_t_e_c_h_n_i_k_u_m_-_w_i_e_n_._a_t>
+
+
+
+Technikum Wien                    Aug 7, 2010         simple_message_client(1)

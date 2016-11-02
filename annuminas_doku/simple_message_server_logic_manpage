@@ -1,0 +1,100 @@
+simple_message_server_logic(1)    VCS TCP/IP    simple_message_server_logic(1)
+
+
+
+NNAAMMEE
+       simple_message_server_logic  -  The  VCS  TCP/IP message bulletin board
+       server business logic.
+
+
+SSYYNNOOPPSSIISS
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc [--hh]
+
+DDEESSCCRRIIPPTTIIOONN
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc - The VCS  TCP/IP  message  bulletin  board
+       server business logic.
+
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc  (VCS  TCP/IP message bulletin board server
+       business logic) is the business logic of  the  ssiimmppllee__mmeessssaaggee__sseerrvveerr(1)
+       server  daemon  program.   ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc reads input from
+       _s_t_d_i_n and writes output to _s_t_d_o_u_t.
+
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc is intended to be executed by a child  dae-
+       mon  (with  _s_t_d_i_n and _s_t_d_o_u_t redirected to the connected socket) of the
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr(1) application.
+
+       Providing the _-_h commandline option causes a usage message to be  writ-
+       ten to _s_t_d_o_u_t.
+
+       Beware  that ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc assumes that there is a direc-
+       tory named _p_u_b_l_i_c___h_t_m_l which can be read by the user _a_p_a_c_h_e (i.e.,  the
+       user running the _a_p_a_c_h_e web server).
+
+OOPPTTIIOONNSS
+       The following options are supported:
+
+
+       --hh,, ----hheellpp
+              Write usage information to _s_t_d_o_u_t.
+
+TTEESSTTCCAASSEESS
+       This program can perform several tests, which can be choosen by setting
+       the environment variable _S_M_S_L___T_E_S_T_C_A_S_E to one of the following values:
+
+
+       TTEESSTTCCAASSEE__NNOONNEE ((00))
+              Do not perform any specific tests.
+
+
+       TTEESSTTCCAASSEE__CCHHEECCKK__AARRGGVV ((11))
+              Check if _a_r_g_v_[_0_] is set correctly.
+
+
+       TTEESSTTCCAASSEE__CCHHEECCKK__FFDD ((22))
+              Check if all unused file descriptors (i.e., all file descriptors
+              except _s_t_d_i_n, _s_t_d_o_u_t, and _s_t_d_e_r_r) are closed properly.
+
+
+       TTEESSTTCCAASSEE__PPOOSSTTPPOONNEE__CCOOMMPPLLEETTIIOONN ((33))
+              Delay  the  termination  (and thus the closing of _s_t_d_i_n, _s_t_d_o_u_t,
+              and _s_t_d_e_r_r to check proper handling of multiple connections.
+
+
+       TTEESSTTCCAASSEE__PPRREEMMAATTUURREE__CCLLOOSSEE ((44))
+              Simulate network problems by closing _s_t_d_i_n, _s_t_d_o_u_t,  and  _s_t_d_e_r_r
+              prematurly (connection closed by peer).
+
+
+       TTEESSTTCCAASSEE__SSMMAALLLLEERR__LLEENNGGTTHH ((55))
+              Transfer  a  file that is longer than the number of bytes trans-
+              mitted in the file header.
+
+
+       TTEESSTTCCAASSEE__WWRRIITTEE__DDEELLAAYY ((66))
+              Add a delay between the write operations of the different chunks
+              of the response.
+
+
+       TTEESSTTCCAASSEE__HHTTMMLL__OONNLLYY__RREEPPLLYY ((77))
+              Send the HTML part of the response only
+
+
+       TTEESSTTCCAASSEE__HHUUGGEE__FFIILLEE ((88))
+              Send  a  really huge file for the response between the HTML part
+              and the PNG part.
+
+
+       The following test must be executed  manually:  Rename  the  executable
+       ssiimmppllee__mmeessssaaggee__sseerrvveerr__llooggiicc to check if a failure of the eexxeecc(2) system
+       call is handled correctly.
+
+SSEEEE AALLSSOO
+       ssiimmppllee__mmeessssaaggee__cclliieenntt(1), ssiimmppllee__mmeessssaaggee__sseerrvveerr(1)
+
+AAUUTTHHOORRSS
+       Franz Hollerer <_h_o_l_l_e_r_e_r_@_t_e_c_h_n_i_k_u_m_-_w_i_e_n_._a_t>
+       Thomas M. Galla <_g_a_l_l_a_@_t_e_c_h_n_i_k_u_m_-_w_i_e_n_._a_t>
+
+
+
+Technikum Wien                    Dec 5, 2015   simple_message_server_logic(1)
