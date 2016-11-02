@@ -23,7 +23,7 @@ RM=rm
 GREP=grep
 DOXYGEN=doxygen 
 
-OBJECTS=simple_message_client.o simple_message_client_commandline_handling.o
+OBJECTS=simple_message_client.o ##simple_message_client_commandline_handling.o
 
 EXCLUDE_PATTERN=footrulewidth
 
