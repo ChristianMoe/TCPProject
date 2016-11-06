@@ -130,7 +130,7 @@ void bindadd(const char **server,const char **port,const char **message){
               /* Send message datagram to server */
 
                   len = strlen(*message) + 1;
-
+                  retlen = (ssize_t) len;
 
                   if (len + 1 > BUF_SIZE) fprintf(stderr, "Ignoring long message in argument\n");
 
