@@ -89,10 +89,9 @@ void bindadd(const char **server,const char **port,const char **message){
 
           struct addrinfo hints;
           struct addrinfo *result, *rp;
-          int sfd, s, j;
+          int sfd, s;
           size_t len;
-          ssize_t nread;
-          char buf[BUF_SIZE];
+          ssize_t retlen;
 
           /* Obtain address matching host/port */
           memset(&hints, 0, sizeof(struct addrinfo));
@@ -135,7 +134,7 @@ void bindadd(const char **server,const char **port,const char **message){
 
                   if (len + 1 > BUF_SIZE) fprintf(stderr, "Ignoring long message in argument\n");
 
-                  if (write(sfd, *message, len) != len) {
+                  if (write(sfd, *message, len) != retlen) {
                                     fprintf(stderr, "partial/failed write\n");
                                     exit(EXIT_FAILURE);
                                 }
