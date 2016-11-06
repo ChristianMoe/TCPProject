@@ -17,7 +17,43 @@
 #include <stdlib.h> /* Include Standard Library Functions */
 #include <string.h> /* Include String Functions */
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
+
+
+/*
+ * -------------------------------------------------------------- prototypes --
+ */
+void bindadd(const char **server,const char **port,const char **message);
+static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail);
+
+/*
+ * -------------------------------------------------------------- defines --
+ */
+#define BUF_SIZE 500
+
+
+
+/**
+ * prints the usage information
+ *
+ * \param outputdevice 	specifies outputdevice for usage message
+ * \param filename 		filename for which the usage is valid
+ * \param suc_or_fail	exit as success or as failure
+ *
+ * \return none
+ *
+ */
+
+
+/**
+ * start of main program
+ *
+ **/
 
 
 static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail) {
@@ -38,15 +74,76 @@ int main(int argc, const char *argv[]) {
 
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
+	  /* Print values*/
 	  fprintf(stdout, "Server:%s \n", server);
 	  fprintf(stdout, "Port:%s \n", port);
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-
+	  bindadd (&server, &port, &message);
 	return EXIT_SUCCESS;
 
 }
 
+void bindadd(const char **server,const char **port,const char **message){
+
+          struct addrinfo hints;
+          struct addrinfo *result, *rp;
+          int sfd, s, j;
+          size_t len;
+          ssize_t nread;
+          char buf[BUF_SIZE];
+
+          /* Obtain address matching host/port */
+          memset(&hints, 0, sizeof(struct addrinfo));
+          hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+          hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
+          hints.ai_flags = 0;
+          hints.ai_protocol = 0;          /* Any protocol */
+
+          s = getaddrinfo(*server, *port, &hints, &result);
+          if (s != 0) {
+              fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
+              exit(EXIT_FAILURE);
+          }
+
+          /* getaddrinfo() returns a list of address structures.
+                        Try each address until we successfully connect(2).
+                        If socket(2) (or connect(2)) fails, we (close the socket
+                        and) try the next address. */
+
+          for (rp = result; rp != NULL; rp = rp->ai_next) {
+          sfd = socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
+                         if (sfd == -1) continue;
+
+                         if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1) break; /* Success */
+
+                         close(sfd);
+                     }
+
+              if (rp == NULL) {               /* No address succeeded */
+                 fprintf(stderr, "Could not connect\n");
+                 exit(EXIT_FAILURE);
+              }
+
+              freeaddrinfo(result);           /* No longer needed */
+
+              /* Send message datagram to server */
+
+                  len = strlen(*message) + 1;
+
+
+                  if (len + 1 > BUF_SIZE) fprintf(stderr, "Ignoring long message in argument\n");
+
+                  if (write(sfd, *message, len) != len) {
+                                    fprintf(stderr, "partial/failed write\n");
+                                    exit(EXIT_FAILURE);
+                                }
+
+
+
+
+
+}
 
 
