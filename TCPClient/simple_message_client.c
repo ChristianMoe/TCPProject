@@ -94,9 +94,9 @@ void bindadd(const char **server,const char **port,const char **message){
           ssize_t retlen;
 
 
-          fprintf(stdout, "Server:%s \n", server);
-          fprintf(stdout, "Port:%s \n", port);
-          fprintf(stdout, "Message:%s \n", message);
+          fprintf(stdout, "Server:%s \n", *server);
+          fprintf(stdout, "Port:%s \n", *port);
+          fprintf(stdout, "Message:%s \n", *message);
 
           /* Obtain address matching host/port */
           memset(&hints, 0, sizeof(struct addrinfo));
