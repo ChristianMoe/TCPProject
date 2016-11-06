@@ -34,7 +34,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
 /*
  * -------------------------------------------------------------- defines --
  */
-#define BUF_SIZE 500
+#define BUF_SIZE 10
 
 
 
@@ -143,7 +143,7 @@ void bindadd(const char **server,const char **port,const char **message){
                                     fprintf(stderr, "partial/failed write\n");
                                     exit(EXIT_FAILURE);
                                 }
-
+                  close(sfd);
 
 
 
