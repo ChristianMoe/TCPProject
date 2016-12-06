@@ -159,10 +159,6 @@ void bindadd(const char **server,const char **port,const char **message){
                                     fprintf(stderr, "partial/failed write\n");
                                     exit(EXIT_FAILURE);
                                 }
-                  while (read(sfd,readbuffer)!=0){
-                	  fprintf(stdout, "reading: %s\n", readbuffer);
-                  };
-
                   close(sfd);
 
 
