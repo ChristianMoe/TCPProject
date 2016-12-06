@@ -99,7 +99,6 @@ int main(int argc, const char *argv[]) {
 		  strcat(sendbuffer,"\n");
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
-	  printf(sendbuffer);
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
 
