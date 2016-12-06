@@ -80,9 +80,8 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  //char *sendbuffer = malloc (strlen (user) + strlen (imgurl) + strlen (message) + 15);
+	  char *sendbuffer = malloc (strlen (user) + strlen (imgurl) + strlen (message) + 15);
 
-	  char sendbuffer[255];
 	  strcpy(sendbuffer,"user=");
 	  strcat(sendbuffer,user);
 	  strcat(sendbuffer,"\n");
