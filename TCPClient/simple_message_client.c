@@ -84,7 +84,7 @@ int main(int argc, const char *argv[]) {
       char *message1 = (char *)malloc(512);
       strcpy(message1, "first string\n");
       printf(message1);
-      strcat(message1, "second string\n);
+      strcat(message1, "second string\n);");
       printf(message1);
 
 
