@@ -94,7 +94,7 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
 
-	  bindadd (&server, &port, &sendbuffer);
+	  bindadd (&server, &port, (const char)&sendbuffer);
 	  return EXIT_SUCCESS;
 
 }
