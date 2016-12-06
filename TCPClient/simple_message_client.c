@@ -70,6 +70,7 @@ int main(int argc, const char *argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
+	  const char *sendtext = NULL;
 	  int verbose = 0;
 
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
@@ -80,8 +81,13 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
+	  sendtext=strcat("user=",&user);
+	  sendtext=strcat(&sendtext,"\n");
+	  sendtext=strcat(&sendtext,message);
+	  fprintf(stdout, "Text to send:%s \n", sendtext);
+
 	  bindadd (&server, &port, &message);
-	return EXIT_SUCCESS;
+	  return EXIT_SUCCESS;
 
 }
 
