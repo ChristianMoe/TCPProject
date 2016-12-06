@@ -81,9 +81,9 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  sendtext=strcat("user=",&user);
-	  sendtext=strcat(&sendtext,"\n");
-	  sendtext=strcat(&sendtext,message);
+	  sendtext=strcat("user=",user);
+	  sendtext=strcat(sendtext,"\n");
+	  sendtext=strcat(sendtext,message);
 	  fprintf(stdout, "Text to send:%s \n", sendtext);
 
 	  bindadd (&server, &port, &message);
