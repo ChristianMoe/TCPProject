@@ -70,6 +70,9 @@ int main(int argc, const char *argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
+	  const char *user_text = "user=";
+	  const char *img_text = "img=";
+	  const char *lf_text = "\n";
 	  char *sendtext = NULL;
 	  int verbose = 0;
 
@@ -81,9 +84,16 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  sendtext=strcat("user=",user);
-	  sendtext=strcat(sendtext,"\n");
-	  sendtext=strcat(sendtext,message);
+	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 1);
+
+	  sendbuffer=strcat(user_text,user);
+	  sendbuffer=strcat(sendbuffer,lf_text);
+	  if (imgurl!=NULL) {
+		  sendbuffer=strcat(sendbuffer,img_text);
+		  sendbuffer=strcat(sendbuffer,imgurl);
+		  sendbuffer=strcat(sendbuffer,lf_text);
+	  }
+	  sendbuffer=strcat(sendbuffer,message);
 	  fprintf(stdout, "Text to send:%s \n", sendtext);
 
 	  bindadd (&server, &port, &message);
