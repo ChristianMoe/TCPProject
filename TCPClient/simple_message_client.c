@@ -104,7 +104,7 @@ void bindadd(const char **server,const char **port,const char **message){
 
           struct addrinfo hints;
           struct addrinfo *result, *rp;
-          void *readbuffer;
+          // void *readbuffer;
           int sfd, s;
           size_t len;
           ssize_t retlen;
