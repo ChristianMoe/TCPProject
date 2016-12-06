@@ -83,7 +83,7 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 1);
+	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 100);
 	  strcpy(sendbuffer,user_text);
 	  strcat(sendbuffer,user);
 	  strcat(sendbuffer,lf_text);
