@@ -85,16 +85,16 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "Message:%s \n", message);
 
 	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 1);
-
-	  sendbuffer=strcat(user_text,user);
-	  sendbuffer=strcat(sendbuffer,lf_text);
+	  strcpy(sendbuffer,user_text);
+	  strcat(sendbuffer,user);
+	  strcat(sendbuffer,lf_text);
 	  if (imgurl!=NULL) {
-		  sendbuffer=strcat(sendbuffer,img_text);
-		  sendbuffer=strcat(sendbuffer,imgurl);
-		  sendbuffer=strcat(sendbuffer,lf_text);
+		  strcat(sendbuffer,img_text);
+		  strcat(sendbuffer,imgurl);
+		  strcat(sendbuffer,lf_text);
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
-	  fprintf(stdout, "Text to send:%s \n", sendtext);
+	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
 	  bindadd (&server, &port, &message);
 	  return EXIT_SUCCESS;
