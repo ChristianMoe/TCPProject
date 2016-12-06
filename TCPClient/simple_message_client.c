@@ -73,7 +73,6 @@ int main(int argc, const char *argv[]) {
 	  char *user_text = "user=\0";
 	  char *img_text = "img=\0";
 	  char *lf_text = "\n";
-	  char *sendtext = NULL;
 	  int verbose = 0;
 
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
@@ -105,6 +104,7 @@ void bindadd(const char **server,const char **port,const char **message){
 
           struct addrinfo hints;
           struct addrinfo *result, *rp;
+          void *readbuffer;
           int sfd, s;
           size_t len;
           ssize_t retlen;
@@ -159,6 +159,10 @@ void bindadd(const char **server,const char **port,const char **message){
                                     fprintf(stderr, "partial/failed write\n");
                                     exit(EXIT_FAILURE);
                                 }
+                  while (read(sfd,readbuffer)!=0){
+                	  fprintf(stdout, "reading: %s\n", readbuffer);
+                  };
+
                   close(sfd);
 
 
