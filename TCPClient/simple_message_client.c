@@ -70,9 +70,9 @@ int main(int argc, const char *argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
-	  const char *user_text = "user=\0";
-	  const char *img_text = "img=\0";
-	  const char *lf_text = "\n";
+	  char *user_text = "user=\0";
+	  char *img_text = "img=\0";
+	  char *lf_text = "\n";
 	  char *sendtext = NULL;
 	  int verbose = 0;
 
