@@ -93,8 +93,9 @@ int main(int argc, const char *argv[]) {
 	  sendbuffer=strcat(sendbuffer,message);
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
+	  const char *finalmessage = sendbuffer;
 
-	  bindadd (&server, &port, &(const char) sendbuffer);
+	  bindadd (&server, &port, & finalmessage);
 	  return EXIT_SUCCESS;
 
 }
