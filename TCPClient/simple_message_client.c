@@ -80,6 +80,14 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
+	  /*Test Strcat*/
+      char *message1 = (char *)malloc(512);
+      strcpy(message1, "first string\n");
+      printf(message1);
+      strcat(message1, "second string\n);
+      printf(message1);
+
+
 	  char *sendbuffer = malloc (strlen (user) + strlen (imgurl) + strlen (message) + 15);
 
 	  strcpy(sendbuffer,"user=");
@@ -91,7 +99,8 @@ int main(int argc, const char *argv[]) {
 		  strcat(sendbuffer,"\n");
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
-	  fprintf(stdout, "Text to send:%s \n", &sendbuffer);
+	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
+
 
 	  bindadd (&server, &port, &message);
 	  return EXIT_SUCCESS;
