@@ -70,7 +70,7 @@ int main(int argc, const char *argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
-	  const char *sendtext = NULL;
+	  char *sendtext = NULL;
 	  int verbose = 0;
 
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
