@@ -70,9 +70,6 @@ int main(int argc, const char *argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
-	  char *user_text = "user=\0";
-	  char *img_text = "img=\0";
-	  char *lf_text = "\n";
 	  int verbose = 0;
 
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
@@ -83,14 +80,14 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 100);
-	  strcpy(sendbuffer,user_text);
+	  char *sendbuffer = malloc (strlen (user_text) + strlen (user) + strlen (lf_text) + strlen (img_text) + strlen (imgurl) + strlen (lf_text) + strlen (message) + 15);
+	  strcpy(sendbuffer,"user=");
 	  strcat(sendbuffer,user);
-	  strcat(sendbuffer,lf_text);
+	  strcat(sendbuffer,"img=");
 	  if (imgurl!=NULL) {
-		  strcat(sendbuffer,img_text);
+		  strcat(sendbuffer,"img=");
 		  strcat(sendbuffer,imgurl);
-		  strcat(sendbuffer,lf_text);
+		  strcat(sendbuffer,"img=");
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
