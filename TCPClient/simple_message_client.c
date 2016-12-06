@@ -80,14 +80,6 @@ int main(int argc, const char *argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  /*Test Strcat*/
-      char *message1 = (char *)malloc(512);
-      strcpy(message1, "first string\n");
-      printf(message1);
-      strcat(message1, "second string\n);");
-      printf(message1);
-
-
 	  char *sendbuffer = (char*) malloc (1024);
 
 	  strcpy(sendbuffer,"user=");
