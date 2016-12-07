@@ -31,6 +31,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 void bindadd(const char **server,const char **port,const char **message);
+static void cleanResources();
 static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail);
 
 /*
@@ -49,8 +50,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
 
 static void cleanResources(){
 
-
-
+	fprintf(stdout, "Resources cleaned!\n");
 
 }
 
