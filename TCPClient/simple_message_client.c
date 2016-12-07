@@ -101,7 +101,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
  **/
 
 
-void main(int argc, const char * argv[]) {
+int main(int argc, const char * argv[]) {
 
 	  const char *server = NULL;
 	  const char *port = NULL;
@@ -156,6 +156,7 @@ void main(int argc, const char * argv[]) {
 
 	  exitCR(EXIT_SUCCESS); /* clean resources and exit */
 
+	  return 0; /* not necessary but void main is not accepted */
 }
 
 
