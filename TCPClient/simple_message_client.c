@@ -40,6 +40,13 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 #define BUF_SIZE 10
 #define DEBUG 1 /* 1 ... debugging messages activated, 0 ... normal program mode */
 
+
+/*
+ * -------------------------------------------------------------- global variables --
+ */
+int ressourcearray[10];
+
+
 /**
  * closes all open resources
  *
@@ -53,6 +60,16 @@ static void exitCR(int status){
 
 	if (DEBUG==1) fprintf(stdout, "Resources cleaned!\n");
 	if (DEBUG==1) fprintf(stdout, "Exit status: %d\n",status);
+
+	for (int i=0;i<10;i++){
+		if (ressourcearray[i]!=NULL) {
+			if (DEBUG==1) fprintf(stdout, "Freeing resource: %d\n",ressourcearray[i]);
+			free(ressourcearray[i]);
+		}
+
+
+	}
+
 	exit(status);
 
 }
@@ -81,7 +98,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 	fprintf(outputdevice,"	-v, --verbose           verbose output\n");
 	fprintf(outputdevice,"	-h, --help\n");
 
-	exitCR(status);
+	exit(status);
 }
 
 
@@ -91,7 +108,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
  **/
 
 
-int main(int argc, const char * argv[]) {
+void main(int argc, const char * argv[]) {
 
 	  const char *server = NULL;
 	  const char *port = NULL;
@@ -127,6 +144,7 @@ int main(int argc, const char * argv[]) {
 	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
 	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
 	  char *sendbuffer = (char*) malloc (buffersize);
+	  ressourcearray[0]=sendbuffer;
 
 	  /* building string to be sent */
 	  strcpy(sendbuffer,"user=");
@@ -144,7 +162,7 @@ int main(int argc, const char * argv[]) {
 
 	  bindadd (&server, &port, & finalmessage);
 
-	  return EXIT_SUCCESS;
+	  exitCR(EXIT_SUCCESS); /* clean resources and exit */
 
 }
 
@@ -153,7 +171,6 @@ void bindadd(const char **server,const char **port,const char **message){
 
           struct addrinfo hints;
           struct addrinfo *result, *rp;
-          // void *readbuffer;
           int sfd, s;
           size_t len;
           ssize_t retlen;
