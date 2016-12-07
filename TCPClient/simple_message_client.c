@@ -88,7 +88,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
  **/
 
 
-int main(int argc, char * const argv[]) {
+int main(int argc, const char * argv[]) {
 
 	  const char *server = NULL;
 	  const char *port = NULL;
@@ -102,6 +102,7 @@ int main(int argc, char * const argv[]) {
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  /* checking whether -h is a parameter of command line */
+	  char * const argv2[] = (char * const) argv;
 	  while ((opt = getopt(argc, argv, "h")) != -1) {
 	               switch (opt) {
 	               case 'n':
