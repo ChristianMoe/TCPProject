@@ -64,7 +64,7 @@ static void exitCR(int status){
 	for (int i=0;i<10;i++){
 		if (ressourcearray[i]!=0) {
 			if (DEBUG==1) fprintf(stdout, "Freeing resource: %d\n",ressourcearray[i]);
-			free(ressourcearray[i]);
+			free(&ressourcearray[i]);
 		}
 
 
