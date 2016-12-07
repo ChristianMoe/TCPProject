@@ -204,7 +204,7 @@ void bindadd(const char **server,const char **port,const char **message){
                   close(sfd);
 
 
-
+}
 
 }
 
