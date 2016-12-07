@@ -103,12 +103,14 @@ int main(int argc, const char * argv[]) {
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  /* checking whether -h is a parameter of command line */
-	  char * const argv2[] = (char * const) argv;
-	  while ((opt = getopt(argc, argv, "h")) != -1) {
+	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
 	               switch (opt) {
 	               case 'n':
 	            	   usageinfo();
 	            	   exitCR(EXIT_SUCCESS);
+	            	   break;
+	               default:
+	            	   break;
 	               }
 
 
