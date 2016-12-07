@@ -51,7 +51,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 static void exitCR(int status){
 
 	fprintf(stdout, "Resources cleaned!\n");
-	exit
+	exit(status);
 
 }
 
