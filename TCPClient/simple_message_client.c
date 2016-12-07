@@ -16,6 +16,8 @@
 #include <stdio.h> /* Include Standard Input/Output Features */
 #include <stdlib.h> /* Include Standard Library Functions */
 #include <string.h> /* Include String Functions */
+#include <getopt.h> /* Include Function for parsing -h */
+
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -36,7 +38,21 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
  */
 #define BUF_SIZE 10
 
+/**
+ * closes all open resources
+ *
+ * \param none
+ *
+ * \return none
+ *
+ */
 
+static void cleanResources(){
+
+
+
+
+}
 
 /**
  * prints the usage information
@@ -50,18 +66,27 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
  */
 
 
+static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail) {
+
+	fprintf(outputdevice, "usage: %s options\n", filename);
+	fprintf(outputdevice,"options:\n");
+	fprintf(outputdevice,"	-s, --server <server>   full qualified domain name or IP address of the server\n");
+	fprintf(outputdevice,"	-p, --port <port>       well-known port of the server [0..65535]\n");
+	fprintf(outputdevice,"	-u, --user <name>       name of the posting user\n");
+	fprintf(outputdevice,"	-i, --image <URL>       URL pointing to an image of the posting user\n");
+	fprintf(outputdevice,"	-m, --message <message> message to be added to the bulletin board\n");
+	fprintf(outputdevice,"	-v, --verbose           verbose output\n");
+	fprintf(outputdevice,"	-h, --help\n");
+
+	cleanResources();
+	exit(suc_or_fail);
+}
+
 /**
  * start of main program
  *
  **/
 
-
-static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail) {
-
-	fprintf(outputdevice, "%s: Usage will be implemented \n", filename);
-	exit(suc_or_fail);
-
-}
 
 int main(int argc, const char *argv[]) {
 
@@ -71,8 +96,20 @@ int main(int argc, const char *argv[]) {
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
 	  int verbose = 0;
+	  int opt=0; /* variable for getopt */
 
+	  /* calling parsing function for return of command line parameters */
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
+
+	  /* checking whether -h is a parameter of command line */
+	  while ((opt = getopt(argc, argv, "h")) != -1) {
+	               switch (opt) {
+	               case 'n':
+	            	   usageinfo();
+	            	   cleanResources();
+	            	   exit(EXIT_SUCCESS);
+	               }
+
 
 	  /* Print values*/
 	  fprintf(stdout, "Server:%s \n", server);
