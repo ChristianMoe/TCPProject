@@ -42,9 +42,9 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 
 
 /*
- * -------------------------------------------------------------- global variables --
+ * -------------------------------------------------------------- global resource variables --
  */
-int ressourcearray[]={0,0,0,0,0,0,0,0,0,0};
+char *sendbuffer;
 
 
 /**
@@ -61,12 +61,7 @@ static void exitCR(int status){
 	if (DEBUG==1) fprintf(stdout, "Resources cleaned!\n");
 	if (DEBUG==1) fprintf(stdout, "Exit status: %d\n",status);
 
-	for (int i=0;i<10;i++){
-		if (ressourcearray[i]!=0) {
-			if (DEBUG==1) fprintf(stdout, "Freeing resource: %d\n",ressourcearray[i]);
-			free(&ressourcearray[i]);
-		}
-
+	free(sendbuffer);
 
 	}
 
@@ -143,7 +138,7 @@ void main(int argc, const char * argv[]) {
 	  /* variable for string to be sent */
 	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
 	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
-	  char *sendbuffer = (char*) malloc (buffersize);
+	  sendbuffer = (char*) malloc (buffersize);
 	  ressourcearray[0]=sendbuffer;
 
 	  /* building string to be sent */
