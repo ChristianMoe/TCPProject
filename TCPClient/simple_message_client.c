@@ -99,7 +99,8 @@ int main(int argc, const char * argv[]) {
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
 	  int verbose = 0;
-	  int opt=0; /* variable for getopt */
+	  int opt = 0; /* variable for getopt */
+	  int buffersize = 0; /* size for sendbuffer */
 
 	  /* calling parsing function for return of command line parameters */
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
@@ -122,8 +123,12 @@ int main(int argc, const char * argv[]) {
 	  fprintf(stdout, "User:%s \n", user);
 	  fprintf(stdout, "Message:%s \n", message);
 
-	  char *sendbuffer = (char*) malloc (1024);
+	  /* variable for string to be sent */
+	  if (imgurl!=NULL) buffersize = (char*) malloc (strlen(user) + strlen(imgurl) + strlen(message) + 20);
+	  if (imgurl==NULL) buffersize = (char*) malloc (strlen(user) + strlen(message) + 20);
+	  char *sendbuffer = (char*) malloc (buffersize);
 
+	  /* building string to be sent */
 	  strcpy(sendbuffer,"user=");
 	  strcat(sendbuffer,user);
 	  strcat(sendbuffer,"\n");
