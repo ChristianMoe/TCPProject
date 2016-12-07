@@ -63,8 +63,6 @@ static void exitCR(int status){
 
 	free(sendbuffer);
 
-	}
-
 	exit(status);
 
 }
@@ -139,7 +137,6 @@ void main(int argc, const char * argv[]) {
 	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
 	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
 	  sendbuffer = (char*) malloc (buffersize);
-	  ressourcearray[0]=sendbuffer;
 
 	  /* building string to be sent */
 	  strcpy(sendbuffer,"user=");
