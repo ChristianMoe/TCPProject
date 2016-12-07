@@ -31,8 +31,8 @@
  * -------------------------------------------------------------- prototypes --
  */
 void bindadd(const char **server,const char **port,const char **message);
-static void cleanResources();
-static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail);
+static void exitCR(int status);
+static void usageinfo(FILE *outputdevice, const char *filename, int status);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -48,9 +48,10 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
  *
  */
 
-static void cleanResources(){
+static void exitCR(int status){
 
 	fprintf(stdout, "Resources cleaned!\n");
+	exit
 
 }
 
@@ -66,7 +67,7 @@ static void cleanResources(){
  */
 
 
-static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail) {
+static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 	fprintf(outputdevice, "usage: %s options\n", filename);
 	fprintf(outputdevice,"options:\n");
@@ -78,9 +79,9 @@ static void usageinfo(FILE *outputdevice, const char *filename, int suc_or_fail)
 	fprintf(outputdevice,"	-v, --verbose           verbose output\n");
 	fprintf(outputdevice,"	-h, --help\n");
 
-	cleanResources();
-	exit(suc_or_fail);
+	exitCR(status);
 }
+
 
 /**
  * start of main program
@@ -107,8 +108,7 @@ int main(int argc, const char * argv[]) {
 	               switch (opt) {
 	               case 'n':
 	            	   usageinfo();
-	            	   cleanResources();
-	            	   exit(EXIT_SUCCESS);
+	            	   exitCR(EXIT_SUCCESS);
 	               }
 
 
