@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
 	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
 	               switch (opt) {
 	               case 'n':
-	            	   usageinfo();
+	            	   usageinfo(stdout,argv[0],EXIT_SUCCESS);
 	            	   exitCR(EXIT_SUCCESS);
 	            	   break;
 	               default:
