@@ -102,7 +102,7 @@ int main(int argc, const char *argv[]) {
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  /* checking whether -h is a parameter of command line */
-	  while ((opt = getopt(argc, argv, "h")) != -1) {
+	  while ((opt = getopt(argc, &argv, "h")) != -1) {
 	               switch (opt) {
 	               case 'n':
 	            	   usageinfo();
@@ -133,9 +133,11 @@ int main(int argc, const char *argv[]) {
 	  const char *finalmessage = sendbuffer;
 
 	  bindadd (&server, &port, & finalmessage);
+
 	  return EXIT_SUCCESS;
 
 }
+
 
 void bindadd(const char **server,const char **port,const char **message){
 
