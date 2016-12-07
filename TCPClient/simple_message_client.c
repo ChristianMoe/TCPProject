@@ -38,6 +38,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
  * -------------------------------------------------------------- defines --
  */
 #define BUF_SIZE 10
+#define DEBUG 1 /* 1 ... debugging messages activated, 0 ... normal program mode */
 
 /**
  * closes all open resources
@@ -50,8 +51,8 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 
 static void exitCR(int status){
 
-	fprintf(stdout, "Resources cleaned!\n");
-	fprintf(stdout, "Exit status: %d\n",status);
+	if (DEBUG==1) fprintf(stdout, "Resources cleaned!\n");
+	if (DEBUG==1) fprintf(stdout, "Exit status: %d\n",status);
 	exit(status);
 
 }
