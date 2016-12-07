@@ -112,7 +112,7 @@ int main(int argc, const char * argv[]) {
 	               default:
 	            	   break;
 	               }
-
+	  }
 
 	  /* Print values*/
 	  fprintf(stdout, "Server:%s \n", server);
@@ -202,9 +202,6 @@ void bindadd(const char **server,const char **port,const char **message){
                                     exit(EXIT_FAILURE);
                                 }
                   close(sfd);
-
-
-}
 
 }
 
