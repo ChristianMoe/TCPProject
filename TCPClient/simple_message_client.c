@@ -124,8 +124,8 @@ int main(int argc, const char * argv[]) {
 	  fprintf(stdout, "Message:%s \n", message);
 
 	  /* variable for string to be sent */
-	  if (imgurl!=NULL) buffersize = (char*) malloc (strlen(user) + strlen(imgurl) + strlen(message) + 20);
-	  if (imgurl==NULL) buffersize = (char*) malloc (strlen(user) + strlen(message) + 20);
+	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
+	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
 	  char *sendbuffer = (char*) malloc (buffersize);
 
 	  /* building string to be sent */
