@@ -44,7 +44,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 /*
  * -------------------------------------------------------------- global variables --
  */
-int ressourcearray[10];
+int ressourcearray[]={0,0,0,0,0,0,0,0,0,0};
 
 
 /**
@@ -62,7 +62,7 @@ static void exitCR(int status){
 	if (DEBUG==1) fprintf(stdout, "Exit status: %d\n",status);
 
 	for (int i=0;i<10;i++){
-		if (ressourcearray[i]!=NULL) {
+		if (ressourcearray[i]!=0) {
 			if (DEBUG==1) fprintf(stdout, "Freeing resource: %d\n",ressourcearray[i]);
 			free(ressourcearray[i]);
 		}
