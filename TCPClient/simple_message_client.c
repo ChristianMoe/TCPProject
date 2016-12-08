@@ -23,6 +23,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <errno.h>
+#include <limits.h>
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
@@ -30,42 +32,18 @@
 /*
  * -------------------------------------------------------------- prototypes --
  */
-void bindadd(const char **server,const char **port,const char **message);
-static void exitCR(int status);
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
 
 /*
  * -------------------------------------------------------------- defines --
  */
-#define BUF_SIZE 10
-#define DEBUG 1 /* 1 ... debugging messages activated, 0 ... normal program mode */
+#define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
 
 
 /*
  * -------------------------------------------------------------- global resource variables --
  */
-char *sendbuffer;
 
-
-/**
- * closes all open resources
- *
- * \param none
- *
- * \return none
- *
- */
-
-static void exitCR(int status){
-
-	if (DEBUG==1) fprintf(stdout, "Resources cleaned!\n");
-	if (DEBUG==1) fprintf(stdout, "Exit status: %d\n",status);
-
-	free(sendbuffer);
-
-	exit(status);
-
-}
 
 /**
  * prints the usage information
@@ -112,33 +90,30 @@ int main(int argc, const char * argv[]) {
 	  int opt = 0; /* variable for getopt */
 	  int buffersize = 0; /* size for sendbuffer */
 
-	  /* calling parsing function for return of command line parameters */
-	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
-
 	  /* checking whether -h is a parameter of command line */
 	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
 	               switch (opt) {
-	               case 'n':
+	               case 'h':
 	            	   usageinfo(stdout,argv[0],EXIT_SUCCESS);
-	            	   exitCR(EXIT_SUCCESS);
 	            	   break;
 	               default:
 	            	   break;
 	               }
 	  }
 
-	  /* Print values*/
-	  fprintf(stdout, "Server:%s \n", server);
-	  fprintf(stdout, "Port:%s \n", port);
-	  fprintf(stdout, "User:%s \n", user);
-	  fprintf(stdout, "Message:%s \n", message);
+	  /* calling parsing function for return of command line parameters */
+	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
-	  /* variable for string to be sent */
+	  if (verbose==1){
+		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n", server, port, user, imgurl, message);
+	  }
+
+	  /*variable for string to be sent*/
 	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
 	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
-	  sendbuffer = (char*) malloc (buffersize);
+	  char *sendbuffer = (char*) malloc (buffersize);
 
-	  /* building string to be sent */
+	  /*building string to be sent */
 	  strcpy(sendbuffer,"user=");
 	  strcat(sendbuffer,user);
 	  strcat(sendbuffer,"\n");
@@ -152,74 +127,145 @@ int main(int argc, const char * argv[]) {
 
 	  const char *finalmessage = sendbuffer;
 
-	  bindadd (&server, &port, & finalmessage);
+	  free(sendbuffer); /*free resource as it is no longer needed*/
 
-	  exitCR(EXIT_SUCCESS); /* clean resources and exit */
+	  /* variables for socket */
+      struct addrinfo hints; /* struct for parameters for getaddrinfo*/
+      struct addrinfo *result, *rp;
+      int socketdescriptor, gea_ret;
 
-	  return 0; /* not necessary but void main is not accepted */
-}
+      /* Obtain address matching host/port */
+      memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
+      hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+      hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
+      hints.ai_flags = 0;
+      hints.ai_protocol = 0;          /* Any protocol */
+
+      /*
+       * getaddrinfo return == 0 if success, otherwise Error-Code
+       * and fills results with
+       */
+      if (getaddrinfo(*server, *port, &hints, &result) != 0) {
+          fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
+          exit(EXIT_FAILURE);
+      }
+
+      /* getaddrinfo() returns a list of address structures.
+                    Try each address until successfully connected.
+                    If socket (or connect) fails, close the socket
+                    and try the next address.
+
+         struct addrinfo {
+               int              ai_flags;
+               int              ai_family;
+               int              ai_socktype;
+               int              ai_protocol;
+               size_t           ai_addrlen;
+               struct sockaddr *ai_addr;
+               char            *ai_canonname;
+               struct addrinfo *ai_next;
+           };
+
+     */
 
 
-void bindadd(const char **server,const char **port,const char **message){
+      for (rp = result; rp != NULL; rp = rp->ai_next) {
+    	  /* socket()  creates  an endpoint for communication and returns a descriptor */
+    	  socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
+                     if (socketdescriptor == -1) continue;
+                     if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1) break; /* Success */
+                     close(socketdescriptor);
+                 }
 
-          struct addrinfo hints;
-          struct addrinfo *result, *rp;
-          int sfd, s;
-          size_t len;
-          ssize_t retlen;
-
-
-          fprintf(stdout, "Server:%s \n", *server);
-          fprintf(stdout, "Port:%s \n", *port);
-          fprintf(stdout, "Message:%s \n", *message);
-
-          /* Obtain address matching host/port */
-          memset(&hints, 0, sizeof(struct addrinfo));
-          hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-          hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
-          hints.ai_flags = 0;
-          hints.ai_protocol = 0;          /* Any protocol */
-
-          s = getaddrinfo(*server, *port, &hints, &result);
-          if (s != 0) {
-              fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
-              exit(EXIT_FAILURE);
+          if (rp == NULL) {               /* No address succeeded */
+             fprintf(stderr, "Could not connect: %s\n", strerror(errno));
+             freeaddrinfo(result); /* result of getaddrinfo no longer needed */
+             exit(EXIT_FAILURE);
           }
 
-          /* getaddrinfo() returns a list of address structures.
-                        Try each address until we successfully connect(2).
-                        If socket(2) (or connect(2)) fails, we (close the socket
-                        and) try the next address. */
+          freeaddrinfo(result);     /* result of getaddrinfo no longer needed */
 
-          for (rp = result; rp != NULL; rp = rp->ai_next) {
-          sfd = socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
-                         if (sfd == -1) continue;
+          /* variables for sending */
+          size_t len = 0;
+          ssize_t retlen = 0;
+          ssize_t byteswritten = 0;
 
-                         if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1) break; /* Success */
+          /* Send message datagram to server */
 
-                         close(sfd);
-                     }
+              len = strlen(*finalmessage) + 1; /* +1 for terminating character \0 */
 
-              if (rp == NULL) {               /* No address succeeded */
-                 fprintf(stderr, "Could not connect\n");
-                 exit(EXIT_FAILURE);
+          /* checking whether message is to big */
+              if (len > MAX_BUF_SIZE) {
+            	  fprintf(stderr, "Message to send is too big - Maximum is 10 MB\n");
+            	  close (socketdescriptor);
+            	  exit(EXIT_FAILURE);
               }
 
-              freeaddrinfo(result);           /* No longer needed */
+          /* sending message */
+              while (byteswritten!= (ssize_t)len) {
 
-              /* Send message datagram to server */
+            	  retlen=write(socketdescriptor, *message, len); /*adding bytes written if partial write is performed */
+            	  if (retlen==-1){
+            		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
+            		  close (socketdescriptor);
+            		  exit(EXIT_FAILURE);
+            	  }
+            	  byteswritten+=retlen;
+              }
 
-                  len = strlen(*message) + 1;
-                  retlen = (ssize_t) len;
+           /* shutdown Write from Client side */
+           if (shutdown(socketdescriptor,SHUT_WR)==-1){
+                      fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
+                      close (socketdescriptor);
+                      exit(EXIT_FAILURE);
+           }
 
-                  if (len + 1 > BUF_SIZE) fprintf(stderr, "Ignoring long message in argument\n");
+           /* open file for read from server */
 
-                  if (write(sfd, *message, len) != retlen) {
-                                    fprintf(stderr, "partial/failed write\n");
-                                    exit(EXIT_FAILURE);
-                                }
-                  close(sfd);
+           void *readbuffer=malloc(SSIZE_MAX);
 
+           FILE *read_fp = fdopen(socketdescriptor, "r");
+           if (read_fp==0){
+               fprintf(stderr,"fdopen failed: %s\n", strerror(errno));
+               close (socketdescriptor);
+               exit(EXIT_FAILURE);
+           }
+
+           /* perform read+write cylce */
+           size_t char_read=1; /* initializing with 1 that while cycle starts*/
+           size_t char_written=0;
+
+           /*open file for write*/
+           FILE *write_fp = fopen("returnmessage.txt","w");
+
+           while (char_read!=0){
+        	   char_read=fread(readbuffer, 1, (size_t) SSIZE_MAX, read_fp); /*reading bytewise*/
+        	   if ((char_read==0)&&(ferror(read_fp))){
+                   fprintf(stderr,"fread failed!\n");
+                   fclose(read_fp);
+                   fclose(write_fp);
+                   close (socketdescriptor);
+                   exit(EXIT_FAILURE);
+        	   }
+
+        	   char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp); /*writing bytewise*/
+        	   if ((char_written==0)&&(ferror(write_fp))){
+                   fprintf(stderr,"fwrite failed!\n");
+                   fclose(read_fp);
+                   fclose(write_fp);
+                   close (socketdescriptor);
+                   exit(EXIT_FAILURE);
+        	           	   }
+           }
+
+      close (socketdescriptor); /* finally close socket */
+
+      /* clean resources */
+      fclose(read_fp);
+      fclose(write_fp);
+
+      return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
+
 
 
