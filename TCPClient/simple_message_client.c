@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+//#include <arpa/inet.h> /* include for function inet_ntop()
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
@@ -269,7 +270,7 @@ int main(int argc, const char * argv[]) {
            }
 
 
-           /*open file for write and write buffer in file*/
+           /*open file for write and write buffer in file
            FILE *write_fp = fopen("returnmessage.txt","w");
            size_t char_written=0;
            size_t char_written_sum=0;
@@ -277,8 +278,8 @@ int main(int argc, const char * argv[]) {
            while ((char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp))!=0){
         	   char_written_sum+=char_written;
         	   fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
-           }/*writing bytewise*/
-
+           }*//*writing bytewise*/
+/*
            if ((char_written==0)&&(ferror(write_fp))){
                               fprintf(stderr,"fwrite failed!\n");
                               free(readbuffer);
@@ -286,7 +287,7 @@ int main(int argc, const char * argv[]) {
                               close (socketdescriptor);
                               exit(EXIT_FAILURE);
            }
-
+*/
            /*
            FILE *read_fp = fdopen(socketdescriptor, "r");
            if (read_fp==0){
@@ -326,7 +327,7 @@ int main(int argc, const char * argv[]) {
       close (socketdescriptor); /* finally close socket */
 
       /* clean resources */
-      fclose(write_fp);
+  //    fclose(write_fp);
       free (readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
