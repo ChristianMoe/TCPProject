@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  if (verbose==1){
-		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n", server, port, user, imgurl, message);
+		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n", (char*)server, (char*)port, (char*)user, (char*)imgurl, (char*)message);
 	  }
 
 	  /*variable for string to be sent*/
@@ -145,7 +145,7 @@ int main(int argc, const char * argv[]) {
        * getaddrinfo return == 0 if success, otherwise Error-Code
        * and fills results with
        */
-      if (getaddrinfo(*server, *port, &hints, &result) != 0) {
+      if (getaddrinfo((const char*) server, (const char*) port, &hints, &result) != 0) {
           fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
           exit(EXIT_FAILURE);
       }
