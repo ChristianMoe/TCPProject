@@ -182,8 +182,7 @@ int main(int argc, const char * argv[]) {
     	  socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
                      if (socketdescriptor == -1) continue;
                      if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Created %d %d socket" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,rp->ai_family, rp->ai_socktype);
-                     if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1) break; /* Success */
-                     if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Connected to port %s of server %s" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,(char*)port, (char*)server);
+                     if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
                      close(socketdescriptor);
                  }
 
@@ -192,7 +191,10 @@ int main(int argc, const char * argv[]) {
              freeaddrinfo(result); /* result of getaddrinfo no longer needed */
              exit(EXIT_FAILURE);
           }
-      if (verbose==TRUE){
+          if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Connected to port %s of server %s" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,(char*)port, (char*)server);
+
+
+          if (verbose==TRUE){
            fprintf(stdout,"socket+connect successful!\n");
            }
 
