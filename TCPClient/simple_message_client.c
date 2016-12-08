@@ -262,8 +262,9 @@ int main(int argc, const char * argv[]) {
         		   close (socketdescriptor);
         		   free (readbuffer);
         		   exit(EXIT_FAILURE);
-
         	   }
+
+        	   fprintf(stdout,"bytes in buffer: %d\n", (int) strlen(readbuffer));
 
         	   bytesread_sum+=bytesread;
         	   fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
@@ -276,7 +277,6 @@ int main(int argc, const char * argv[]) {
            size_t char_written_sum=0;
 
 
-           fprintf(stdout,"size buffer: %d\n", (int) strlen(readbuffer));
 
 
            while (char_written_sum<=strlen(readbuffer)){
@@ -290,7 +290,7 @@ int main(int argc, const char * argv[]) {
 				char_written_sum+=char_written;
            }
 
-           fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
+           fprintf(stdout,"%d characters written!\n", (int)char_written_sum);
 
            /*writing bytewise*/
 /*
