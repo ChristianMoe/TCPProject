@@ -270,15 +270,25 @@ int main(int argc, const char * argv[]) {
            }
 
 
-           /*open file for write and write buffer in file
+           /*open file for write and write buffer in file */
            FILE *write_fp = fopen("returnmessage.txt","w");
            size_t char_written=0;
            size_t char_written_sum=0;
 
-           while ((char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp))!=0){
-        	   char_written_sum+=char_written;
-        	   fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
-           }*//*writing bytewise*/
+           while (char_written_sum!=strlen(readbuffer)){
+        	    char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp);
+        	    if ((char_written==0)&&(ferror(write_fp))){
+		                   fprintf(stderr,"fwrite failed!\n");
+		                   fclose(write_fp);
+		                   close (socketdescriptor);
+		                   exit(EXIT_FAILURE);
+        	    }
+				char_written_sum+=char_written;
+           }
+
+           fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
+
+           /*writing bytewise*/
 /*
            if ((char_written==0)&&(ferror(write_fp))){
                               fprintf(stderr,"fwrite failed!\n");
