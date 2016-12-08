@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
 	  }
 
 	  if (verbose==TRUE){
-		//  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n",strdup(argv[0]), strdup(server), strdup(port), strdup(user), strdup(imgurl), strdup(message));
+		 fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n",(char*) argv[0], (char*) server, (char*) port, (char*) user, (char*) imgurl, (char*) message);
 	  }
 
 	  /*variable for string to be sent*/
