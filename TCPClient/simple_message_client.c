@@ -90,6 +90,11 @@ int main(int argc, const char * argv[]) {
 	  int opt = 0; /* variable for getopt */
 	  int buffersize = 0; /* size for sendbuffer */
 
+
+	  /* calling parsing function for return of command line parameters */
+	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
+
+
 	  /* checking whether -h is a parameter of command line */
 	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
 	               switch (opt) {
@@ -100,9 +105,6 @@ int main(int argc, const char * argv[]) {
 	            	   break;
 	               }
 	  }
-
-	  /* calling parsing function for return of command line parameters */
-	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  if (verbose==1){
 		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n",strdup(argv[0]), strdup(server), strdup(port), strdup(user), strdup(imgurl), strdup(message));
