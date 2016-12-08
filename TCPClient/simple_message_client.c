@@ -246,22 +246,60 @@ int main(int argc, const char * argv[]) {
 
            void *readbuffer=malloc(SSIZE_MAX);
 
+           ssize_t bytesread=0;
+           ssize_t bytesread_sum=0;
+
+
+           while ((bytesread=read(socketdescriptor,readbuffer,SSIZE_MAX))!=0){
+        	   if (bytesread==-1){
+        		   fprintf(stderr,"read failed: %s\n", strerror(errno));
+        		   close (socketdescriptor);
+        		   free (readbuffer);
+        		   exit(EXIT_FAILURE);
+
+        	   }
+
+        	   bytesread_sum+=bytesread;
+        	   fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
+           }
+
+
+           /*open file for write and write buffer in file*/
+           FILE *write_fp = fopen("returnmessage.txt","w");
+           size_t char_written=0;
+           size_t char_written_sum=0;
+
+           while ((char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp))!=0){
+        	   char_written_sum+=char_written;
+        	   fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
+           }/*writing bytewise*/
+
+           if ((char_written==0)&&(ferror(write_fp))){
+                              fprintf(stderr,"fwrite failed!\n");
+                              free(readbuffer);
+                              fclose(write_fp);
+                              close (socketdescriptor);
+                              exit(EXIT_FAILURE);
+           }
+
+           /*
            FILE *read_fp = fdopen(socketdescriptor, "r");
            if (read_fp==0){
                fprintf(stderr,"fdopen failed: %s\n", strerror(errno));
                close (socketdescriptor);
                exit(EXIT_FAILURE);
            }
-
-           /* perform read+write cylce */
-           size_t char_read=1; /* initializing with 1 that while cycle starts*/
+*/
+           /* perform read+write cylce
+           size_t char_read=1; /* initializing with 1 that while cycle starts
            size_t char_written=0;
 
-           /*open file for write*/
-           FILE *write_fp = fopen("returnmessage.txt","w");
 
-           while (char_read!=0){
-        	   char_read=fread(readbuffer, 1, (size_t) SSIZE_MAX, read_fp); /*reading bytewise*/
+
+
+
+/*           while (char_read!=0){
+        	   char_read=fread(readbuffer, 1, (size_t) SSIZE_MAX, read_fp); /*reading bytewise
         	   if ((char_read==0)&&(ferror(read_fp))){
                    fprintf(stderr,"fread failed!\n");
                    fclose(read_fp);
@@ -270,7 +308,7 @@ int main(int argc, const char * argv[]) {
                    exit(EXIT_FAILURE);
         	   }
 
-        	   char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp); /*writing bytewise*/
+        	   char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp); /*writing bytewise
         	   if ((char_written==0)&&(ferror(write_fp))){
                    fprintf(stderr,"fwrite failed!\n");
                    fclose(read_fp);
@@ -279,12 +317,12 @@ int main(int argc, const char * argv[]) {
                    exit(EXIT_FAILURE);
         	           	   }
            }
-
+*/
       close (socketdescriptor); /* finally close socket */
 
       /* clean resources */
-      fclose(read_fp);
       fclose(write_fp);
+      free (readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
