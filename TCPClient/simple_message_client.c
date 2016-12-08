@@ -140,7 +140,7 @@ int main(int argc, const char * argv[]) {
       /* Obtain address matching host/port */
       memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
       hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-      hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
+      hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
       hints.ai_flags = 0;
       hints.ai_protocol = 0;          /* Any protocol */
 
