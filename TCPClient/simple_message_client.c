@@ -125,7 +125,7 @@ int main(int argc, const char * argv[]) {
 	  sendbuffer=strcat(sendbuffer,message);
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
-	  const char *finalmessage = *sendbuffer;
+	  const char finalmessage = *sendbuffer;
 
 	  free(sendbuffer); /*free resource as it is no longer needed*/
 
@@ -192,7 +192,7 @@ int main(int argc, const char * argv[]) {
 
           /* Send message datagram to server */
 
-              len = strlen(*finalmessage) + 1; /* +1 for terminating character \0 */
+              len = strlen(finalmessage) + 1; /* +1 for terminating character \0 */
 
           /* checking whether message is to big */
               if (len > MAX_BUF_SIZE) {
