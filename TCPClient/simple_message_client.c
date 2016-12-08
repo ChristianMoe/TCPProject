@@ -38,7 +38,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
-
+#define READ_BUF_SIZE 10000000 /*SSIZE_MAX */
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -94,7 +94,6 @@ int main(int argc, const char * argv[]) {
 	  /* calling parsing function for return of command line parameters */
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
-
 	  /* checking whether -h is a parameter of command line */
 	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
 	               switch (opt) {
@@ -125,7 +124,9 @@ int main(int argc, const char * argv[]) {
 		  strcat(sendbuffer,"\n");
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
-	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
+
+	  fprintf(stdout, "Size: %d \n", (int)SSIZE_MAX);
+
 
 	  const char *finalmessage = sendbuffer;
 
@@ -244,13 +245,13 @@ int main(int argc, const char * argv[]) {
 
            /* open file for read from server */
 
-           void *readbuffer=malloc(SSIZE_MAX);
+           void *readbuffer=malloc(READ_BUF_SIZE);
 
            ssize_t bytesread=0;
            ssize_t bytesread_sum=0;
 
 
-           while ((bytesread=read(socketdescriptor,readbuffer,SSIZE_MAX))!=0){
+           while ((bytesread=read(socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
         	   if (bytesread==-1){
         		   fprintf(stderr,"read failed: %s\n", strerror(errno));
         		   close (socketdescriptor);
