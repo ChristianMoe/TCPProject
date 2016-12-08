@@ -275,7 +275,11 @@ int main(int argc, const char * argv[]) {
            size_t char_written=0;
            size_t char_written_sum=0;
 
-           while (char_written_sum!=strlen(readbuffer)){
+
+           fprintf(stdout,"size buffer: %d\n", (int) strlen(readbuffer));
+
+
+           while (char_written_sum<=strlen(readbuffer)){
         	    char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp);
         	    if ((char_written==0)&&(ferror(write_fp))){
 		                   fprintf(stderr,"fwrite failed!\n");
