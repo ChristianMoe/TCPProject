@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
 	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	  if (verbose==1){
-		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n", strdup(server), strdup(port), strdup(user), strdup(imgurl), strdup(message));
+		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n",strdup(argv[0]), strdup(server), strdup(port), strdup(user), strdup(imgurl), strdup(message));
 	  }
 
 	  /*variable for string to be sent*/
