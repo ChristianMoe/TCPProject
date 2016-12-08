@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
-#define READ_BUF_SIZE 10000000 /*SSIZE_MAX */
+#define READ_BUF_SIZE 512
 
 /*
  * -------------------------------------------------------------- global resource variables --
