@@ -125,7 +125,7 @@ int main(int argc, const char * argv[]) {
 	  sendbuffer=strcat(sendbuffer,message);
 	  fprintf(stdout, "Text to send:%s \n", sendbuffer);
 
-	  const char finalmessage = *sendbuffer;
+	  const char *finalmessage = sendbuffer;
 
 	  free(sendbuffer); /*free resource as it is no longer needed*/
 
