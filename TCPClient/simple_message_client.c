@@ -181,7 +181,7 @@ int main(int argc, const char * argv[]) {
     	  /* socket()  creates  an endpoint for communication and returns a descriptor */
     	  socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
                      if (socketdescriptor == -1) continue;
-                     if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Created %d %d socket" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,rp->ai_family, rp->ai_socktype);
+                     if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Created %s %s socket" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,rp->ai_family, rp->ai_socktype);
                      if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1) break; /* Success */
                      close(socketdescriptor);
                  }
