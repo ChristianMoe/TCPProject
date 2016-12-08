@@ -289,17 +289,17 @@ int main(int argc, const char * argv[]) {
                close (socketdescriptor);
                exit(EXIT_FAILURE);
            }
-*/
-           /* perform read+write cylce
-           size_t char_read=1; /* initializing with 1 that while cycle starts
+
+           perform read+write cylce
+           size_t char_read=1;  initializing with 1 that while cycle starts
            size_t char_written=0;
 
-
+*/
 
 
 
 /*           while (char_read!=0){
-        	   char_read=fread(readbuffer, 1, (size_t) SSIZE_MAX, read_fp); /*reading bytewise
+        	   char_read=fread(readbuffer, 1, (size_t) SSIZE_MAX, read_fp); *//*reading bytewise
         	   if ((char_read==0)&&(ferror(read_fp))){
                    fprintf(stderr,"fread failed!\n");
                    fclose(read_fp);
@@ -308,7 +308,7 @@ int main(int argc, const char * argv[]) {
                    exit(EXIT_FAILURE);
         	   }
 
-        	   char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp); /*writing bytewise
+        	   char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp); *//*writing bytewise
         	   if ((char_written==0)&&(ferror(write_fp))){
                    fprintf(stderr,"fwrite failed!\n");
                    fclose(read_fp);
