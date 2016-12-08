@@ -145,7 +145,9 @@ int main(int argc, const char * argv[]) {
        * getaddrinfo return == 0 if success, otherwise Error-Code
        * and fills results with
        */
-      if (getaddrinfo((const char*) server, (const char*) port, &hints, &result) != 0) {
+      gea_ret=getaddrinfo((const char*) server, (const char*) port, &hints, &result);
+
+      if (gea_ret!= 0) {
           fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
           exit(EXIT_FAILURE);
       }
@@ -204,7 +206,7 @@ int main(int argc, const char * argv[]) {
           /* sending message */
               while (byteswritten!= (ssize_t)len) {
 
-            	  retlen=write(socketdescriptor, *message, len); /*adding bytes written if partial write is performed */
+            	  retlen=write(socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
             	  if (retlen==-1){
             		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
             		  close (socketdescriptor);
