@@ -267,16 +267,16 @@ int main(int argc, const char * argv[]) {
         		   close (socketdescriptor);
         		   free (readbuffer);
         		   exit(EXIT_FAILURE);
-        	   }
+        	   	   }
 
         	   fprintf(stdout,"bytes in buffer: %d\n", (int) strlen(readbuffer));
 
         	   bytesread_sum+=bytesread;
-        	     fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
+        	   fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
 
         	   while ((char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp))!=0){
         	          	char_written_sum+=char_written;
-        	            fprintf(stdout,"%d characters written!\n", (int)char_written_sum);
+        	            fprintf(stdout,"%d characters written!\n", (int)char_written);
         	   }
 
         	   if ((char_written==0)&&(ferror(write_fp))){
