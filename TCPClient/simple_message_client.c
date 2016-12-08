@@ -272,7 +272,7 @@ int main(int argc, const char * argv[]) {
         	   fprintf(stdout,"bytes in buffer: %d\n", (int) strlen(readbuffer));
 
         	   bytesread_sum+=bytesread;
-        	   fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
+        	     fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
 
         	   while (char_written_sum!=strlen(readbuffer)){
         	           	    char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp);
