@@ -86,7 +86,7 @@ int main(int argc, const char * argv[]) {
 	  const char *user = NULL;
 	  const char *message = NULL;
 	  const char *imgurl = NULL;
-	  int verbose = 0;
+	  int verbose = FALSE;
 	  int opt = 0; /* variable for getopt */
 	  int buffersize = 0; /* size for sendbuffer */
 
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
 	               }
 	  }
 
-	  if (verbose==1){
+	  if (verbose==TRUE){
 		  fprintf(stdout,"%s: Using the following options: server=%s port=%s, user=%s, img_url=%s, message=%s\n",strdup(argv[0]), strdup(server), strdup(port), strdup(user), strdup(imgurl), strdup(message));
 	  }
 
@@ -153,6 +153,9 @@ int main(int argc, const char * argv[]) {
           fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
           exit(EXIT_FAILURE);
       }
+      if (verbose==TRUE){
+      		  fprintf(stdout,"getaddrinfo successful!\n");
+      }
 
       /* getaddrinfo() returns a list of address structures.
                     Try each address until successfully connected.
@@ -186,6 +189,9 @@ int main(int argc, const char * argv[]) {
              freeaddrinfo(result); /* result of getaddrinfo no longer needed */
              exit(EXIT_FAILURE);
           }
+      if (verbose==TRUE){
+           fprintf(stdout,"socket+connect successful!\n");
+           }
 
           freeaddrinfo(result);     /* result of getaddrinfo no longer needed */
 
@@ -217,12 +223,24 @@ int main(int argc, const char * argv[]) {
             	  byteswritten+=retlen;
               }
 
+
+              if (verbose==TRUE){
+               		  fprintf(stdout,"write successful!\n");
+               }
+
+
+
            /* shutdown Write from Client side */
            if (shutdown(socketdescriptor,SHUT_WR)==-1){
                       fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
                       close (socketdescriptor);
                       exit(EXIT_FAILURE);
            }
+
+           if (verbose==TRUE){
+            		  fprintf(stdout,"shutdown SHUT_WR successful!\n");
+            }
+
 
            /* open file for read from server */
 
