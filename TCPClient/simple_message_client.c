@@ -327,7 +327,7 @@ int main(int argc, const char * argv[]) {
       close (socketdescriptor); /* finally close socket */
 
       /* clean resources */
-  //    fclose(write_fp);
+  //    fclose(write_fp); /* free */
       free (readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
