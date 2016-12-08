@@ -274,7 +274,7 @@ int main(int argc, const char * argv[]) {
            size_t char_written=0;
            size_t char_written_sum=0;
 
-           while ((char_written=fwrite(readbuffer, 1, strlen(readbuffer),write_fp))!=0){
+           while ((char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp))!=0){
         	   char_written_sum+=char_written;
         	   fprintf(stdout,"%d bytes written!\n", (int)char_written_sum);
            }/*writing bytewise*/
