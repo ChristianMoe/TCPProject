@@ -283,7 +283,7 @@ int main(int argc, const char * argv[]) {
         			    char_written_sum+=char_written;
         	   }*/
 
-               strcpy((tempbuffer+offset),(char*)readbuffer);
+               memcpy((tempbuffer+offset),readbuffer,bytesread);
                offset+=bytesread;
            }
 
