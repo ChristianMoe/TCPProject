@@ -126,10 +126,10 @@ int main(int argc, const char * argv[]) {
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
 
-	  //testing line below (can be removed!)
-      fprintf(stdout,"%s",(char*)finalmessage);
 
 	  const char *finalmessage = sendbuffer;
+	  //testing line below (can be removed!)
+	      fprintf(stdout,"%s",(char*)finalmessage);
 
 	  free(sendbuffer); /*free resource as it is no longer needed*/
 
