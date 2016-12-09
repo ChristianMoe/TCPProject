@@ -126,12 +126,7 @@ int main(int argc, const char * argv[]) {
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
 
-
 	  const char *finalmessage = sendbuffer;
-	  //testing line below (can be removed!)
-	      fprintf(stdout,"%s",(char*)finalmessage);
-
-	  free(sendbuffer); /*free resource as it is no longer needed*/
 
 	  /* variables for socket */
       struct addrinfo hints; /* struct for parameters for getaddrinfo*/
@@ -342,6 +337,7 @@ int main(int argc, const char * argv[]) {
       /* clean resources */
   //    fclose(write_fp); /* free */
       free (readbuffer);
+	  free (sendbuffer); /*free resource as it is no longer needed*/
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
