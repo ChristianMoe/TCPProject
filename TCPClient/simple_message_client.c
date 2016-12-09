@@ -290,10 +290,12 @@ int main(int argc, const char * argv[]) {
            /*find "file=" in string */
 
            char* pos_file=strstr(tempbuffer,"file=");
-           //char* pos_len=strstr(tempbuffer,"len=");
+           char* pos_len=strstr(tempbuffer,"len=");
            //char* pos_len_end=strstr(pos_len,"\n");
 
-           char filename=strtok((pos_file+5),"\n");
+           //char filename=strtok((pos_file+5),"\n");
+           char* filename=0;
+           strncpy(pos_file,filename,(pos_len-pos_file));
 
            fprintf(stdout,"filename: %s  -- size: %d",filename, offset);
 
