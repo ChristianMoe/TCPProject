@@ -251,14 +251,14 @@ int main(int argc, const char * argv[]) {
            /* open file for read from server */
 
            void *readbuffer=malloc(READ_BUF_SIZE);
-           void *tempbuffer=malloc(MAX_BUF_SIZE);
+           //void *tempbuffer=malloc(MAX_BUF_SIZE);
 
            ssize_t bytesread=0;
 
            /*open file for write and write buffer in file */
-           FILE *write_fp = fopen("returnmessage.txt","w");
-           size_t char_written=0;
-           size_t char_written_sum=0;
+           //FILE *write_fp = fopen("returnmessage.txt","w");
+           //size_t char_written=0;
+           //size_t char_written_sum=0;
 
 
            while ((bytesread=read(socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
