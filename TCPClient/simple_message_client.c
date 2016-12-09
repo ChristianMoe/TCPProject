@@ -252,6 +252,7 @@ int main(int argc, const char * argv[]) {
 
            void *readbuffer=malloc(READ_BUF_SIZE);
            char *tempbuffer=malloc(MAX_BUF_SIZE);
+           int offset=0;
 
            ssize_t bytesread=0;
 
@@ -282,8 +283,8 @@ int main(int argc, const char * argv[]) {
         			    char_written_sum+=char_written;
         	   }*/
 
-               strcpy(tempbuffer,(char*)readbuffer);
-               fprintf(stdout,"%s",(char*)readbuffer);
+               strcpy((tempbuffer+offset),(char*)readbuffer);
+               offset+=strlen((char*)readbuffer);
            }
 
            fprintf(stdout,"%s",tempbuffer);
