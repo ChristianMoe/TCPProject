@@ -287,7 +287,7 @@ int main(int argc, const char * argv[]) {
                offset+=bytesread;
            }
 
-           fprintf(stdout,"%s",tempbuffer);
+           fprintf(stdout,"%s final size: %d",tempbuffer, offset);
 
 
 
