@@ -217,6 +217,9 @@ int main(int argc, const char * argv[]) {
             	  exit(EXIT_FAILURE);
               }
 
+              //testing line below (can be removed!)
+              fprintf(stdout,"%s",*finalmessage);
+
           /* sending message */
               while (byteswritten!= (ssize_t)len) {
 
@@ -253,7 +256,6 @@ int main(int argc, const char * argv[]) {
            void *readbuffer=malloc(READ_BUF_SIZE);
 
            ssize_t bytesread=0;
-           ssize_t bytesread_sum=0;
 
            /*open file for write and write buffer in file */
            FILE *write_fp = fopen("returnmessage.txt","w");
@@ -269,11 +271,6 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	   fprintf(stdout,"bytes in buffer: %d\n", (int) strlen(readbuffer));
-
-        	   bytesread_sum+=bytesread;
-        	   fprintf(stdout,"%d bytes read!\n", (int)bytesread_sum);
-
         	   while (char_written_sum<(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
@@ -282,9 +279,7 @@ int main(int argc, const char * argv[]) {
         			            	       		                   close (socketdescriptor);
         			            	       		                   exit(EXIT_FAILURE);
         			            	              	           	    }
-
         			    char_written_sum+=char_written;
-        	            fprintf(stdout,"%d characters written!\n", (int)char_written);
         	   }
 
 
