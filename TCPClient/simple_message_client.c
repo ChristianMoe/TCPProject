@@ -276,6 +276,7 @@ int main(int argc, const char * argv[]) {
         			            	       		                   close (socketdescriptor);
         			            	       		                   exit(EXIT_FAILURE);
         			            	              	           	    }
+        			    fflush(write_fp);
         			    char_written_sum+=char_written;
         	   }
 
