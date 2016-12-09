@@ -269,7 +269,7 @@ int main(int argc, const char * argv[]) {
         	   	   }
 
         	   while (char_written_sum<(size_t)bytesread){
-        			    char_written=fwrite(readbuffer, sizeof(char), strlen(readbuffer),write_fp);
+        			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
         			            	       		                   fclose(write_fp);
