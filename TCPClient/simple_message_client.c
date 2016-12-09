@@ -283,6 +283,7 @@ int main(int argc, const char * argv[]) {
         	   }*/
 
                strcpy(tempbuffer,(char*)readbuffer);
+               fprintf(stdout,"%s",(char*)readbuffer);
            }
 
            fprintf(stdout,"%s",tempbuffer);
