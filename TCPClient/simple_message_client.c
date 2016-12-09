@@ -214,7 +214,8 @@ int main(int argc, const char * argv[]) {
               }
 
               //testing line below (can be removed!)
-              fprintf(stdout,"%s",(char*)finalmessage);
+              fprintf(stdout,"%s, länge:%d",(char*)finalmessage, (int)len);
+
 
           /* sending message */
               while (byteswritten!= (ssize_t)len) {
