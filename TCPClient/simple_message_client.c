@@ -251,6 +251,7 @@ int main(int argc, const char * argv[]) {
            /* open file for read from server */
 
            void *readbuffer=malloc(READ_BUF_SIZE);
+           void *tempbuffer=malloc(MAX_BUF_SIZE);
 
            ssize_t bytesread=0;
 
@@ -268,7 +269,7 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	   while (char_written_sum<(size_t)bytesread){
+        	/*   while (char_written_sum<(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
@@ -278,11 +279,11 @@ int main(int argc, const char * argv[]) {
         			            	              	           	    }
         			    fflush(write_fp);
         			    char_written_sum+=char_written;
-        	   }
+        	   }*/
 
 
            }
-
+           fprintf(stdout,"%s",(char*)readbuffer);
 
 
 
