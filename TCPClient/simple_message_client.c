@@ -126,9 +126,6 @@ int main(int argc, const char * argv[]) {
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
 
-	  fprintf(stdout, "Size: %d \n", (int)SSIZE_MAX);
-
-
 	  const char *finalmessage = sendbuffer;
 
 	  free(sendbuffer); /*free resource as it is no longer needed*/
