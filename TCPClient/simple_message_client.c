@@ -284,7 +284,7 @@ int main(int argc, const char * argv[]) {
         	   }*/
 
                strcpy((tempbuffer+offset),(char*)readbuffer);
-               offset+=strlen((char*)readbuffer);
+               offset+=bytesread;
            }
 
            fprintf(stdout,"%s",tempbuffer);
