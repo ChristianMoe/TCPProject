@@ -287,12 +287,15 @@ int main(int argc, const char * argv[]) {
                offset+=bytesread;
            }
 
-           fprintf(stdout,"%s final size: %d",tempbuffer, offset);
+           /*find "file=" in string */
 
+           char* pos_file=strstr(tempbuffer,"file=");
+           //char* pos_len=strstr(tempbuffer,"len=");
+           //char* pos_len_end=strstr(pos_len,"\n");
 
+           char filename=strtok((pos_file+5),"\n");
 
-
-
+           fprintf(stdout,"filename: %s  -- size: %d",filename, offset);
 
            /*writing bytewise*/
 /*
@@ -349,6 +352,5 @@ int main(int argc, const char * argv[]) {
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
-
 
 
