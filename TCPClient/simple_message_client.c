@@ -125,6 +125,7 @@ int main(int argc, const char * argv[]) {
 		  strcat(sendbuffer,"\n");
 	  }
 	  sendbuffer=strcat(sendbuffer,message);
+	  sendbuffer=strcat(sendbuffer,"\0");
 
 	  const char *finalmessage = sendbuffer;
 
