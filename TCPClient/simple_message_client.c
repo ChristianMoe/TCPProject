@@ -293,11 +293,13 @@ int main(int argc, const char * argv[]) {
            char* pos_len=strstr(tempbuffer,"len=");
            //char* pos_len_end=strstr(pos_len,"\n");
 
+           fprintf(stdout,"pos_file: %d  -- pos_len: %d\n",pos_file, pos_len);
+
            //char filename=strtok((pos_file+5),"\n");
            char* filename = malloc (pos_len-pos_file+1);
            strncpy(pos_file,filename,(pos_len-pos_file));
 
-           fprintf(stdout,"filename: %s  -- size: %d",filename, offset);
+           fprintf(stdout,"filename: %s  -- size: %d\n",filename, offset);
 
            /*writing bytewise*/
 /*
