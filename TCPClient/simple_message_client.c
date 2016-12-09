@@ -251,7 +251,7 @@ int main(int argc, const char * argv[]) {
            /* open file for read from server */
 
            void *readbuffer=malloc(READ_BUF_SIZE);
-           //void *tempbuffer=malloc(MAX_BUF_SIZE);
+           char *tempbuffer=malloc(MAX_BUF_SIZE);
 
            ssize_t bytesread=0;
 
@@ -260,6 +260,7 @@ int main(int argc, const char * argv[]) {
            //size_t char_written=0;
            //size_t char_written_sum=0;
 
+           strcpy(tempbuffer,"");
 
            while ((bytesread=read(socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
         	   if (bytesread==-1){
@@ -281,9 +282,10 @@ int main(int argc, const char * argv[]) {
         			    char_written_sum+=char_written;
         	   }*/
 
-
+               strcpy(tempbuffer,(char*)readbuffer);
            }
-           fprintf(stdout,"%s",(char*)readbuffer);
+
+           fprintf(stdout,"%s",tempbuffer);
 
 
 
