@@ -290,8 +290,8 @@ int main(int argc, const char * argv[]) {
            /*find "file=" in string */
 
            char* pos_file=strstr(tempbuffer,"file=");
-           pos_file++;pos_file++;pos_file++;pos_file++;pos_file++;
-           char* pos_len=strstr(tempbuffer,"len=");
+           pos_file*=strlen("file=");
+           char* pos_len=strstr(tempbuffer,"\n");
            //char* pos_len_end=strstr(pos_len,"\n");
 
            fprintf(stdout,"pos_file: %d\n",(int) pos_len-(int)pos_file);
