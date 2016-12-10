@@ -47,10 +47,10 @@ $(BIN1): $(OBJ1)
 
 .PHONY: clean
 clean:
-	@-rm -rf $(BIN1) $(OBJ1) $@
-##	@-rm -rf $(BIN2) $(OBJ2) $@
+	rm -rf $(BIN1) $(OBJ1) 
+##	rm -rf $(BIN2) $(OBJ2)
 	
-	Executeable and Object-Files deleted!
+
 	
 
 
