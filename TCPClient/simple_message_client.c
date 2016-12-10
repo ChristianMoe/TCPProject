@@ -34,6 +34,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
+void searchandparsestring(char*startstring, char*returnstring, const char pattern);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -287,16 +288,20 @@ int main(int argc, const char * argv[]) {
                offset+=bytesread;
            }
 
-           /*find "file=" in string and parse filename*/
+           /*find "file=" in string and parse filename
            char* pos_file=strstr(tempbuffer,"file=");
            pos_file+=strlen("file=");
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
-           //free (filename);
+           //free (filename);*/
 
-           /*find "len=" in string and parse filename*/
+           char* filename;
+           searchandparsestring(tempbuffer,filename,"file=");
+           fprintf(stdout,"filename: %s\n",filename);
+
+           /*find "len=" in string and parse filename
            pos_file=strstr(tempbuffer,"img=");
            pos_file+=strlen("img=");
            pos_end=strstr(pos_file,"\n");
@@ -310,7 +315,7 @@ int main(int argc, const char * argv[]) {
            fprintf(stdout,"filename: %s\n",filename);
            fprintf(stdout,"length: %d\n",(int)filelength);
 
-
+*/
            /*writing bytewise*/
 /*
            if ((char_written==0)&&(ferror(write_fp))){
@@ -367,4 +372,13 @@ int main(int argc, const char * argv[]) {
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
+void searchandparsestring(char*startstring, char*returnstring, const char pattern){
 
+    char* pos_file=strstr(startstring,pattern);
+    pos_file+=strlen(pattern);
+    char* pos_end=strstr(pos_file,"\n");
+    char* retstring = malloc ((int)pos_end-(int)pos_file+1);
+    strncpy(retstring,pos_file,((int)pos_end-(int)pos_file));
+	returnstring=retstring;
+
+}
