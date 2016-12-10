@@ -16,13 +16,13 @@
 CC=gcc52
 CFLAGS=-Wall -Werror -Wextra -Wstrict-prototypes -pedantic -fno-common -O3 -g -std=gnu11
 LDFLAGS=-lsimple_message_client_commandline_handling
-CP=cp
-CD=cd
-MV=mv
-RM=rm
 
 OBJ1=simple_message_client.o
 BIN1=simple_message_client
+## OBJ2=simple_message_server.o
+## BIN2=simple_message_server
+
+
 
 ##
 ## ----------------------------------------------------------------- rules --
@@ -36,16 +36,20 @@ BIN1=simple_message_client
 ##
 
 .PHONY: all
-all: $(BIN1)
+all: $(BIN1) ## $(BIN2)
 
 $(BIN1): $(OBJ1)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) 
+
+## $(BIN2): $(OBJ2)
+##	$(CC) $(CFLAGS) -o $@ $^ 
+
 
 .PHONY: clean
 clean:
 	@-rm -rf $(BIN) $(OBJ1) $@
 	
-	Executeable and Object-Files deleted!
+	echo Executeable and Object-Files deleted!
 	
 
 
