@@ -422,10 +422,10 @@ int submitmessage(const char* server,const char* port, int* socketdescriptor, in
 
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		/* socket()  creates  an endpoint for communication and returns a descriptor */
-		socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
-		if (socketdescriptor == -1) continue;
+		*socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
+		if (*socketdescriptor == -1) continue;
         if (verbose==TRUE) fprintf(stdout,"%s [%s, %s(), line %d]: Socket successfully created!\n" ,argv0,__FILE__, __func__ ,__LINE__);
-        if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
+        if (connect(*socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
         close(*socketdescriptor);
         }
 
