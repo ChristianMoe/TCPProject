@@ -197,6 +197,8 @@ int main(int argc, const char * argv[]) {
 			 	exit(EXIT_FAILURE);
 				}
 
+
+		fprintf(stdout,"%s",readbuffer);
 // successfully subroutines up to here
 
            /*open file for write and write buffer in file */
