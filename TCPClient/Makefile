@@ -45,8 +45,8 @@ $(BIN1): $(OBJ1)
 clean:
 	@-rm -rf $(BIN) $(OBJ1) $@
 	
-	@echo $(OBJ1) --> deleted!
-	@echo $(BIN1) --> deleted!
+	echo $(OBJ1) --> deleted!
+	echo $(BIN1) --> deleted!
 
 
 ##
