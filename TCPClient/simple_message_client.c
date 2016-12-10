@@ -406,16 +406,16 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* variables for sending */
-		size_t len = 0;
+		long int len = 0;
 		ssize_t retlen = 0;
-		ssize_t byteswritten = 0;
+		long int byteswritten = 0;
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
 
 	/* checking whether message is to big */
    	    if (len > MAX_BUF_SIZE) {
-   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %ld!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
 
@@ -424,13 +424,13 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
    	    }
 
 	/* sending message */
-   	    while (byteswritten!= (ssize_t)len) {
+   	    while (byteswritten!=len) {
    	    	retlen=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
    	    	if (retlen==-1){
    	    		fprintf(stderr, "%s [%s, %s(), line %d]: Write failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
    	    		return -1;
    	    		}
-   	    	byteswritten+=retlen; /* counting the sum of written bytes */
+   	    	byteswritten+=(long int)retlen; /* counting the sum of written bytes */
    	    	}
    	    if (verbose==TRUE){
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Message sent to server!\n" ,argv0,__FILE__, __func__ ,__LINE__);
