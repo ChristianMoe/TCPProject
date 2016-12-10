@@ -415,7 +415,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* checking whether message is to big */
    	    if (len > MAX_BUF_SIZE) {
-   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %ld!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
 
@@ -462,7 +462,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
-       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %ld bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
        	    	free (tmp_readbuffer);
        	    	return -1;
     			}
