@@ -94,7 +94,7 @@ int main(int argc, const char * argv[]) {
 	  int verbose = FALSE;
 	  int opt = 0; /* variable for getopt */
 	  int buffersize = 0; /* size for sendbuffer */
-	  int* socketdescriptor; /* pointer to socketdescriptor for subroutine*/
+	  int* socketdescriptor=NULL; /* pointer to socketdescriptor for subroutine*/
 
 
 	  /* calling parsing function for return of command line parameters */
@@ -267,7 +267,7 @@ int main(int argc, const char * argv[]) {
                    	if ((char_written==0)&&(ferror(write_html))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
                    	     fclose(write_html);
-                   	     close (socketdescriptor);
+                   	     close (*socketdescriptor);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_html);
@@ -284,7 +284,7 @@ int main(int argc, const char * argv[]) {
            FILE *write_png = fopen(filename,"w");
            if (write_png==NULL){
                  fprintf(stderr,"Failed to open PNG File!\n");
-                 close (socketdescriptor);
+                 close (*socketdescriptor);
     	       	 exit(EXIT_FAILURE);
     	         }
            free(filename);
@@ -309,7 +309,7 @@ int main(int argc, const char * argv[]) {
                    	if ((char_written==0)&&(ferror(write_png))){
                    	     fprintf(stderr,"fwrite write_png failed!\n");
                    	     fclose(write_png);
-                   	     close (socketdescriptor);
+                   	     close (*socketdescriptor);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_png);
@@ -392,7 +392,7 @@ int submitmessage(const char* server,const char* port, int* socketdescriptor, in
  * and fills results with
  */
 
-	if (getaddrinfo(server, port, &hints, &result)!= 0) {
+	if ((gea_ret=getaddrinfo(server, port, &hints, &result))!= 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
 		return -1; 			/* return failure to main */
 		}
