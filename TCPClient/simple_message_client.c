@@ -138,6 +138,7 @@ int main(int argc, const char * argv[]) {
 
 	  if (submitmessage(server,port,socketdescriptor,verbose)==-1){
 		  free(sendbuffer);
+		  free (*socketdescriptor);
 		  exit(EXIT_FAILURE);
 	  }
 
@@ -153,7 +154,11 @@ int main(int argc, const char * argv[]) {
           /* checking whether message is to big */
               if (len > MAX_BUF_SIZE) {
             	  fprintf(stderr, "Message to send is too big - Maximum is 10 MB\n");
-            	  close (*socketdescriptor);
+            	  free (sendbuffer);
+                  if (close (*socketdescriptor)!=0){
+                	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                  	  }
+            	  free (*socketdescriptor);
             	  exit(EXIT_FAILURE);
               }
 
@@ -163,7 +168,11 @@ int main(int argc, const char * argv[]) {
             	  retlen=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
             	  if (retlen==-1){
             		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
-            		  close (*socketdescriptor);
+                	  free (sendbuffer);
+                      if (close (*socketdescriptor)!=0){
+                    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                      	  }
+            		  free (*socketdescriptor);
             		  exit(EXIT_FAILURE);
             	  }
             	  byteswritten+=retlen;
@@ -179,7 +188,11 @@ int main(int argc, const char * argv[]) {
            /* shutdown Write from Client side */
            if (shutdown((int)*socketdescriptor,SHUT_WR)==-1){
                       fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
-                      close (*socketdescriptor);
+                	  free (sendbuffer);
+                      if (close (*socketdescriptor)!=0){
+                    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                      	  }
+                      free (*socketdescriptor);
                       exit(EXIT_FAILURE);
            }
 
@@ -206,7 +219,11 @@ int main(int argc, const char * argv[]) {
            while ((bytesread=read(*socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
         	   if (bytesread==-1){
         		   fprintf(stderr,"read failed: %s\n", strerror(errno));
-        		   close (*socketdescriptor);
+             	   free (sendbuffer);
+                   if (close (*socketdescriptor)!=0){
+                	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                   	   }
+        		   free (*socketdescriptor);
         		   free (readbuffer);
         		   exit(EXIT_FAILURE);
         	   	   }
@@ -226,7 +243,12 @@ int main(int argc, const char * argv[]) {
 */
         	   if ((offset+bytesread)>MAX_BUF_SIZE){
 	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
-    	       		   close (*socketdescriptor);
+	                   free (sendbuffer);
+                       if (close (*socketdescriptor)!=0){
+                      	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                       	 }
+    	       		   free (*socketdescriptor);
+    	       		   free (readbuffer);
     	       		   exit(EXIT_FAILURE);
     	        	   }
 
@@ -243,7 +265,12 @@ int main(int argc, const char * argv[]) {
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
-                 close (*socketdescriptor);
+           	     free (sendbuffer);
+                 if (close (*socketdescriptor)!=0){
+                	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                 	 }
+                 free (*socketdescriptor);
+                 free (readbuffer);
     	       	 exit(EXIT_FAILURE);
     	         }
 
@@ -268,8 +295,13 @@ int main(int argc, const char * argv[]) {
                    	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
                    	if ((char_written==0)&&(ferror(write_html))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
+                   	     free (sendbuffer);
+                         if (close (*socketdescriptor)!=0){
+                        	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                         	 }
+                         free (*socketdescriptor);
+                         free (readbuffer);
                    	     fclose(write_html);
-                   	     close (*socketdescriptor);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_html);
@@ -286,7 +318,12 @@ int main(int argc, const char * argv[]) {
            FILE *write_png = fopen(filename,"w");
            if (write_png==NULL){
                  fprintf(stderr,"Failed to open PNG File!\n");
-                 close (*socketdescriptor);
+           	     free (sendbuffer);
+                 if (close (*socketdescriptor)!=0){
+                	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                 	 }
+                 free (*socketdescriptor);
+                 free (readbuffer);
     	       	 exit(EXIT_FAILURE);
     	         }
            free(filename);
@@ -311,7 +348,12 @@ int main(int argc, const char * argv[]) {
                    	if ((char_written==0)&&(ferror(write_png))){
                    	     fprintf(stderr,"fwrite write_png failed!\n");
                    	     fclose(write_png);
-                   	     close (*socketdescriptor);
+                   	     free (sendbuffer);
+                         if (close (*socketdescriptor)!=0){
+                        	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                         	 }
+                         free (*socketdescriptor);
+                         free (readbuffer);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_png);
@@ -365,12 +407,15 @@ int main(int argc, const char * argv[]) {
         	           	   }
            }
 */
-      close (*socketdescriptor); /* finally close socket */
 
-      /* clean resources */
-  //    fclose(write_fp); /* free */
+/*finally free resources */
+  	  free (sendbuffer);
+      if (close (*socketdescriptor)!=0){
+    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+      	  }
+      free (*socketdescriptor);
       free (readbuffer);
-	  free (sendbuffer); /*free resource as it is no longer needed*/
+      free (readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
