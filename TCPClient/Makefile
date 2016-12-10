@@ -45,8 +45,8 @@ $(BIN1): $(OBJ1)
 clean:
 	@-rm -rf $(BIN) $(OBJ1) $@
 	
-	$(OBJ1) --> deleted!
-	$(BIN1) --> deleted!
+	Executeable and Object-Files deleted!
+	
 
 
 ##
