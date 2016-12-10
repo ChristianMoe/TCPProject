@@ -108,7 +108,7 @@ int main(int argc, const char * argv[]) {
 	  }
 
 	  if (verbose==TRUE){
-		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, (char*) server, (char*) port, (char*) user, (char*) imgurl, (char*) message);
+		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, (char*) server, (char*) port, (char*) user, (char*) imgurl, message);
 	  }
 
 	  /*variable for string to be sent*/
@@ -125,7 +125,7 @@ int main(int argc, const char * argv[]) {
 		  strcat(sendbuffer,imgurl);
 		  strcat(sendbuffer,"\n");
 	  }
-	  sendbuffer=strcat(sendbuffer,message);
+	  //sendbuffer=strcat(sendbuffer,message);
 	  //sendbuffer=strcat(sendbuffer,"\0");
 
 	  const char *finalmessage = sendbuffer;
