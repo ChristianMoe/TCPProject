@@ -401,6 +401,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    char *pos_end=NULL;
 	    char *filename=NULL;
 
+
 	/* start of logic for subroutine */
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
 			fprintf(stdout,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
@@ -413,10 +414,13 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
+		fprintf(stdout,"%s",bufferstart);
+
+
 		fprintf(stdout,"file=%d",(int)pos_end-(int)pos_file);
 
 		filename = malloc ((int)pos_end-(int)pos_file+1);
-		strncpy(filename,pos_file,((int)pos_end-(int)pos_file-1));
+		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
 		strcat(filename,"\0");
 	//
 	    if (verbose==TRUE){
