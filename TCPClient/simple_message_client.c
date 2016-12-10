@@ -396,10 +396,12 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
-	/* support variables for reading */
-	    int *pos_file=NULL;
-	    int *pos_end=NULL;
+	/* support variables for parsing */
+	    char *pos_file=NULL;
+	    char *pos_end=NULL;
 	    char *filename=NULL;
+	    char *length=NULL;
+	    char **endptr=NULL;
 
 
 	/* start of logic for subroutine */
@@ -418,7 +420,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		writefile(bufferstart, "test.dat", 5000, 1);
 
-		fprintf(stdout,"file=%d",(int)pos_end-(int)pos_file);
+		fprintf(stdout,"filelaenge zu lesen %d - %d",(int)pos_end, (int)pos_file);
 
 		filename = malloc ((int)pos_end-(int)pos_file+1);
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
@@ -444,10 +446,10 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 	   		fprintf(stdout,"len=%d",(int)pos_end-(int)pos_file);
 
-	           char* length = malloc ((int)pos_end-(int)pos_file+1);
+	           length = malloc ((int)pos_end-(int)pos_file+1);
 	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
 	           strcat(length,"\0");
-	           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+	           endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
 	           if (verbose==TRUE){
 	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
