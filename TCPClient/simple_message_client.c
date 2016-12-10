@@ -205,7 +205,7 @@ int main(int argc, const char * argv[]) {
 
           /* Send message datagram to server */
 
-              len = strlen(finalmessage); /* */
+              len = strlen(finalmessage)+1; /* */
 
           /* checking whether message is to big */
               if (len > MAX_BUF_SIZE) {
