@@ -42,7 +42,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
+#define MAX_BUF_SIZE SSIZE_MAX /* maximum Buffer SSIZE_MAX */
 #define READ_BUF_SIZE 5000
 
 /*
@@ -415,7 +415,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* checking whether message is to big */
    	    if (len > MAX_BUF_SIZE) {
-   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is 10 MB\n",argv0,__FILE__, __func__ ,__LINE__);
+   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
 
