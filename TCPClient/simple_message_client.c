@@ -309,6 +309,7 @@ int main(int argc, const char * argv[]) {
            char **endptr=malloc ((int)pos_end-(int)pos_file+1);
            long int filelength=strtol(length, endptr, 10);
            free(length);
+           free(endptr);
            fprintf(stdout,"length: %d\n",(int)filelength);
 
 
@@ -325,6 +326,51 @@ int main(int argc, const char * argv[]) {
                    	fflush(write_html);
                    	char_written_sum+=char_written;
            	   	   	}
+           fclose(write_html);
+
+           /*find "file=" in string and parse filename*/
+           pos_file=strstr(pos_end,"file=");
+           pos_file+=strlen("file=");
+           pos_end=strstr(pos_file,"\n");
+           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+           fprintf(stdout,"filename: %s\n",filename);
+           FILE *write_html = fopen(filename,"w");
+           if (write_html==NULL){
+                 fprintf(stderr,"Failed to open HTML File!\n");
+                 close (socketdescriptor);
+    	       	 exit(EXIT_FAILURE);
+    	         }
+           free(filename);
+
+           /*find "len=" in string and parse filename*/
+           pos_file=strstr(tempbuffer,"len=");
+           pos_file+=strlen("len=");
+           pos_end=strstr(pos_file,"\n");
+           char* length = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+           long int filelength=strtol(length, endptr, 10);
+           free(length);
+           free(endptr);
+           fprintf(stdout,"length: %d\n",(int)filelength);
+
+
+           /*writing bytewise*/
+           pos_end++;
+           while ((int)char_written_sum<(int)filelength){
+                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
+                   	if ((char_written==0)&&(ferror(write_html))){
+                   	     fprintf(stderr,"fwrite write_html failed!\n");
+                   	     fclose(write_html);
+                   	     close (socketdescriptor);
+                   	     exit(EXIT_FAILURE);
+                   	     }
+                   	fflush(write_html);
+                   	char_written_sum+=char_written;
+           	   	   	}
+           fclose(write_html);
+
 
 /*
            if ((char_written==0)&&(ferror(write_fp))){
