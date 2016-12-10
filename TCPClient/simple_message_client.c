@@ -290,7 +290,6 @@ int main(int argc, const char * argv[]) {
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-           fprintf(stdout,"filename: %s\n",filename);
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
@@ -310,7 +309,6 @@ int main(int argc, const char * argv[]) {
            long int filelength=strtol(length, endptr, 10);
            free(length);
            free(endptr);
-           fprintf(stdout,"length: %d\n",(int)filelength);
 
 
            /*writing bytewise*/
@@ -334,7 +332,6 @@ int main(int argc, const char * argv[]) {
            pos_end=strstr(pos_file,"\n");
            filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-           fprintf(stdout,"filename: %s\n",filename);
            FILE *write_png = fopen(filename,"w");
            if (write_png==NULL){
                  fprintf(stderr,"Failed to open PNG File!\n");
@@ -353,15 +350,15 @@ int main(int argc, const char * argv[]) {
            filelength=strtol(length, endptr, 10);
            free(length);
            free(endptr);
-           fprintf(stdout,"length: %d\n",(int)filelength);
 
 
            /*writing bytewise*/
            pos_end++;
+           char_written_sum=0;
            while ((int)char_written_sum<(int)filelength){
                    	char_written=fwrite(pos_end, sizeof(char), filelength ,write_png);
                    	if ((char_written==0)&&(ferror(write_png))){
-                   	     fprintf(stderr,"fwrite write_html failed!\n");
+                   	     fprintf(stderr,"fwrite write_png failed!\n");
                    	     fclose(write_png);
                    	     close (socketdescriptor);
                    	     exit(EXIT_FAILURE);
