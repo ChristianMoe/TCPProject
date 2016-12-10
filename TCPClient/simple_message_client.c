@@ -42,7 +42,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 1000000000 /* maximum Buffer SSIZE_MAX */
+#define MAX_BUF_SIZE 1073741823
 #define READ_BUF_SIZE 5000
 
 /*
