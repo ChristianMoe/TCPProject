@@ -268,7 +268,7 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	   while ((char_written_sum+1)!=(size_t)bytesread){
+        	   while ((char_written_sum-1)!=(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
