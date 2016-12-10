@@ -1,9 +1,10 @@
-/**
+**
  * @file simple_message_client.c
- * Distributed Systems - Implementation of a simple message client
+ * Distributed Systems - Implementation of a simple TCP message client
  *
  * @author Christian Mödlhammer,ic14b027
- * @details This program implements a simple message client using a Library libsimple_message_client_commandline_handling.a for parsing the command line input
+ * @author Harald Partmann,ic14b027
+ *
  * @date 2016-01-12
  *
  * @version 0.1
@@ -34,9 +35,9 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose);
-
-
+int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
+int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
+int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -47,19 +48,22 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
 /*
  * -------------------------------------------------------------- global resource variables --
  */
-const char* argv0; /*neccessary for verbose for not handing parameter to every function */
+const char* argv0; /* necessary for verbose for not handing parameter to every function */
 
 /**
- * prints the usage information
  *
- * \param outputdevice 	specifies outputdevice for usage message
- * \param filename 		filename for which the usage is valid
- * \param suc_or_fail	exit as success or as failure
+ * \brief The usageinfo for the Client
+ *
+ * This subroutine prints the usageinfo for the client and exits
+ *
+ * \param outputdevice the outputdevice for usage message
+ * \param filename the file for which the usage info is valid
+ * \param suc_or_fail the exit status
  *
  * \return void
+ * \retval none
  *
  */
-
 
 static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
@@ -78,186 +82,130 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 
 /**
- * start of main program
  *
- **/
-
+ * \brief The main routine for the Client
+ *
+ * This is the main entry point for the simple_message_client
+ *
+ * \param argc the number of arguments
+ * \param argv the arguments from the command line (including the program name in argv[0])
+ *
+ * \return always "success"
+ * \retval 0 always
+ *
+ */
 
 int main(int argc, const char * argv[]) {
 
-	  argv0=argv[0]; /*copy prog name to global variable*/
-	  const char *server = NULL;
-	  const char *port = NULL;
-	  const char *user = NULL;
-	  const char *message = NULL;
-	  const char *imgurl = NULL;
-	  int verbose = FALSE;
-	  int opt = 0; /* variable for getopt */
-	  int buffersize = 0; /* size for sendbuffer */
-	  int* socketdescriptor=NULL; /* pointer to socketdescriptor for subroutine*/
+	/* define the program variables */
+		/* for parsing and getopt (-h) */
+			const char *server = NULL;
+			const char *port = NULL;
+			const char *user = NULL;
+			const char *message = NULL;
+			const char *imgurl = NULL;
+			int verbose = FALSE;
+			int opt = 0; /* variable for getopt */
+		/* for building the sent message string */
+			int buffersize = 0; /* size of sendmessage */
+			char *sendmessage = NULL;
+		/* for connecting the socket */
+			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
+		/* for reading from server */
+			char *readbuffer=NULL;
+	/* end of variable definition */
 
+		argv0=argv[0]; /*copy prog name to global variable*/
 
-	  /* calling parsing function for return of command line parameters */
-	  smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
+	/* calling parsing function for return of command line parameters */
+		smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
-	  /* checking whether -h is a parameter of command line */
-	  while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
-	               switch (opt) {
-	               case 'h':
-	            	   usageinfo(stdout,argv[0],EXIT_SUCCESS);
-	            	   break;
-	               default:
-	            	   break;
-	               }
-	  }
+	/* checking whether -h is a parameter of command line */
+		while ((opt = getopt(argc,(char **) argv, "h:")) != -1) {
+			switch (opt) {
+	        case 'h':
+	        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
+	        	break;
+	        default:
+	        	break;
+			}
+		}
 
-	  if (verbose==TRUE){
-		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
-	  }
+		if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
+			}
 
-	  /*variable for string to be sent*/
-	  if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
-	  if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
-	  char *sendbuffer = (char*) malloc (buffersize);
+	/* build final message to be transfered to server */
 
-	  /*building string to be sent */
-	  strcpy(sendbuffer,"user=");
-	  strcat(sendbuffer,user);
-	  strcat(sendbuffer,"\n");
-	  if (imgurl!=NULL) {
-		  strcat(sendbuffer,"img=");
-		  strcat(sendbuffer,imgurl);
-		  strcat(sendbuffer,"\n");
-	  }
-	  sendbuffer=strcat(sendbuffer,message);
-	  sendbuffer=strcat(sendbuffer,"\0");
+		/*variable for string to be sent*/
+			if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
+			if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
+			sendmessage = (char*) malloc (buffersize);
 
-	  const char *finalmessage = sendbuffer;
+		/*building string to be sent */
+			strcpy(sendmessage,"user=");
+			strcat(sendmessage,user);
+			strcat(sendmessage,"\n");
+			if (imgurl!=NULL) {
+				strcat(sendmessage,"img=");
+				strcat(sendmessage,imgurl);
+				strcat(sendmessage,"\n");
+		  		}
+			sendmessage=strcat(sendmessage,message);
+			sendmessage=strcat(sendmessage,"\0");
 
-	  socketdescriptor=malloc(sizeof(int));
+	/* calling subroutine for connecting to server and managing failure case */
+		socketdescriptor=malloc(sizeof(int));
+		if (connectsocket(server,port,socketdescriptor,verbose)==-1){
+			free(sendmessage);
+			free(socketdescriptor);
+			exit(EXIT_FAILURE);
+			}
 
-	  if (connectsocket(server,port,socketdescriptor,verbose)==-1){
-		  free(sendbuffer);
-		  free (socketdescriptor);
-		  exit(EXIT_FAILURE);
-	  }
+	/* calling subroutine for sending message to server and managing failure case */
+		if (sendingmessage(sendmessage, socketdescriptor, verbose)==-1){
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+				}
+			free(socketdescriptor);
+		 	exit(EXIT_FAILURE);
+			}
+		free(sendmessage); /*resource no longer needed*/
 
-          /* variables for sending */
-          size_t len = 0;
-          ssize_t retlen = 0;
-          ssize_t byteswritten = 0;
+	/* shutdown Write from Client side and manage failure case */
+		if (shutdown((int)*socketdescriptor,SHUT_WR)==-1){
+			fprintf(stderr, "%s [%s, %s(), line %d]: Client Shutdown SHUT_WR failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+				}
+			free (socketdescriptor);
+			exit(EXIT_FAILURE);
+			}
 
-          /* Send message datagram to server */
-
-              len = strlen(finalmessage); /* */
-
-          /* checking whether message is to big */
-              if (len > MAX_BUF_SIZE) {
-            	  fprintf(stderr, "Message to send is too big - Maximum is 10 MB\n");
-            	  free (sendbuffer);
-                  if (close (*socketdescriptor)!=0){
-                	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                  	  }
-        		  free(socketdescriptor);
-            	  exit(EXIT_FAILURE);
-              }
-
-          /* sending message */
-              while (byteswritten!= (ssize_t)len) {
-
-            	  retlen=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
-            	  if (retlen==-1){
-            		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
-                	  free (sendbuffer);
-                      if (close (*socketdescriptor)!=0){
-                    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                      	  }
-            		  free (socketdescriptor);
-            		  exit(EXIT_FAILURE);
-            	  }
-            	  byteswritten+=retlen;
-              }
-
-
-              if (verbose==TRUE){
-               		  fprintf(stdout,"write successful!\n");
-               }
-
-
-
-           /* shutdown Write from Client side */
-           if (shutdown((int)*socketdescriptor,SHUT_WR)==-1){
-                      fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
-                	  free (sendbuffer);
-                      if (close (*socketdescriptor)!=0){
-                    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                      	  }
-            		  free (socketdescriptor);
-                      exit(EXIT_FAILURE);
-           }
-
-           if (verbose==TRUE){
-            		  fprintf(stdout,"shutdown SHUT_WR successful!\n");
+		if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: shutdown SHUT_WR successful! \n",argv0,__FILE__, __func__ ,__LINE__);
             }
 
+	/* calling subroutine for reading message from server and managing failure case */
+		readbuffer=malloc(MAX_BUF_SIZE);
+		if (readingmessage(readbuffer, socketdescriptor, verbose)==-1){
+				if (close (*socketdescriptor)!=0){
+					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+					}
+				free(socketdescriptor);
+				free(readbuffer);
+			 	exit(EXIT_FAILURE);
+				}
 
-           /* open file for read from server */
-
-           void *readbuffer=malloc(READ_BUF_SIZE);
-           char *tempbuffer=malloc(MAX_BUF_SIZE);
-           int offset=0;
-
-           ssize_t bytesread=0;
+// successfully subroutines up to here
 
            /*open file for write and write buffer in file */
-           //FILE *write_fp = fopen("returnmessage.txt","w");
-           size_t char_written=0;
-           size_t char_written_sum=0;
+                 size_t char_written=0;
+                 size_t char_written_sum=0;
 
-           strcpy(tempbuffer,"");
-
-           while ((bytesread=read(*socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
-        	   if (bytesread==-1){
-        		   fprintf(stderr,"read failed: %s\n", strerror(errno));
-             	   free (sendbuffer);
-                   if (close (*socketdescriptor)!=0){
-                	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                   	   }
-                   free (socketdescriptor);
-        		   free (readbuffer);
-        		   exit(EXIT_FAILURE);
-        	   	   }
-
-        	  /* while ((char_written_sum)<(size_t)bytesread){
-        			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
-        			    if ((char_written==0)&&(ferror(write_fp))){
-        			            	      		                   fprintf(stderr,"fwrite failed!\n");
-        			            	       		                   fclose(write_fp);
-        			            	       		                   close (socketdescriptor);
-        			            	       		                   exit(EXIT_FAILURE);
-        			            	              	           	    }
-        			    fflush(write_fp);
-        			    char_written_sum+=char_written;
-        			    fprintf(stdout,"%d bytes written\n", (int)char_written_sum);
-        	   }
-*/
-        	   if ((offset+bytesread)>MAX_BUF_SIZE){
-	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
-	                   free (sendbuffer);
-                       if (close (*socketdescriptor)!=0){
-                      	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                       	 }
-                       free (socketdescriptor);
-    	       		   free (readbuffer);
-    	       		   exit(EXIT_FAILURE);
-    	        	   }
-
-               memcpy((tempbuffer+offset),readbuffer,bytesread);
-               offset+=bytesread;
-           }
 
            /*find "file=" in string and parse filename*/
-           char* pos_file=strstr(tempbuffer,"file=");
+           char* pos_file=strstr(readbuffer,"file=");
            pos_file+=strlen("file=");
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
@@ -265,12 +213,12 @@ int main(int argc, const char * argv[]) {
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
-           	     free (sendbuffer);
+           	     free (sendmessage);
                  if (close (*socketdescriptor)!=0){
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
                  free (socketdescriptor);
-                 free (readbuffer);
+                 free (tmp_readbuffer);
                  free(filename);
                  exit(EXIT_FAILURE);
     	         }
@@ -296,12 +244,12 @@ int main(int argc, const char * argv[]) {
                    	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
                    	if ((char_written==0)&&(ferror(write_html))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
-                   	     free (sendbuffer);
+                   	     free (sendmessage);
                          if (close (*socketdescriptor)!=0){
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
                          free (socketdescriptor);
-                         free (readbuffer);
+                         free (tmp_readbuffer);
                    	     fclose(write_html);
                    	     exit(EXIT_FAILURE);
                    	     }
@@ -319,12 +267,12 @@ int main(int argc, const char * argv[]) {
            FILE *write_png = fopen(filename,"w");
            if (write_png==NULL){
                  fprintf(stderr,"Failed to open PNG File!\n");
-           	     free (sendbuffer);
+           	     free (sendmessage);
                  if (close (*socketdescriptor)!=0){
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
                  free (socketdescriptor);
-                 free (readbuffer);
+                 free (tmp_readbuffer);
                  free(filename);
                  exit(EXIT_FAILURE);
     	         }
@@ -350,12 +298,12 @@ int main(int argc, const char * argv[]) {
                    	if ((char_written==0)&&(ferror(write_png))){
                    	     fprintf(stderr,"fwrite write_png failed!\n");
                    	     fclose(write_png);
-                   	     free (sendbuffer);
+                   	     free (sendmessage);
                          if (close (*socketdescriptor)!=0){
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
                          free (socketdescriptor);
-                         free (readbuffer);
+                         free (tmp_readbuffer);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_png);
@@ -365,12 +313,12 @@ int main(int argc, const char * argv[]) {
 
 
 /*finally free resources */
-  	  free (sendbuffer);
+  	  free (sendmessage);
       if (close (*socketdescriptor)!=0){
     	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
       	  }
 	  free (socketdescriptor);
-      free (readbuffer);
+      free (tmp_readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
@@ -458,3 +406,74 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
     freeaddrinfo(result);     /* result of getaddrinfo no longer needed */
     return 0; /*return for successfully executed subroutine*/
 }
+
+
+int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
+
+	/* variables for sending */
+		size_t len = 0;
+		ssize_t retlen = 0;
+		ssize_t byteswritten = 0;
+
+	/* start of logic for subroutine */
+   	    len = strlen(finalmessage);
+
+	/* checking whether message is to big */
+   	    if (len > MAX_BUF_SIZE) {
+   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is 10 MB\n",argv0,__FILE__, __func__ ,__LINE__);
+   	    	return -1;
+   	    	}
+
+   	    if (verbose==TRUE){
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Going to send the following message consisting of %d bytes ...\n %s\n" ,argv0,__FILE__, __func__ ,__LINE__,len,finalmessage);
+   	    }
+
+	/* sending message */
+   	    while (byteswritten!= (ssize_t)len) {
+   	    	retlen=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
+   	    	if (retlen==-1){
+   	    		fprintf(stderr, "%s [%s, %s(), line %d]: Write failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
+   	    		return -1;
+   	    		}
+   	    	byteswritten+=retlen; /* counting the sum of written bytes */
+   	    	}
+   	    if (verbose==TRUE){
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Message sent to server!\n" ,argv0,__FILE__, __func__ ,__LINE__);
+		   }
+
+   	 return 0; /*return for successfully executed subroutine*/
+}
+
+int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
+
+	/* support variables for reading */
+    	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
+    	int offset=0;
+    	ssize_t bytesread=0;
+
+    /* start of logic for subroutine */
+    	strcpy(readbuffer,"");
+
+    /* perform reading */
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
+    		if (bytesread==-1){
+    			fprintf(stderr,"read failed: %s\n", strerror(errno));
+    			free (tmp_readbuffer);
+    			return -1;
+    			}
+
+    /* check whether received message is exceeding maximum size */
+    	if ((offset+bytesread)>MAX_BUF_SIZE){
+    		fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+    		free (tmp_readbuffer);
+	       	return -1;
+    		}
+
+        memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+        offset+=bytesread;
+    }
+
+    free (tmp_readbuffer); /* no longer needed resource */
+	return 0; /*return for successfully executed subroutine*/
+}
+
