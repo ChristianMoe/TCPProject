@@ -108,7 +108,7 @@ int main(int argc, const char * argv[]) {
 	  }
 
 	  if (verbose==TRUE){
-		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, (char*) server, (char*) port, (char*) user, (char*) imgurl, message);
+		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
 	  }
 
 	  /*variable for string to be sent*/
@@ -289,6 +289,8 @@ int main(int argc, const char * argv[]) {
                memcpy((tempbuffer+offset),readbuffer,bytesread);
                offset+=bytesread;
            }
+
+           fprintf(stdout,"sum of bytes read: %d\n",offset);
 
            /*find "file=" in string and parse filename*/
            char* pos_file=strstr(tempbuffer,"file=");
