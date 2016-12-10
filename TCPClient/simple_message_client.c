@@ -293,20 +293,19 @@ int main(int argc, const char * argv[]) {
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-           const char fname=*filename;
+           fprintf(stdout,"filename: %s\n",filename);
            free (filename);
-           fprintf(stdout,"filename: %s\n",fname);
 
            /*find "len=" in string and parse filename*/
-           char* pos_file=strstr(tempbuffer,"img=");
+           pos_file=strstr(tempbuffer,"img=");
            pos_file+=strlen("img=");
-           char* pos_end=strstr(pos_file,"\n");
+           pos_end=strstr(pos_file,"\n");
            char* length = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
            char **endptr;
            long int filelength=strtol(length, endptr, 10);
            free(length);
-           fprintf(stdout,"length: %d\n",filelength);
+           fprintf(stdout,"length: %d\n",(int)filelength);
 
 
            /*writing bytewise*/
