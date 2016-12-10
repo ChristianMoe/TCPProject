@@ -108,7 +108,7 @@ int main(int argc, const char * argv[]) {
 	  }
 
 	  if (verbose==TRUE){
-		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
+		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
 	  }
 
 	  /*variable for string to be sent*/
@@ -125,8 +125,8 @@ int main(int argc, const char * argv[]) {
 		  strcat(sendbuffer,imgurl);
 		  strcat(sendbuffer,"\n");
 	  }
-	  //sendbuffer=strcat(sendbuffer,message);
-	  //sendbuffer=strcat(sendbuffer,"\0");
+	  sendbuffer=strcat(sendbuffer,message);
+	  sendbuffer=strcat(sendbuffer,"\0");
 
 	  const char *finalmessage = sendbuffer;
 
@@ -268,7 +268,7 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	   while ((char_written_sum)<(size_t)bytesread){
+        	  /* while ((char_written_sum)<(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
@@ -280,7 +280,7 @@ int main(int argc, const char * argv[]) {
         			    char_written_sum+=char_written;
         			    fprintf(stdout,"%d bytes written\n", (int)char_written_sum);
         	   }
-
+*/
         	   if ((offset+bytesread)>MAX_BUF_SIZE){
 	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
     	       		   close (socketdescriptor);
