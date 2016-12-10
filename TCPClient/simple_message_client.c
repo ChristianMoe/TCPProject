@@ -304,7 +304,7 @@ int main(int argc, const char * argv[]) {
            pos_file=strstr(tempbuffer,"len=");
            pos_file+=strlen("len=");
            pos_end=strstr(pos_file,"\n");
-           char* length = malloc ((int)pos_end-(int)pos_file+1);
+           char* length = realloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
            char **endptr=malloc ((int)pos_end-(int)pos_file+1);
            long int filelength=strtol(length, endptr, 10);
@@ -332,7 +332,7 @@ int main(int argc, const char * argv[]) {
            pos_file=strstr(pos_end,"file=");
            pos_file+=strlen("file=");
            pos_end=strstr(pos_file,"\n");
-           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+           filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
            FILE *write_html = fopen(filename,"w");
@@ -347,9 +347,9 @@ int main(int argc, const char * argv[]) {
            pos_file=strstr(tempbuffer,"len=");
            pos_file+=strlen("len=");
            pos_end=strstr(pos_file,"\n");
-           char* length = malloc ((int)pos_end-(int)pos_file+1);
+           length = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+           endptr=malloc ((int)pos_end-(int)pos_file+1);
            long int filelength=strtol(length, endptr, 10);
            free(length);
            free(endptr);
