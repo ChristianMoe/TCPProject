@@ -42,7 +42,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE SSIZE_MAX /* maximum Buffer SSIZE_MAX */
+#define MAX_BUF_SIZE 100000000 /* maximum Buffer SSIZE_MAX */
 #define READ_BUF_SIZE 5000
 
 /*
@@ -183,7 +183,7 @@ int main(int argc, const char * argv[]) {
 			}
 
 		if (verbose==TRUE){
-			fprintf(stdout,"%s [%s, %s(), line %d]: shutdown SHUT_WR successful! \n",argv0,__FILE__, __func__ ,__LINE__);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Shutdown SHUT_WR successful! \n",argv0,__FILE__, __func__ ,__LINE__);
             }
 
 	/* calling subroutine for reading message from server and managing failure case */
