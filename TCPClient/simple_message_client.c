@@ -420,7 +420,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		writefile(bufferstart, "test.dat", 5000, 1);
 
 		filename = malloc ((int)pos_end-(int)pos_file);
-	    memset(&filename, "x", sizeof(filename));
+	    memset(&filename, 9, sizeof(filename));
 
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
 		strcat(filename,"\0");
