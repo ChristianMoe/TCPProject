@@ -416,6 +416,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		fprintf(stdout,"%s",bufferstart);
 
+		writefile(bufferstart, "test.dat", 5000, 1);
 
 		fprintf(stdout,"file=%d",(int)pos_end-(int)pos_file);
 
@@ -452,8 +453,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	         	    			}
 
-	           //free(length);
-	           //free(endptr);
+	           free(length);
+	           free(endptr);
 
 	           if (writefile(++pos_end, filename, filelength, verbose)==-1){
 	               free(filename);
