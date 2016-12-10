@@ -9,6 +9,7 @@
  *
  * @version 0.1
  *
+ *	@ todo Malloc fehlerbehandeln!
  */
 
 /*
@@ -38,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,int verbose);
+int parsebuffer(char *bufferstart, char *bufferrest, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -115,6 +116,10 @@ int main(int argc, const char * argv[]) {
 			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
 		/* for reading from server */
 			char *readbuffer=NULL;
+		/* for parsing subroutine */
+		 	char *bufferstart=NULL;
+		 	char *bufferrest=NULL;
+
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -199,79 +204,28 @@ int main(int argc, const char * argv[]) {
 			 	exit(EXIT_FAILURE);
 				}
 
-
+		// for test purpose line below
 		fprintf(stdout,"%s",readbuffer);
 
+		if (parsebuffer(readbuffer, bufferrest, verbose)==-1){
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+				}
+			free(socketdescriptor);
+			free(readbuffer);
+			exit(EXIT_FAILURE);
+			}
 
+		bufferstart=bufferrest;
 
-
-		// successfully subroutines up to here
-
-           /*find "file=" in string and parse filename*/
-           char* pos_file=strstr(readbuffer,"file=");
-           pos_file+=strlen("file=");
-           char* pos_end=strstr(pos_file,"\n");
-           char* filename = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-//
-           fprintf(stdout,"----> html file: %s\n",filename);
-
-           /*find "len=" in string and parse filename*/
-           pos_file=strstr(pos_end,"len=");
-           pos_file+=strlen("len=");
-           pos_end=strstr(pos_file,"\n");
-           char* length = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
-           long int filelength=strtol(length, endptr, 10);
-           free(length);
-           free(endptr);
-
-           if (writefile(++pos_end, filename, filelength, verbose)==-1){
-               if (close (*socketdescriptor)!=0){
-            	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                   }
-               free(socketdescriptor);
-               free(readbuffer);
-               exit(EXIT_FAILURE);
-           	   }
-           free(filename);
-
-
-           /*find next "file=" in string and parse filename*/
-           pos_file=strstr(pos_end,"file=");
-           pos_file+=strlen("file=");
-           pos_end=strstr(pos_file,"\n");
-           filename = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-
-           fprintf(stdout,"----> png file: %s\n",filename);
-
-
-           /*find "len=" in string and parse filename*/
-           pos_file=strstr(pos_end,"len=");
-           pos_file+=strlen("len=");
-           pos_end=strstr(pos_file,"\n");
-           length = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-           endptr=malloc ((int)pos_end-(int)pos_file+1);
-           filelength=strtol(length, endptr, 10);
-           free(length);
-           free(endptr);
-
-
-           if (writefile(++pos_end, filename, filelength, verbose)==-1){
-               if (close (*socketdescriptor)!=0){
-            	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                   }
-               free(socketdescriptor);
-               free(readbuffer);
-               exit(EXIT_FAILURE);
-           	   }
-           free(filename);
-
-
-
+		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+					}
+			free(socketdescriptor);
+			free(readbuffer);
+			exit(EXIT_FAILURE);
+			}
 
 
 /*finally free resources */
@@ -440,10 +394,49 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart,int verbose){
+int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
+	/* support variables for reading */
+	    char *pos_file=NULL;
+	    char *pos_end=NULL;
+	    char *filename=NULL;
 
+	/* start of logic for subroutine */
+	    pos_file=strstr(bufferstart,"file=");
+		pos_file+=strlen("file=");
 
+		pos_end=strstr(pos_file,"\n");
+		filename = malloc ((int)pos_end-(int)pos_file+1);
+		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+		strncpy(filename,"\0");
+	//
+	    if (verbose==TRUE){
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+	    			}
+	           /*find "len=" in string and parse filename*/
+	           pos_file=strstr(pos_end,"len=");
+	           pos_file+=strlen("len=");
+	           pos_end=strstr(pos_file,"\n");
+	           char* length = malloc ((int)pos_end-(int)pos_file+1);
+	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+	           strncpy(length,"\0");
+	           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+	           long int filelength=strtol(length, endptr, 10);
+	           if (verbose==TRUE){
+	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %ld parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filelength);
+	         	    			}
+
+	           free(length);
+	           free(endptr);
+
+	           if (writefile(++pos_end, filename, filelength, verbose)==-1){
+	               free(filename);
+	               return -1;
+	           	   }
+
+	           bufferrest=pos_end+filelength; /* pointer to remaining buffer data */
+
+	free(filename); /* resource no longer needed */
 	return 0; /*return for successfully executed subroutine*/
 }
 int writefile(char *bufferstart, char *filename, int filelength, int verbose){
