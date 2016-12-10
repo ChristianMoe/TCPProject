@@ -313,9 +313,9 @@ int main(int argc, const char * argv[]) {
 
 
            /*writing bytewise*/
-           readbuffer=pos_end;
+           pos_end++;
            while ((int)char_written_sum<(int)filelength){
-                   	char_written=fwrite(readbuffer, sizeof(char), filelength ,write_html);
+                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
                    	if ((char_written==0)&&(ferror(write_html))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
                    	     fclose(write_html);
