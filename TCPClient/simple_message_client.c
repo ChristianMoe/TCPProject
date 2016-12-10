@@ -397,20 +397,20 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 	/* support variables for reading */
-	    char *pos_file=NULL;
-	    char *pos_end=NULL;
+	    int *pos_file=NULL;
+	    int *pos_end=NULL;
 	    char *filename=NULL;
 
 
 	/* start of logic for subroutine */
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
-			fprintf(stdout,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
 	    pos_file+=strlen("file=");
 
 		if((pos_end=strstr(pos_file,"\n"))==NULL){
-			fprintf(stdout,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
 
@@ -430,14 +430,14 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	  /*find "len=" in string and parse filename*/
 
 	   		if((pos_file=strstr(pos_end,"len="))==NULL){
-	   			fprintf(stdout,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   			fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 	   			free(filename);
 	   			return -1;
 	   			}
 
 	           pos_file+=strlen("len=");
 	           if((pos_end=strstr(pos_file,"\n"))==NULL){
-	   			fprintf(stdout,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   			fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 	   			free(filename);
 	   			return -1;
 	   			}
