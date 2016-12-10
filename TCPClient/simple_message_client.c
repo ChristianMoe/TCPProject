@@ -185,7 +185,7 @@ int main(int argc, const char * argv[]) {
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
-			free (socketdescriptor);
+			free(socketdescriptor);
 			exit(EXIT_FAILURE);
 			}
 
@@ -229,6 +229,9 @@ int main(int argc, const char * argv[]) {
 		if (close (*socketdescriptor)!=0){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
       	  	}
+		if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: Socket closed - Connection to server successfully terminated! \n", argv[0],__FILE__, __func__ ,__LINE__);
+			}
 		free (socketdescriptor);
 
 	return (EXIT_SUCCESS); /* 0 if execution was successful */
@@ -410,8 +413,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
-		fprintf(stdout,"%s",bufferstart);
-		fprintf(stdout,"%d",(int)pos_end-(int)pos_file);
+		fprintf(stdout,"file=%d",(int)pos_end-(int)pos_file);
 
 		filename = malloc ((int)pos_end-(int)pos_file+1);
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file-1));
@@ -435,6 +437,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   			return -1;
 	   			}
 
+	   		fprintf(stdout,"len=%d",(int)pos_end-(int)pos_file);
+
 	           char* length = malloc ((int)pos_end-(int)pos_file+1);
 	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
 	           strcat(length,"\0");
@@ -444,8 +448,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	         	    			}
 
-	           free(length);
-	           free(endptr);
+	           //free(length);
+	           //free(endptr);
 
 	           if (writefile(++pos_end, filename, filelength, verbose)==-1){
 	               free(filename);
