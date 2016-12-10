@@ -303,10 +303,10 @@ int main(int argc, const char * argv[]) {
            pos_end=strstr(pos_file,"\n");
            char* length = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-           //char **endptr=malloc ((int)pos_end-(int)pos_file+1);
-           //long int filelength=strtol(length, endptr, 10);
-          // free(length);
-           fprintf(stdout,"length: %s\n",length);
+           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+           long int filelength=strtol(length, endptr, 10);
+           free(length);
+           fprintf(stdout,"length: %d\n",(int)filelength);
 
 
            /*writing bytewise*/
