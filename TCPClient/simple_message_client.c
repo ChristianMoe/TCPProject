@@ -298,8 +298,8 @@ int main(int argc, const char * argv[]) {
            //free (filename);
 
            /*find "len=" in string and parse filename*/
-           pos_file=strstr(tempbuffer,"img=");
-           pos_file+=strlen("img=");
+           pos_file=strstr(tempbuffer,"len=");
+           pos_file+=strlen("len=");
            pos_end=strstr(pos_file,"\n");
            char* length = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
