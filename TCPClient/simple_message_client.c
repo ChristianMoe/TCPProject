@@ -399,12 +399,19 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    char *filename=NULL;
 
 	/* start of logic for subroutine */
-	    pos_file=strstr(bufferstart,"file=");
-		pos_file+=strlen("file=");
+		if((pos_file=strstr(bufferstart,"file="))==NULL){
+			fprintf(stdout,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
+	    pos_file+=strlen("file=");
+
+		if((pos_end=strstr(pos_file,"\n"))==NULL){
+			fprintf(stdout,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
 
 		fprintf(stdout,"%d",(int)pos_end-(int)pos_file);
 
-		pos_end=strstr(pos_file,"\n");
 		filename = malloc ((int)pos_end-(int)pos_file+1);
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
 		strcat(filename,"\0");
@@ -412,10 +419,21 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
 	    			}
-	           /*find "len=" in string and parse filename*/
-	           pos_file=strstr(pos_end,"len=");
+	  /*find "len=" in string and parse filename*/
+
+	   		if((pos_file=strstr(pos_end,"len="))==NULL){
+	   			fprintf(stdout,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   			free(filename);
+	   			return -1;
+	   			}
+
 	           pos_file+=strlen("len=");
-	           pos_end=strstr(pos_file,"\n");
+	           if((pos_end=strstr(pos_file,"\n"))==NULL){
+	   			fprintf(stdout,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   			free(filename);
+	   			return -1;
+	   			}
+
 	           char* length = malloc ((int)pos_end-(int)pos_file+1);
 	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
 	           strcat(length,"\0");
