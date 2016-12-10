@@ -196,18 +196,15 @@ int main(int argc, const char * argv[]) {
 	/* calling subroutine for reading message from server and managing failure case */
 		readbuffer=malloc(MAX_BUF_SIZE);
 		if (readingmessage(readbuffer, socketdescriptor, verbose)==-1){
-				if (close (*socketdescriptor)!=0){
-					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-					}
-				free(socketdescriptor);
-				free(readbuffer);
-			 	exit(EXIT_FAILURE);
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
+			free(socketdescriptor);
+			free(readbuffer);
+			exit(EXIT_FAILURE);
+			}
 
-		// for test purpose line below
-		fprintf(stdout,"%s",readbuffer);
-		fflush(stdout);
-
+	/* calling subroutines for parsing and writing and managing failure case */
 		if (parsebuffer(readbuffer, bufferrest, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
@@ -228,14 +225,13 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
+	/*finally free resources */
+		if (close (*socketdescriptor)!=0){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+      	  	}
+		free (socketdescriptor);
 
-/*finally free resources */
-      if (close (*socketdescriptor)!=0){
-    	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-      	  }
-	  free (socketdescriptor);
-
-      return (EXIT_SUCCESS); /* 0 if execution was successful */
+	return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
 
@@ -405,6 +401,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	/* start of logic for subroutine */
 	    pos_file=strstr(bufferstart,"file=");
 		pos_file+=strlen("file=");
+
+		fprintf(stdout,"%d",(int)pos_end-(int)pos_file);
 
 		pos_end=strstr(pos_file,"\n");
 		filename = malloc ((int)pos_end-(int)pos_file+1);
