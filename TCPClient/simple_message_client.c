@@ -158,7 +158,7 @@ int main(int argc, const char * argv[]) {
           /* sending message */
               while (byteswritten!= (ssize_t)len) {
 
-            	  retlen=write(*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
+            	  retlen=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
             	  if (retlen==-1){
             		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
             		  close (*socketdescriptor);
@@ -175,7 +175,7 @@ int main(int argc, const char * argv[]) {
 
 
            /* shutdown Write from Client side */
-           if (shutdown(*socketdescriptor,SHUT_WR)==-1){
+           if (shutdown((int)*socketdescriptor,SHUT_WR)==-1){
                       fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
                       close (*socketdescriptor);
                       exit(EXIT_FAILURE);
