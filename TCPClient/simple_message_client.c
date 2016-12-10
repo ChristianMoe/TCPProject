@@ -288,34 +288,27 @@ int main(int argc, const char * argv[]) {
                offset+=bytesread;
            }
 
-           /*find "file=" in string and parse filename
+           /*find "file=" in string and parse filename*/
            char* pos_file=strstr(tempbuffer,"file=");
            pos_file+=strlen("file=");
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
-           //free (filename);*/
+           //free (filename);
 
-           char* filename;
-           searchandparsestring((const char)tempbuffer,filename,(const char)"file=");
-           fprintf(stdout,"filename: %s\n",filename);
-
-           /*find "len=" in string and parse filename
+           /*find "len=" in string and parse filename*/
            pos_file=strstr(tempbuffer,"img=");
            pos_file+=strlen("img=");
            pos_end=strstr(pos_file,"\n");
            char* length = malloc ((int)pos_end-(int)pos_file+1);
-           fprintf(stdout,"filename: %s\n",filename);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
-           fprintf(stdout,"filename: %s\n",filename);
-           long int filelength=strtol(length, endptr, 10);
-           free(length);
-           fprintf(stdout,"filename: %s\n",filename);
-           fprintf(stdout,"length: %d\n",(int)filelength);
+           //char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+           //long int filelength=strtol(length, endptr, 10);
+          // free(length);
+           fprintf(stdout,"length: %s\n",length);
 
-*/
+
            /*writing bytewise*/
 /*
            if ((char_written==0)&&(ferror(write_fp))){
@@ -372,13 +365,4 @@ int main(int argc, const char * argv[]) {
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
-void searchandparsestring(char* startstring, char* returnstring, const char pattern){
 
-    char* pos_file=strstr(startstring,pattern);
-    pos_file+=strlen(pattern);
-    char* pos_end=strstr(pos_file,"\n");
-    char* retstring = malloc ((int)pos_end-(int)pos_file+1);
-    strncpy(retstring,pos_file,((int)pos_end-(int)pos_file));
-	returnstring=retstring;
-
-}
