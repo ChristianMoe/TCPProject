@@ -313,18 +313,18 @@ int main(int argc, const char * argv[]) {
 
 
            /*writing bytewise*/
-           readbuffer=++pos_end;
+           readbuffer=pos_end;
            while ((int)char_written_sum<(int)filelength){
-                   			    char_written=fwrite(readbuffer, sizeof(char), filelength ,write_html);
-                   			    if ((char_written==0)&&(ferror(write_html))){
-                   			            	      		                   fprintf(stderr,"fwrite write_html failed!\n");
-                   			            	       		                   fclose(write_html);
-                   			            	       		                   close (socketdescriptor);
-                   			            	       		                   exit(EXIT_FAILURE);
-                   			            	              	           	    }
-                   			    fflush(write_html);
-                   			    char_written_sum+=char_written;
-           	   	   	   	   	   	   }
+                   	char_written=fwrite(readbuffer, sizeof(char), filelength ,write_html);
+                   	if ((char_written==0)&&(ferror(write_html))){
+                   	     fprintf(stderr,"fwrite write_html failed!\n");
+                   	     fclose(write_html);
+                   	     close (socketdescriptor);
+                   	     exit(EXIT_FAILURE);
+                   	     }
+                   	fflush(write_html);
+                   	char_written_sum+=char_written;
+           	   	   	}
 
 /*
            if ((char_written==0)&&(ferror(write_fp))){
