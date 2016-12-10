@@ -410,6 +410,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
+		fprintf(stdout,"%s",bufferstart);
 		fprintf(stdout,"%d",(int)pos_end-(int)pos_file);
 
 		filename = malloc ((int)pos_end-(int)pos_file+1);
