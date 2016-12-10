@@ -451,18 +451,17 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	           endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
 	           if (verbose==TRUE){
-	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! not parsed %s\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength, *endptr);
+	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	         	    			}
 
 	           free(length);
 	           free(endptr);
 
-	           if (writefile(++pos_end, filename, filelength, verbose)==-1){
+	           if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
 	               free(filename);
 	               return -1;
 	           	   }
 
-	           pos_end+=(filelength-1); /* pointer to remaining buffer data */
 	           bufferrest=pos_end;
 	           bufferrest++;
 
