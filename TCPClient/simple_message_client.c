@@ -446,7 +446,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		fprintf(stdout,"len=%d",(int)pos_end-(int)pos_file);
 
 	           length = malloc ((int)pos_end-(int)pos_file+1);
-	           strncpy(length,pos_file,4);
+	           strncpy(length,pos_file,3);
 	           //strcat(length,"\0");
 	           endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
