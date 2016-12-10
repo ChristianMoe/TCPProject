@@ -408,7 +408,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		pos_end=strstr(pos_file,"\n");
 		filename = malloc ((int)pos_end-(int)pos_file+1);
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-		strncat(filename,"\0");
+		strcat(filename,"\0");
 	//
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
@@ -419,7 +419,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	           pos_end=strstr(pos_file,"\n");
 	           char* length = malloc ((int)pos_end-(int)pos_file+1);
 	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-	           strncat(length,"\0");
+	           strcat(length,"\0");
 	           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
 	           if (verbose==TRUE){
