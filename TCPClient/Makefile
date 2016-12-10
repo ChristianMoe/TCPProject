@@ -43,10 +43,10 @@ $(BIN1): $(OBJ1)
 
 .PHONY: clean
 clean:
-	-rm -rf $(BIN) $(OBJ1)
+	@-rm -rf $(BIN) $(OBJ1)
 	
-	@echo $(OBJ1) - deleted!
-	@echo $(BIN1) - deleted!
+	@echo $(OBJ1) --> deleted!
+	@echo $(BIN1) --> deleted!
 
 
 ##
