@@ -287,20 +287,27 @@ int main(int argc, const char * argv[]) {
                offset+=bytesread;
            }
 
-           /*find "file=" in string */
-
+           /*find "file=" in string and parse filename*/
            char* pos_file=strstr(tempbuffer,"file=");
            pos_file+=strlen("file=");
-           char* pos_len=strstr(pos_file,"\n");
-           //char* pos_len_end=strstr(pos_len,"\n");
+           char* pos_end=strstr(pos_file,"\n");
+           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+           const char fname=*filename;
+           free (filename);
+           fprintf(stdout,"filename: %s\n",fname);
 
-           fprintf(stdout,"pos_file: %d\n",(int) pos_len-(int)pos_file);
+           /*find "len=" in string and parse filename*/
+           char* pos_file=strstr(tempbuffer,"img=");
+           pos_file+=strlen("img=");
+           char* pos_end=strstr(pos_file,"\n");
+           char* length = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+           char **endptr;
+           long int filelength=strtol(length, endptr, 10);
+           free(length);
+           fprintf(stdout,"length: %d\n",filelength);
 
-           //char filename=strtok((pos_file+5),"\n");
-           char* filename = malloc ((int)pos_len-(int)pos_file+1);
-           strncpy(filename,pos_file,((int)pos_len-(int)pos_file));
-
-           fprintf(stdout,"filename: %s  -- size: %d\n",filename, offset);
 
            /*writing bytewise*/
 /*
