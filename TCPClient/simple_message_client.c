@@ -447,7 +447,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 	           length = malloc ((int)pos_end-(int)pos_file+1);
 	           strncpy(length,pos_file,4);
-	           strcat(length,"\0");
+	           //strcat(length,"\0");
 	           endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
 	           if (verbose==TRUE){
