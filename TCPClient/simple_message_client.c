@@ -388,7 +388,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	if (verbose==TRUE){
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
-		   }
+		   	}
 
     free (tmp_readbuffer); /* no longer needed resource */
 	return 0; /*return for successfully executed subroutine*/
@@ -418,9 +418,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		fprintf(stdout,"%s",bufferstart);
 
-		writefile(bufferstart, "test.dat", 5000, 1);
-
 		fprintf(stdout,"filelaenge zu lesen %d - %d",(int)pos_end, (int)pos_file);
+		writefile(bufferstart, "test.dat", 5000, 1);
 
 		filename = malloc ((int)pos_end-(int)pos_file+1);
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
@@ -481,7 +480,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 		if (write_fd==NULL){
 			fprintf(stderr,"Failed to open HTML File!\n");
 			return -1;
-    	}
+    		}
 		if (verbose==TRUE){
 			fprintf(stdout,"%s [%s, %s(), line %d]: File %s opened for writing!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
 			fprintf(stdout,"%s [%s, %s(), line %d]: Trying to write %d bytes ...\n" ,argv0,__FILE__, __func__ ,__LINE__,filelength);
