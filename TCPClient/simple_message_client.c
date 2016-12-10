@@ -314,7 +314,6 @@ int main(int argc, const char * argv[]) {
 
 
 /*finally free resources */
-  	  free (sendmessage);
       if (close (*socketdescriptor)!=0){
     	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
       	  }
