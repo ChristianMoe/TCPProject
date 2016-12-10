@@ -47,7 +47,7 @@ int submitmessage(const char* server,const char* port, int* socketdescriptor, in
 /*
  * -------------------------------------------------------------- global resource variables --
  */
-char* argv0; /*neccessary for verbose for not handing parameter to every function */
+const char* argv0; /*neccessary for verbose for not handing parameter to every function */
 
 /**
  * prints the usage information
@@ -139,8 +139,6 @@ int main(int argc, const char * argv[]) {
 		  exit(EXIT_FAILURE);
 	  }
 
-	  socketdescriptor=*socketdescriptor; /*put pointervalue in variable*/
-
           /* variables for sending */
           size_t len = 0;
           ssize_t retlen = 0;
@@ -153,7 +151,7 @@ int main(int argc, const char * argv[]) {
           /* checking whether message is to big */
               if (len > MAX_BUF_SIZE) {
             	  fprintf(stderr, "Message to send is too big - Maximum is 10 MB\n");
-            	  close (socketdescriptor);
+            	  close (*socketdescriptor);
             	  exit(EXIT_FAILURE);
               }
 
@@ -163,7 +161,7 @@ int main(int argc, const char * argv[]) {
             	  retlen=write(socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
             	  if (retlen==-1){
             		  fprintf(stderr, "Write failed: %s\n", strerror(errno));
-            		  close (socketdescriptor);
+            		  close (*socketdescriptor);
             		  exit(EXIT_FAILURE);
             	  }
             	  byteswritten+=retlen;
@@ -179,7 +177,7 @@ int main(int argc, const char * argv[]) {
            /* shutdown Write from Client side */
            if (shutdown(socketdescriptor,SHUT_WR)==-1){
                       fprintf(stderr, "Client Shutdown SHUT_WR failed: %s\n", strerror(errno));
-                      close (socketdescriptor);
+                      close (*socketdescriptor);
                       exit(EXIT_FAILURE);
            }
 
@@ -203,10 +201,10 @@ int main(int argc, const char * argv[]) {
 
            strcpy(tempbuffer,"");
 
-           while ((bytesread=read(socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
+           while ((bytesread=read(*socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
         	   if (bytesread==-1){
         		   fprintf(stderr,"read failed: %s\n", strerror(errno));
-        		   close (socketdescriptor);
+        		   close (*socketdescriptor);
         		   free (readbuffer);
         		   exit(EXIT_FAILURE);
         	   	   }
@@ -226,7 +224,7 @@ int main(int argc, const char * argv[]) {
 */
         	   if ((offset+bytesread)>MAX_BUF_SIZE){
 	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
-    	       		   close (socketdescriptor);
+    	       		   close (*socketdescriptor);
     	       		   exit(EXIT_FAILURE);
     	        	   }
 
@@ -243,7 +241,7 @@ int main(int argc, const char * argv[]) {
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
-                 close (socketdescriptor);
+                 close (*socketdescriptor);
     	       	 exit(EXIT_FAILURE);
     	         }
 
@@ -365,7 +363,7 @@ int main(int argc, const char * argv[]) {
         	           	   }
            }
 */
-      close (socketdescriptor); /* finally close socket */
+      close (*socketdescriptor); /* finally close socket */
 
       /* clean resources */
   //    fclose(write_fp); /* free */
