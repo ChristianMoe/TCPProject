@@ -254,7 +254,7 @@ int main(int argc, const char * argv[]) {
            ssize_t bytesread=0;
 
            /*open file for write and write buffer in file */
-           FILE *write_fp = fopen("returnmessage.txt","w");
+           //FILE *write_fp = fopen("returnmessage.txt","w");
            size_t char_written=0;
            size_t char_written_sum=0;
 
