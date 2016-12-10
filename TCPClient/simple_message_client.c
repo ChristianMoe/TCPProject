@@ -34,19 +34,20 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-void searchandparsestring(char*startstring, char*returnstring, const char pattern);
+int submitmessage(const char* server,const char* port, int* socketdescriptor, int verbose);
+
+
 
 /*
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
 #define READ_BUF_SIZE 5000
-#define WRITE_CHUNKS /* Size of writechunks */
 
 /*
  * -------------------------------------------------------------- global resource variables --
  */
-
+char* argv0; /*neccessary for verbose for not handing parameter to every function */
 
 /**
  * prints the usage information
@@ -84,6 +85,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 int main(int argc, const char * argv[]) {
 
+	  argv0=argv[0]; /*copy prog name to global variable*/
 	  const char *server = NULL;
 	  const char *port = NULL;
 	  const char *user = NULL;
@@ -92,6 +94,7 @@ int main(int argc, const char * argv[]) {
 	  int verbose = FALSE;
 	  int opt = 0; /* variable for getopt */
 	  int buffersize = 0; /* size for sendbuffer */
+	  int* socketdescriptor; /* pointer to socketdescriptor for subroutine*/
 
 
 	  /* calling parsing function for return of command line parameters */
@@ -131,73 +134,12 @@ int main(int argc, const char * argv[]) {
 
 	  const char *finalmessage = sendbuffer;
 
-	  /* variables for socket */
-      struct addrinfo hints; /* struct for parameters for getaddrinfo*/
-      struct addrinfo *result, *rp;
-      int socketdescriptor, gea_ret;
+	  if (submitmessage(server,port,socketdescriptor,verbose)==-1){
+		  free(sendbuffer);
+		  exit(EXIT_FAILURE);
+	  }
 
-      /* Obtain address matching host/port */
-      memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
-      hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-      hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
-      hints.ai_flags = 0;
-      hints.ai_protocol = 0;          /* Any protocol */
-
-      /*
-       * getaddrinfo return == 0 if success, otherwise Error-Code
-       * and fills results with
-       */
-      gea_ret=getaddrinfo(server, port, &hints, &result);
-
-      if (gea_ret!= 0) {
-          fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
-          exit(EXIT_FAILURE);
-      }
-      if (verbose==TRUE){
-      		  fprintf(stdout,"getaddrinfo successful!\n");
-      }
-
-      /* getaddrinfo() returns a list of address structures.
-                    Try each address until successfully connected.
-                    If socket (or connect) fails, close the socket
-                    and try the next address.
-
-         struct addrinfo {
-               int              ai_flags;
-               int              ai_family;
-               int              ai_socktype;
-               int              ai_protocol;
-               size_t           ai_addrlen;
-               struct sockaddr *ai_addr;
-               char            *ai_canonname;
-               struct addrinfo *ai_next;
-           };
-
-     */
-
-
-      for (rp = result; rp != NULL; rp = rp->ai_next) {
-    	  /* socket()  creates  an endpoint for communication and returns a descriptor */
-    	  socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
-                     if (socketdescriptor == -1) continue;
-                     if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Created %d %d socket" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,rp->ai_family, rp->ai_socktype);
-                     if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
-                     close(socketdescriptor);
-                 }
-
-          if (rp == NULL) {               /* No address succeeded */
-             fprintf(stderr, "Could not connect: %s\n", strerror(errno));
-             freeaddrinfo(result); /* result of getaddrinfo no longer needed */
-             exit(EXIT_FAILURE);
-          }
-          if (verbose==TRUE) fprintf (stdout,"%s [%s, %s(), line %d]: Connected to port %s of server %s" ,(char*) argv[0],__FILE__, __func__ ,__LINE__,(char*)port, (char*)server);
-
-
-          if (verbose==TRUE){
-           fprintf(stdout,"socket+connect successful!\n");
-           }
-
-          freeaddrinfo(result);     /* result of getaddrinfo no longer needed */
+	  socketdescriptor=*socketdescriptor; /*put pointervalue in variable*/
 
           /* variables for sending */
           size_t len = 0;
@@ -433,4 +375,71 @@ int main(int argc, const char * argv[]) {
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
+int submitmessage(const char* server,const char* port, int* socketdescriptor, int verbose){
 
+/* variables for socket */
+	struct addrinfo hints; /* struct for parameters for getaddrinfo*/
+	struct addrinfo *result, *rp;
+	int gea_ret; /* variable for getaddrinfo return */
+
+/* Obtain address matching host/port */
+	memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
+	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+	hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
+	hints.ai_flags = 0;
+	hints.ai_protocol = 0;          /* Any protocol */
+
+/*
+ * getaddrinfo return == 0 if success, otherwise Error-Code
+ * and fills results with
+ */
+
+	if (getaddrinfo(server, port, &hints, &result)!= 0) {
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
+		return -1; 			/* return failure to main */
+		}
+	if (verbose==TRUE){
+		fprintf(stdout,"%s [%s, %s(), line %d]: Obtained IP address for server %s and port %s\n",argv0,__FILE__, __func__ ,__LINE__,server,port);
+		}
+
+/* getaddrinfo() returns a list of address structures.
+              Try each address until successfully connected.
+              If socket (or connect) fails, close the socket
+              and try the next address.
+
+   struct addrinfo {
+         int              ai_flags;
+         int              ai_family;
+         int              ai_socktype;
+         int              ai_protocol;
+         size_t           ai_addrlen;
+         struct sockaddr *ai_addr;
+         char            *ai_canonname;
+         struct addrinfo *ai_next;
+     };
+
+*/
+
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		/* socket()  creates  an endpoint for communication and returns a descriptor */
+		socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
+		if (socketdescriptor == -1) continue;
+        if (verbose==TRUE) fprintf(stdout,"%s [%s, %s(), line %d]: Socket successfully created!\n" ,argv0,__FILE__, __func__ ,__LINE__);
+        if (connect(socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
+        close(*socketdescriptor);
+        }
+
+	/* No address could be successfully connected */
+    if (rp == NULL) {
+    	fprintf(stderr, "Could not connect to socket: %s\n", strerror(errno));
+    	freeaddrinfo(result); 		/* result of getaddrinfo no longer needed */
+    	return -1;			/* return failure to main */
+    	}
+
+    if (verbose==TRUE){
+    	fprintf(stdout,"%s [%s, %s(), line %d]: Connected to port %s of server %s" ,argv0,__FILE__, __func__ ,__LINE__,port, server);
+    	}
+
+    freeaddrinfo(result);     /* result of getaddrinfo no longer needed */
+    return 0; /*return for successfully executed subroutine*/
+}
