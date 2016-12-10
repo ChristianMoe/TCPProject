@@ -34,7 +34,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-int submitmessage(const char* server,const char* port, int* socketdescriptor, int verbose);
+int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose);
 
 
 
@@ -56,7 +56,7 @@ const char* argv0; /*neccessary for verbose for not handing parameter to every f
  * \param filename 		filename for which the usage is valid
  * \param suc_or_fail	exit as success or as failure
  *
- * \return none
+ * \return void
  *
  */
 
@@ -136,7 +136,7 @@ int main(int argc, const char * argv[]) {
 
 	  socketdescriptor=malloc(sizeof(int));
 
-	  if (submitmessage(server,port,socketdescriptor,verbose)==-1){
+	  if (connectsocket(server,port,socketdescriptor,verbose)==-1){
 		  free(sendbuffer);
 		  free (socketdescriptor);
 		  exit(EXIT_FAILURE);
@@ -375,7 +375,22 @@ int main(int argc, const char * argv[]) {
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
-int submitmessage(const char* server,const char* port, int* socketdescriptor, int verbose){
+
+/**
+ * Subroutine that tries to connect to the socket!
+ *
+ * \param server 			server that should be connected to (IPv4 or IPv6 address or www.xyz.com)
+ * \param port 				port that should be used to connect
+ * \param socketdescriptor	pointer to descriptor as returnvalue for later use
+ * \param verbose			tells whether subroutine should be verbose
+ *
+ * \return int 		returns 0 on success and -1 on failure
+ *
+ */
+
+
+
+int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose){
 
 /* variables for socket */
 	struct addrinfo hints; /* struct for parameters for getaddrinfo*/
