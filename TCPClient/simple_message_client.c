@@ -254,7 +254,7 @@ int main(int argc, const char * argv[]) {
            ssize_t bytesread=0;
 
            /*open file for write and write buffer in file */
-           //FILE *write_fp = fopen("returnmessage.txt","w");
+           FILE *write_fp = fopen("returnmessage.txt","w");
            size_t char_written=0;
            size_t char_written_sum=0;
 
@@ -268,7 +268,7 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	/*   while (char_written_sum<(size_t)bytesread){
+        	   while (char_written_sum<(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
@@ -278,7 +278,7 @@ int main(int argc, const char * argv[]) {
         			            	              	           	    }
         			    fflush(write_fp);
         			    char_written_sum+=char_written;
-        	   }*/
+        	   }
 
         	   if ((offset+bytesread)>MAX_BUF_SIZE){
 	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
@@ -321,6 +321,7 @@ int main(int argc, const char * argv[]) {
 
            /*writing bytewise*/
            pos_end++;
+           char_written_sum=0;
            while ((int)char_written_sum<(int)filelength){
                    	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
                    	if ((char_written==0)&&(ferror(write_html))){
