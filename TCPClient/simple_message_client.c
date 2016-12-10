@@ -280,6 +280,12 @@ int main(int argc, const char * argv[]) {
         			    char_written_sum+=char_written;
         	   }*/
 
+        	   if ((offset+bytesread)>MAX_BUF_SIZE){
+	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
+    	       		   close (socketdescriptor);
+    	       		   exit(EXIT_FAILURE);
+    	        	   }
+
                memcpy((tempbuffer+offset),readbuffer,bytesread);
                offset+=bytesread;
            }
