@@ -290,14 +290,15 @@ int main(int argc, const char * argv[]) {
            /*find "file=" in string */
 
            char* pos_file=strstr(tempbuffer,"file=");
+           pos_file++;pos_file++;pos_file++;pos_file++;pos_file++;
            char* pos_len=strstr(tempbuffer,"len=");
            //char* pos_len_end=strstr(pos_len,"\n");
 
-           fprintf(stdout,"pos_file: %d  -- pos_len: %d\n",(int)pos_file,(int) pos_len);
+           fprintf(stdout,"pos_file: %d\n",(int) pos_len-(int)pos_file);
 
            //char filename=strtok((pos_file+5),"\n");
            char* filename = malloc ((int)pos_len-(int)pos_file+1);
-           strncpy(pos_file,filename,((int)pos_len-(int)pos_file));
+           strncpy((pos_file),filename,((int)pos_len-(int)pos_file));
 
            fprintf(stdout,"filename: %s  -- size: %d\n",filename, offset);
 
