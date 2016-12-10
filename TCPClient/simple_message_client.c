@@ -292,7 +292,7 @@ int main(int argc, const char * argv[]) {
            pos_file+=strlen("file=");
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+           strncpy(filename,pos_file,((int)pos_end-(int)pos_file+1));
            fprintf(stdout,"filename: %s\n",filename);
            free (filename);
 
@@ -301,7 +301,7 @@ int main(int argc, const char * argv[]) {
            pos_file+=strlen("img=");
            pos_end=strstr(pos_file,"\n");
            char* length = malloc ((int)pos_end-(int)pos_file+1);
-           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+           strncpy(length,pos_file,((int)pos_end-(int)pos_file+1));
            char **endptr=malloc ((int)pos_end-(int)pos_file+1);
            long int filelength=strtol(length, endptr, 10);
            free(length);
