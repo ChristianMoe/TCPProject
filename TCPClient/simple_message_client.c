@@ -134,6 +134,8 @@ int main(int argc, const char * argv[]) {
 
 	  const char *finalmessage = sendbuffer;
 
+	  socketdescriptor=malloc(sizeof(int));
+
 	  if (submitmessage(server,port,socketdescriptor,verbose)==-1){
 		  free(sendbuffer);
 		  exit(EXIT_FAILURE);
