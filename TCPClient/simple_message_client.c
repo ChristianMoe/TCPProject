@@ -403,7 +403,6 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    char *length=NULL;
 	    char **endptr=NULL;
 
-
 	/* start of logic for subroutine */
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
@@ -417,11 +416,12 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			}
 
 		fprintf(stdout,"%s",bufferstart);
-
 		fprintf(stdout,"filelaenge zu lesen %d - %d",(int)pos_end, (int)pos_file);
 		writefile(bufferstart, "test.dat", 5000, 1);
 
-		filename = malloc ((int)pos_end-(int)pos_file+1);
+		filename = malloc ((int)pos_end-(int)pos_file);
+	    memset(&filename, "x", sizeof(filename));
+
 		strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
 		strcat(filename,"\0");
 	//
