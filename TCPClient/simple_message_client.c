@@ -291,7 +291,7 @@ int main(int argc, const char * argv[]) {
 
            char* pos_file=strstr(tempbuffer,"file=");
            pos_file+=strlen("file=");
-           char* pos_len=strstr(tempbuffer,"\n");
+           char* pos_len=strstr(pos_file,"\n");
            //char* pos_len_end=strstr(pos_len,"\n");
 
            fprintf(stdout,"pos_file: %d\n",(int) pos_len-(int)pos_file);
