@@ -218,7 +218,6 @@ int main(int argc, const char * argv[]) {
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
                  free (socketdescriptor);
-                 free (tmp_readbuffer);
                  free(filename);
                  exit(EXIT_FAILURE);
     	         }
@@ -249,7 +248,6 @@ int main(int argc, const char * argv[]) {
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
                          free (socketdescriptor);
-                         free (tmp_readbuffer);
                    	     fclose(write_html);
                    	     exit(EXIT_FAILURE);
                    	     }
@@ -272,7 +270,6 @@ int main(int argc, const char * argv[]) {
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
                  free (socketdescriptor);
-                 free (tmp_readbuffer);
                  free(filename);
                  exit(EXIT_FAILURE);
     	         }
@@ -303,7 +300,6 @@ int main(int argc, const char * argv[]) {
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
                          free (socketdescriptor);
-                         free (tmp_readbuffer);
                    	     exit(EXIT_FAILURE);
                    	     }
                    	fflush(write_png);
@@ -318,7 +314,6 @@ int main(int argc, const char * argv[]) {
     	  fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
       	  }
 	  free (socketdescriptor);
-      free (tmp_readbuffer);
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
@@ -461,17 +456,23 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			free (tmp_readbuffer);
     			return -1;
     			}
+       	    if (verbose==TRUE){
+       	    	fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
+    		   }
 
-    /* check whether received message is exceeding maximum size */
-    	if ((offset+bytesread)>MAX_BUF_SIZE){
-    		fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
-    		free (tmp_readbuffer);
-	       	return -1;
+       	/* check whether received message is exceeding maximum size */
+       	    if ((offset+bytesread)>MAX_BUF_SIZE){
+       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+       	    	free (tmp_readbuffer);
+       	    	return -1;
+    			}
+       	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+       	    offset+=bytesread;
     		}
 
-        memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
-        offset+=bytesread;
-    }
+    	if (verbose==TRUE){
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
+		   }
 
     free (tmp_readbuffer); /* no longer needed resource */
 	return 0; /*return for successfully executed subroutine*/
