@@ -298,7 +298,7 @@ int main(int argc, const char * argv[]) {
 
            //char filename=strtok((pos_file+5),"\n");
            char* filename = malloc ((int)pos_len-(int)pos_file+1);
-           strncpy((pos_file),filename,((int)pos_len-(int)pos_file));
+           strncpy(filename,pos_file,((int)pos_len-(int)pos_file));
 
            fprintf(stdout,"filename: %s  -- size: %d\n",filename, offset);
 
