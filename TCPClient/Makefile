@@ -3,7 +3,7 @@
 ## Distributed Systems - simple_message-client Makefile
 ## 
 ## @author Christian Mödlhammer
-## @date 2016-01-12
+## @date 2016-09-12
 ##
 ## @version 0.1
 ##
@@ -20,18 +20,15 @@ CP=cp
 CD=cd
 MV=mv
 RM=rm
-GREP=grep
-DOXYGEN=doxygen 
 
-OBJECTS=simple_message_client.o ##simple_message_client_commandline_handling.o
-
-EXCLUDE_PATTERN=footrulewidth
+OBJ1=simple_message_client.o
+BIN1=simple_message_client
 
 ##
 ## ----------------------------------------------------------------- rules --
 ##
 
-%.o: %.c %.h
+%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 ##
@@ -39,42 +36,22 @@ EXCLUDE_PATTERN=footrulewidth
 ##
 
 .PHONY: all
-all: simple_message_client
+all: $(BIN1)
 
-simple_message_client: $(OBJECTS)
+$(BIN1): $(OBJ1)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) 
 
 .PHONY: clean
 clean:
-	for f in $(OBJECTS); do if [ -e $$f ]; then rm $$f; fi done
-
-distclean: clean
-	@if [ -e *.doc ]; then $(RM) -r doc; fi
-	@if [ -e simple_message_client ]; then $(RM) simple_message_client; fi
+	rm -rf $(BIN) $(OBJ1)
+	
+	echo $(OBJ1) - deleted!
+	echo $(BIN1) - deleted!
 
 
 ##
-## --------------------------------------------------------------- documentation --
+## ---------------------------------------------------------- documentation --
 ##
-
-doc: html pdf
-
-html:
-	$(DOXYGEN) doxygen.dcf
-
-pdf: html
-	$(CD) ./doxygen/latex && \
-	$(MV) refman.tex refman_save.tex && \
-	$(GREP) -v $(EXCLUDE_PATTERN) refman_save.tex > refman.tex && \
-	$(RM) refman_save.tex && \
-	make && \
-	$(MV) refman.pdf refman.save && \
-	$(RM) *.tex *.aux *.sty *.log *.out *.ind *.idx \
-	      *.ilg *.toc Makefile && \
-	$(MV) refman.save refman.pdf
-	$(CD) ..
-	$(CD) ..
-	$(MV) ./doxygen/latex/refman.pdf simple_message_client_refman.pdf
 
 ##
 ## ---------------------------------------------------------- dependencies --
