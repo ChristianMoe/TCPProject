@@ -255,8 +255,8 @@ int main(int argc, const char * argv[]) {
 
            /*open file for write and write buffer in file */
            //FILE *write_fp = fopen("returnmessage.txt","w");
-           //size_t char_written=0;
-           //size_t char_written_sum=0;
+           size_t char_written=0;
+           size_t char_written_sum=0;
 
            strcpy(tempbuffer,"");
 
@@ -291,7 +291,14 @@ int main(int argc, const char * argv[]) {
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
-           //free (filename);
+           FILE *write_html = fopen(filename,"w"));
+           if (write_html==NULL){
+                 fprintf(stderr,"Failed to open HTML File!\n");
+                 close (socketdescriptor);
+    	       	 exit(EXIT_FAILURE);
+    	         }
+
+           free(filename);
 
            /*find "len=" in string and parse filename*/
            pos_file=strstr(tempbuffer,"len=");
@@ -306,6 +313,18 @@ int main(int argc, const char * argv[]) {
 
 
            /*writing bytewise*/
+           while (char_written_sum<filelength){
+                   			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_html);
+                   			    if ((char_written==0)&&(ferror(write_html))){
+                   			            	      		                   fprintf(stderr,"fwrite write_html failed!\n");
+                   			            	       		                   fclose(write_html);
+                   			            	       		                   close (socketdescriptor);
+                   			            	       		                   exit(EXIT_FAILURE);
+                   			            	              	           	    }
+                   			    fflush(write_html);
+                   			    char_written_sum+=char_written;
+           	   	   	   	   	   	   }
+
 /*
            if ((char_written==0)&&(ferror(write_fp))){
                               fprintf(stderr,"fwrite failed!\n");
