@@ -291,7 +291,7 @@ int main(int argc, const char * argv[]) {
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
-           FILE *write_html = fopen(filename,"w"));
+           FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
                  close (socketdescriptor);
@@ -313,7 +313,7 @@ int main(int argc, const char * argv[]) {
 
 
            /*writing bytewise*/
-           while (char_written_sum<filelength){
+           while ((int)char_written_sum<filelength){
                    			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_html);
                    			    if ((char_written==0)&&(ferror(write_html))){
                    			            	      		                   fprintf(stderr,"fwrite write_html failed!\n");
