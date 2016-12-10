@@ -212,6 +212,9 @@ int main(int argc, const char * argv[]) {
            char* pos_end=strstr(pos_file,"\n");
            char* filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+//
+           fprintf(stdout,"----> html file: %s\n",filename);
+
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
