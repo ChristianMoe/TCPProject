@@ -138,7 +138,7 @@ int main(int argc, const char * argv[]) {
 
 	  if (submitmessage(server,port,socketdescriptor,verbose)==-1){
 		  free(sendbuffer);
-		  free ((int)*socketdescriptor);
+		  free (socketdescriptor);
 		  exit(EXIT_FAILURE);
 	  }
 
