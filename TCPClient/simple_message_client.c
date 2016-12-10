@@ -436,12 +436,12 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   			}
 
 	           char* length = malloc ((int)pos_end-(int)pos_file+1);
-	           strncpy(length,pos_file,((int)pos_end-(int)pos_file-1));
+	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
 	           strcat(length,"\0");
 	           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
 	           if (verbose==TRUE){
-	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %ld parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filelength);
+	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filelength);
 	         	    			}
 
 	           free(length);
