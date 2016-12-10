@@ -41,6 +41,7 @@ void searchandparsestring(char*startstring, char*returnstring, const char patter
  */
 #define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
 #define READ_BUF_SIZE 5000
+#define WRITE_CHUNKS /* Size of writechunks */
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -146,7 +147,7 @@ int main(int argc, const char * argv[]) {
        * getaddrinfo return == 0 if success, otherwise Error-Code
        * and fills results with
        */
-      gea_ret=getaddrinfo((const char*) server, (const char*) port, &hints, &result);
+      gea_ret=getaddrinfo(server, port, &hints, &result);
 
       if (gea_ret!= 0) {
           fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
@@ -290,8 +291,6 @@ int main(int argc, const char * argv[]) {
                memcpy((tempbuffer+offset),readbuffer,bytesread);
                offset+=bytesread;
            }
-
-           fprintf(stdout,"sum of bytes read: %d\n",offset);
 
            /*find "file=" in string and parse filename*/
            char* pos_file=strstr(tempbuffer,"file=");
