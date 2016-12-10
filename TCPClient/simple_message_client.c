@@ -38,6 +38,8 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
+int parsebuffer(char *bufferstart,int verbose);
+int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -199,12 +201,11 @@ int main(int argc, const char * argv[]) {
 
 
 		fprintf(stdout,"%s",readbuffer);
-// successfully subroutines up to here
 
-           /*open file for write and write buffer in file */
-                 size_t char_written=0;
-                 size_t char_written_sum=0;
 
+
+
+		// successfully subroutines up to here
 
            /*find "file=" in string and parse filename*/
            char* pos_file=strstr(readbuffer,"file=");
@@ -214,19 +215,6 @@ int main(int argc, const char * argv[]) {
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
 //
            fprintf(stdout,"----> html file: %s\n",filename);
-
-           FILE *write_html = fopen(filename,"w");
-           if (write_html==NULL){
-                 fprintf(stderr,"Failed to open HTML File!\n");
-                 if (close (*socketdescriptor)!=0){
-                	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                 	 }
-                 free (socketdescriptor);
-                 free(filename);
-                 exit(EXIT_FAILURE);
-    	         }
-
-           free(filename);
 
            /*find "len=" in string and parse filename*/
            pos_file=strstr(pos_end,"len=");
@@ -239,27 +227,18 @@ int main(int argc, const char * argv[]) {
            free(length);
            free(endptr);
 
+           if (writefile(++pos_end, filename, filelength, verbose)==-1){
+               if (close (*socketdescriptor)!=0){
+            	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                   }
+               free(socketdescriptor);
+               free(readbuffer);
+               exit(EXIT_FAILURE);
+           	   }
+           free(filename);
 
-           /*writing bytewise*/
-           pos_end++;
-           char_written_sum=0;
-           while ((int)char_written_sum<(int)filelength){
-                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
-                   	if ((char_written==0)&&(ferror(write_html))){
-                   	     fprintf(stderr,"fwrite write_html failed!\n");
-                         if (close (*socketdescriptor)!=0){
-                        	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                         	 }
-                         free (socketdescriptor);
-                   	     fclose(write_html);
-                   	     exit(EXIT_FAILURE);
-                   	     }
-                   	fflush(write_html);
-                   	char_written_sum+=char_written;
-           	   	   	}
-           fclose(write_html);
 
-           /*find "file=" in string and parse filename*/
+           /*find next "file=" in string and parse filename*/
            pos_file=strstr(pos_end,"file=");
            pos_file+=strlen("file=");
            pos_end=strstr(pos_file,"\n");
@@ -268,18 +247,6 @@ int main(int argc, const char * argv[]) {
 
            fprintf(stdout,"----> png file: %s\n",filename);
 
-
-           FILE *write_png = fopen(filename,"w");
-           if (write_png==NULL){
-                 fprintf(stderr,"Failed to open PNG File!\n");
-                 if (close (*socketdescriptor)!=0){
-                	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                 	 }
-                 free (socketdescriptor);
-                 free(filename);
-                 exit(EXIT_FAILURE);
-    	         }
-           free(filename);
 
            /*find "len=" in string and parse filename*/
            pos_file=strstr(pos_end,"len=");
@@ -293,24 +260,18 @@ int main(int argc, const char * argv[]) {
            free(endptr);
 
 
-           /*writing bytewise*/
-           pos_end++;
-           char_written_sum=0;
-           while ((int)char_written_sum<(int)filelength){
-                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_png);
-                   	if ((char_written==0)&&(ferror(write_png))){
-                   	     fprintf(stderr,"fwrite write_png failed!\n");
-                   	     fclose(write_png);
-                         if (close (*socketdescriptor)!=0){
-                        	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-                         	 }
-                         free (socketdescriptor);
-                   	     exit(EXIT_FAILURE);
-                   	     }
-                   	fflush(write_png);
-                   	char_written_sum+=char_written;
-           	   	   	}
-           fclose(write_png);
+           if (writefile(++pos_end, filename, filelength, verbose)==-1){
+               if (close (*socketdescriptor)!=0){
+            	   fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+                   }
+               free(socketdescriptor);
+               free(readbuffer);
+               exit(EXIT_FAILURE);
+           	   }
+           free(filename);
+
+
+
 
 
 /*finally free resources */
@@ -479,3 +440,48 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
+int parsebuffer(char *bufferstart,int verbose){
+
+
+
+	return 0; /*return for successfully executed subroutine*/
+}
+int writefile(char *bufferstart, char *filename, int filelength, int verbose){
+
+	/* support variables for reading */
+		size_t char_written=0;
+		size_t char_written_sum=0;
+
+	/* start of logic for subroutine */
+		FILE *write_fd = fopen(filename,"w");
+		if (write_fd==NULL){
+			fprintf(stderr,"Failed to open HTML File!\n");
+			return -1;
+    	}
+		if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: File %s opened for writing!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Trying to write %d bytes ...\n" ,argv0,__FILE__, __func__ ,__LINE__,filelength);
+			}
+	/* perform writing to file */
+	    while ((int)char_written_sum<(int)filelength){
+	    	char_written=fwrite(bufferstart, sizeof(char), filelength ,write_fd);
+	    	if ((char_written==0)&&(ferror(write_fd))){
+	    		fprintf(stderr,"%s [%s, %s(), line %d]: Write to %s failed !\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+	            fclose(write_fd);
+	            return -1;
+	    		}
+	    	fflush(write_fd);
+	    	char_written_sum+=char_written;
+	    	}
+
+	    if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes written to %s!\n" ,argv0,__FILE__, __func__ ,__LINE__,char_written_sum,filename);
+			}
+
+    fclose(write_fd); /* file descriptor not needed anymore */
+    if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: File %s closed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+			}
+
+    return 0; /*return for successfully executed subroutine*/
+}
