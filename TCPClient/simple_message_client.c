@@ -434,7 +434,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	               return -1;
 	           	   }
 
-	           bufferrest=pos_end+filelength; /* pointer to remaining buffer data */
+	           pos_end+=filelength; /* pointer to remaining buffer data */
+	           bufferrest=pos_end;
 
 	free(filename); /* resource no longer needed */
 	return 0; /*return for successfully executed subroutine*/
