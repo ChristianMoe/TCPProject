@@ -206,6 +206,7 @@ int main(int argc, const char * argv[]) {
 
 		// for test purpose line below
 		fprintf(stdout,"%s",readbuffer);
+		fflush(stdout);
 
 		if (parsebuffer(readbuffer, bufferrest, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
