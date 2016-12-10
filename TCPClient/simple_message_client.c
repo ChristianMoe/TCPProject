@@ -304,7 +304,7 @@ int main(int argc, const char * argv[]) {
            pos_file=strstr(tempbuffer,"len=");
            pos_file+=strlen("len=");
            pos_end=strstr(pos_file,"\n");
-           char* length = realloc ((int)pos_end-(int)pos_file+1);
+           char* length = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(length,pos_file,((int)pos_end-(int)pos_file));
            char **endptr=malloc ((int)pos_end-(int)pos_file+1);
            long int filelength=strtol(length, endptr, 10);
@@ -335,9 +335,9 @@ int main(int argc, const char * argv[]) {
            filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
            fprintf(stdout,"filename: %s\n",filename);
-           FILE *write_html = fopen(filename,"w");
-           if (write_html==NULL){
-                 fprintf(stderr,"Failed to open HTML File!\n");
+           FILE *write_png = fopen(filename,"w");
+           if (write_png==NULL){
+                 fprintf(stderr,"Failed to open PNG File!\n");
                  close (socketdescriptor);
     	       	 exit(EXIT_FAILURE);
     	         }
@@ -359,17 +359,17 @@ int main(int argc, const char * argv[]) {
            /*writing bytewise*/
            pos_end++;
            while ((int)char_written_sum<(int)filelength){
-                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
-                   	if ((char_written==0)&&(ferror(write_html))){
+                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_png);
+                   	if ((char_written==0)&&(ferror(write_png))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
-                   	     fclose(write_html);
+                   	     fclose(write_png);
                    	     close (socketdescriptor);
                    	     exit(EXIT_FAILURE);
                    	     }
-                   	fflush(write_html);
+                   	fflush(write_png);
                    	char_written_sum+=char_written;
            	   	   	}
-           fclose(write_html);
+           fclose(write_png);
 
 
 /*
