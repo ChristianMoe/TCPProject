@@ -42,7 +42,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 1073741823
+#define MAX_BUF_SIZE 1073741824
 #define READ_BUF_SIZE 5000
 
 /*
@@ -456,9 +456,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			free (tmp_readbuffer);
     			return -1;
     			}
-       	    if (verbose==TRUE){
-       	    	fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
-    		   }
 
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
