@@ -298,7 +298,7 @@ int main(int argc, const char * argv[]) {
            //free (filename);*/
 
            char* filename;
-           searchandparsestring(tempbuffer,filename,"file=");
+           searchandparsestring(tempbuffer,filename,(const char)"file=");
            fprintf(stdout,"filename: %s\n",filename);
 
            /*find "len=" in string and parse filename
@@ -372,7 +372,7 @@ int main(int argc, const char * argv[]) {
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
-void searchandparsestring(char*startstring, char*returnstring, const char pattern){
+void searchandparsestring(char* startstring, char* returnstring, const char pattern){
 
     char* pos_file=strstr(startstring,pattern);
     pos_file+=strlen(pattern);
