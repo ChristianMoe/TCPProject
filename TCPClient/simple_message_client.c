@@ -213,7 +213,6 @@ int main(int argc, const char * argv[]) {
            FILE *write_html = fopen(filename,"w");
            if (write_html==NULL){
                  fprintf(stderr,"Failed to open HTML File!\n");
-           	     free (sendmessage);
                  if (close (*socketdescriptor)!=0){
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
@@ -243,7 +242,6 @@ int main(int argc, const char * argv[]) {
                    	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
                    	if ((char_written==0)&&(ferror(write_html))){
                    	     fprintf(stderr,"fwrite write_html failed!\n");
-                   	     free (sendmessage);
                          if (close (*socketdescriptor)!=0){
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
@@ -262,10 +260,13 @@ int main(int argc, const char * argv[]) {
            pos_end=strstr(pos_file,"\n");
            filename = malloc ((int)pos_end-(int)pos_file+1);
            strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+
+           fprintf(stdout,"----> png file: %s\n",filename);
+
+
            FILE *write_png = fopen(filename,"w");
            if (write_png==NULL){
                  fprintf(stderr,"Failed to open PNG File!\n");
-           	     free (sendmessage);
                  if (close (*socketdescriptor)!=0){
                 	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                  	 }
@@ -295,7 +296,6 @@ int main(int argc, const char * argv[]) {
                    	if ((char_written==0)&&(ferror(write_png))){
                    	     fprintf(stderr,"fwrite write_png failed!\n");
                    	     fclose(write_png);
-                   	     free (sendmessage);
                          if (close (*socketdescriptor)!=0){
                         	 fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
                          	 }
