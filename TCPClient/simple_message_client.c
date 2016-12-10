@@ -435,8 +435,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   			free(filename);
 	   			return -1;
 	   			}
-
 	           pos_file+=strlen("len=");
+
 	           if((pos_end=strstr(pos_file,"\n"))==NULL){
 	   			fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 	   			free(filename);
@@ -446,7 +446,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		fprintf(stdout,"len=%d",(int)pos_end-(int)pos_file);
 
 	           length = malloc ((int)pos_end-(int)pos_file+1);
-	           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+	           strncpy(length,pos_file,4);
 	           strcat(length,"\0");
 	           endptr=malloc ((int)pos_end-(int)pos_file+1);
 	           long int filelength=strtol(length, endptr, 10);
