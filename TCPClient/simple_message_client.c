@@ -465,6 +465,10 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    *bufferrest=*pos_end;
 	    bufferrest++;
 
+	    if (verbose==TRUE){
+	    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Return written! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	    	    	}
+
 	return 0; /*return for successfully executed subroutine*/
 
 }
