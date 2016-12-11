@@ -452,7 +452,7 @@ int parsebuffer(char *bufferstart, int verbose){
 	//
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
-	*/    			}
+	    			}*/
 	  /*find "len=" in string and parse filename
 
 	   		if((pos_file=strstr(pos_end,"len="))==NULL){
