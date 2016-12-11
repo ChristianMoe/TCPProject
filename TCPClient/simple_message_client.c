@@ -376,7 +376,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 
     	if (verbose==TRUE){
-   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket!\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket ...\n" ,argv0,__FILE__, __func__ ,__LINE__);
 		   	}
 
     /* perform reading */
