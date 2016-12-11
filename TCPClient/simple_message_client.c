@@ -117,7 +117,7 @@ int main(int argc, const char * argv[]) {
 		/* for reading from server */
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
-		 	char *bufferstart=NULL;
+		 	//char *bufferstart=NULL;
 		 	//char *bufferrest=NULL;
 	/* end of variable definition */
 
