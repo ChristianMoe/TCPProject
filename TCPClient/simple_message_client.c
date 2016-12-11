@@ -203,7 +203,7 @@ int main(int argc, const char * argv[]) {
 			}
 
 	    /* test writing file */
-		    if (writefile(readbuffer, "response.html", sizeof(readbuffer), 1)==-1){
+		    if (writefile(readbuffer, "response.html", 5000, 1)==-1){
 		    	return -1;
 		        }
 
