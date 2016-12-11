@@ -205,7 +205,7 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutines for parsing and writing and managing failure case */
 		bufferstart=readbuffer;
-		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
+		if (parsebuffer(bufferstart, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -214,9 +214,8 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
-		bufferstart=bufferrest;
 
-		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
+		if (parsebuffer(bufferstart, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 					}
