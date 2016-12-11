@@ -417,7 +417,10 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		filename = malloc ((int)pos_end-(int)pos_file);
 
-		strncpy(filename,(const char*)pos_file,((int)pos_end-(int)pos_file));
+		for(int i;pos_file<=pos_end;i++){
+			*(filename+i)=*(pos_file+i);
+		}
+		//strncpy(filename,(const char*)pos_file,((int)pos_end-(int)pos_file));
 		strcat(filename,"\0");
 	//
 	    if (verbose==TRUE){
