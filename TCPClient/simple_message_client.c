@@ -207,10 +207,6 @@ int main(int argc, const char * argv[]) {
              	           	   }
 
 	/* calling subroutines for parsing and writing and managing failure case */
-
-		fprintf(stdout,"Offset=%d",(int)offset);
-		fprintf(stdout,"Readbuffer=%d",(int)readbuffer);
-
         if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
@@ -405,9 +401,8 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	    char **endptr=NULL;
 
 	/* start of logic for subroutine */
-	/* search for "file=" in substring */
-		fprintf(stdout,"Offset=%d",i_offset);
 
+	/* search for "file=" in substring */
 	    if((pos_file=strstr((bufferstart+i_offset),"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
