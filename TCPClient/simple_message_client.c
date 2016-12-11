@@ -402,7 +402,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
-	    char *tmp_filename=NULL;
+	    //char *tmp_filename=NULL;
 	    char *tmp_length=NULL;
 	    char **endptr=NULL;
 
@@ -419,14 +419,16 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
-		if((tmp_filename = malloc ((size_t)(pos_end-pos_file+1)))==NULL){
+		/*if((tmp_filename = malloc ((size_t)(pos_end-pos_file+1)))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to create resource for Filename! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
+*/
+		char tmp_filename[(size_t)(pos_end-pos_file+1)];
 
 		fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_filename));
 
-		memcpy(tmp_filename,"test.dat",(size_t)(pos_end-pos_file));
+		memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
 		tmp_filename[strlen(tmp_filename)]='\0';
 
 		fprintf(stdout,"Value of filename string: %s \n",tmp_length);
