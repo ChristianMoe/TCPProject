@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,char *bufferrest, int verbose);
+int parsebuffer(char *bufferstart,size_t *offset, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -118,7 +118,7 @@ int main(int argc, const char * argv[]) {
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
 		 	char *bufferstart=NULL;
-		 	char *bufferrest=NULL;
+		 	size_t *offset=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -396,7 +396,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
+int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 
 
 	/* support variables for parsing */
@@ -406,7 +406,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 	/* start of logic for subroutine */
 	/* search for "file=" in substring */
-		if((pos_file=strstr(bufferstart,"file="))==NULL){
+		if((pos_file=strstr((bufferstart+(*offset)),"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
@@ -456,12 +456,11 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    	return -1;
 	        }
 
-    /* set pointer to new end */
-	    bufferrest=bufferstart+(size_t)(pos_end-bufferstart)+filelength;
-	    bufferrest--;
+    /* set offset for next read */
+	    *offset=(size_t)(pos_end-bufferstart)+filelength;
 
 	    if (verbose==TRUE){
-	    	fprintf(stdout,"%s [%s, %s(), line %d]: Return written! \noldFP: %d\nnewFP: %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(size_t)bufferstart,(size_t)bufferrest);
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
 	    	}
 
 	return 0; /*return for successfully executed subroutine*/
