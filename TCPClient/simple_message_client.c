@@ -462,7 +462,7 @@ int parsebuffer(char *bufferstart, size_t *i_offset, int verbose){
 	    *i_offset=(size_t)(pos_end-bufferstart)+filelength;
 
 	    if (verbose==TRUE){
-	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)offset);
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)i_offset);
 	    	}
 
 	return 0; /*return for successfully executed subroutine*/
