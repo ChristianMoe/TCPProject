@@ -214,22 +214,16 @@ int main(int argc, const char * argv[]) {
 
 
 	/* calling subroutines for parsing and writing and managing failure case */
-        if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
-			if (close (*socketdescriptor)!=0){
-				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
-				}
-			free(socketdescriptor);
-			free(readbuffer);
-			exit(EXIT_FAILURE);
-			}
-		if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
-			if (close (*socketdescriptor)!=0){
-				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+        while (offset<=bytesread){
+        	if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
+        		if (close (*socketdescriptor)!=0){
+        			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 					}
-			free(socketdescriptor);
-			free(readbuffer);
-			exit(EXIT_FAILURE);
-			}
+        		free(socketdescriptor);
+        		free(readbuffer);
+        		exit(EXIT_FAILURE);
+				}
+        	}
 
 	/*finally free resources */
         if (close (*socketdescriptor)!=0){
@@ -238,7 +232,7 @@ int main(int argc, const char * argv[]) {
 		if (verbose==TRUE){
 			fprintf(stdout,"%s [%s, %s(), line %d]: Socket closed - Connection to server successfully terminated! \n", argv[0],__FILE__, __func__ ,__LINE__);
 			}
-		free (socketdescriptor);
+		free(socketdescriptor);
 
 	return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
@@ -412,8 +406,8 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
 	/* search for "file=" in substring */
 	    if((pos_file=strstr((bufferstart+i_offset),"file="))==NULL){
-			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-			return -1;
+			fprintf(stdout,"%s [%s, %s(), line %d]: No filename found in Server response! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			return 0;
 			}
 	    pos_file+=strlen("file=");
 
@@ -434,7 +428,7 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	/* search for "len=" in substring */
 		if((pos_file=strstr(pos_end,"len="))==NULL){
 	   		fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-	   		return -1;
+	   		return 0;
 	   		}
 		pos_file+=strlen("len=");
 
