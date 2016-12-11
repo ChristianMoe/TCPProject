@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,size_t *offset, int verbose);
+int parsebuffer(char *bufferstart,int offset, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -117,7 +117,7 @@ int main(int argc, const char * argv[]) {
 		/* for reading from server */
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
-		 	size_t *offset=0;
+		 	int offset=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -208,10 +208,10 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutines for parsing and writing and managing failure case */
 
-		fprintf(stdout,"Offset=%d",*offset);
+		fprintf(stdout,"Offset=%d",(int)offset);
 		fprintf(stdout,"Readbuffer=%d",(int)readbuffer);
 
-        if (parsebuffer(readbuffer, offset, verbose)==-1){
+        if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -219,7 +219,7 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
-		if (parsebuffer(readbuffer, offset, verbose)==-1){
+		if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 					}
@@ -397,7 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart, size_t *i_offset, int verbose){
+int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
@@ -406,9 +406,9 @@ int parsebuffer(char *bufferstart, size_t *i_offset, int verbose){
 
 	/* start of logic for subroutine */
 	/* search for "file=" in substring */
-		fprintf(stdout,"Offset=%d",*i_offset);
+		fprintf(stdout,"Offset=%d",i_offset);
 
-	    if((pos_file=strstr((bufferstart+(*i_offset)),"file="))==NULL){
+	    if((pos_file=strstr((bufferstart+i_offset),"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
@@ -458,14 +458,7 @@ int parsebuffer(char *bufferstart, size_t *i_offset, int verbose){
 	    	return -1;
 	        }
 
-    /* set offset for next read */
-	    *i_offset=(size_t)(pos_end-bufferstart)+filelength;
-
-	    if (verbose==TRUE){
-	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)i_offset);
-	    	}
-
-	return 0; /*return for successfully executed subroutine*/
+	return ((pos_end-bufferstart)+filelength); /*return offset for next read*/
 
 }
 
