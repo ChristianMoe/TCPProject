@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-//int parsebuffer(char *bufferstart, int verbose);
+int parsebuffer(char *bufferstart,char *bufferrest, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -117,8 +117,8 @@ int main(int argc, const char * argv[]) {
 		/* for reading from server */
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
-		 	//char *bufferstart=NULL;
-		 	//char *bufferrest=NULL;
+		 	char *bufferstart=NULL;
+		 	char *bufferrest=NULL;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -207,39 +207,7 @@ int main(int argc, const char * argv[]) {
              	               return -1;
              	           	   }
 
-
-
-		/*find "file=" in string and parse filename*/
-		           char* pos_file=strstr(readbuffer,"file=");
-		           pos_file+=strlen("file=");
-		           char* pos_end=strstr(pos_file,"\n");
-		           char* filename = malloc ((int)pos_end-(int)pos_file+1);
-		           strncpy(filename,pos_file,(37));
-		           FILE *write_html = fopen(filename,"w");
-		           if (write_html==NULL){
-		                 fprintf(stderr,"Failed to open HTML File!\n");
-		                 exit(EXIT_FAILURE);
-		                 }
-
-		           /*find "len=" in string and parse filename*/
-		                      pos_file=strstr(pos_end,"len=");
-		                      pos_file+=strlen("len=");
-		                      pos_end=strstr(pos_file,"\n");
-		                      char* length = malloc ((int)pos_end-(int)pos_file+1);
-		                      strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-		                      char **endptr=malloc ((int)pos_end-(int)pos_file+1);
-		                      long int filelength=strtol(length, endptr, 10);
-		                      free(length);
-		                      free(endptr);
-
-		                if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
-		                     	               free(filename);
-		                     	               return -1;
-		                     	           	   }
-		            	free(filename); /* resource no longer needed */
-
-
-	/* calling subroutines for parsing and writing and managing failure case
+	/* calling subroutines for parsing and writing and managing failure case */
 		bufferstart=readbuffer;
 		if (parsebuffer(bufferstart, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
@@ -250,7 +218,7 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
-
+/*
 		if (parsebuffer(bufferstart, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
@@ -258,10 +226,10 @@ int main(int argc, const char * argv[]) {
 			free(socketdescriptor);
 			free(readbuffer);
 			exit(EXIT_FAILURE);
-			}*/
-
+			}
+*/
 	/*finally free resources */
-		if (close (*socketdescriptor)!=0){
+        if (close (*socketdescriptor)!=0){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
       	  	}
 		if (verbose==TRUE){
@@ -429,17 +397,18 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-//int parsebuffer(char *bufferstart, int verbose){
+int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 
-	/* support variables for parsing
+	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 	    char *filename=NULL;
 	    char *length=NULL;
 	    char **endptr=NULL;
-*/
-	/* start of logic for subroutine
+
+	/* start of logic for subroutine */
+	/* search for "file=" in substring */
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
@@ -451,52 +420,53 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			return -1;
 			}
 
-		filename = malloc ((int)pos_end-(int)pos_file);
+		filename = malloc ((int)(pos_end-pos_file+1));
 
-		strncpy(filename,pos_file,38);
+		strncpy(filename,pos_file,(int)(pos_end-pos_file));
 		strcat(filename,"\0");
-	//
+
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
-	    			}*/
-	  /*find "len=" in string and parse filename
+	    			}
 
-	   		if((pos_file=strstr(pos_end,"len="))==NULL){
-	   			fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-	   			free(filename);
-	   			return -1;
-	   			}
-	           pos_file+=strlen("len=");
+	/* search for "file=" in substring */
+		if((pos_file=strstr(pos_end,"len="))==NULL){
+	   		fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   		free(filename);
+	   		return -1;
+	   		}
+		pos_file+=strlen("len=");
 
-	           if((pos_end=strstr(pos_file,"\n"))==NULL){
-	   			fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-	   			free(filename);
-	   			return -1;
-	   			}
+	    if((pos_end=strstr(pos_file,"\n"))==NULL){
+	    	fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   		free(filename);
+	   		return -1;
+	   		}
 
-	   		fprintf(stdout,"len=%d",(int)pos_end-(int)pos_file);
+        length = malloc ((int)(pos_end-pos_file+1));
+        strncpy(length,pos_file,(int)(pos_end-pos_file));
+        strcat(length,"\0");
+        endptr=malloc ((int)(pos_end-pos_file+1));
+	    long int filelength=strtol(length, endptr, 10);
+	    if (verbose==TRUE){
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
+	    	}
 
-	           length = malloc ((int)pos_end-(int)pos_file);
-	           strncpy(length,pos_file,(int)pos_end-(int)pos_file);
-	           strcat(length,"\0");
-	           endptr=malloc ((int)pos_end-(int)pos_file+1);
-	           long int filelength=strtol(length, endptr, 10);
-	           if (verbose==TRUE){
-	         	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
-	         	    			}
+	    free(length);
+	    free(endptr);
 
-	           free(length);
-	           free(endptr);
+	    if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
+	    	free(filename);
+	        return -1;
+	        }
 
-	           if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
-	               free(filename);
-	               return -1;
-	           	   }
+	    bufferrest=pos_end;
+	    bufferrest++;
 
-	           bufferrest=pos_end;
-	           bufferrest++;*/
+	free(filename);
+	return 0; /*return for successfully executed subroutine*/
 
-//}
+}
 
 int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 
