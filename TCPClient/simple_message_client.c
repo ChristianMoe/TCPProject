@@ -362,7 +362,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	/* support variables for reading */
     	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
     	size_t offset=0;
-    	size_t bytesread=0;
+    	ssize_t bytesread=0;
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
