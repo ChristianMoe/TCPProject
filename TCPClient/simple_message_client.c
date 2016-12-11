@@ -454,7 +454,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		char tmp_length[(size_t)(pos_end-pos_file+1)];
 
-	    tmp_length = malloc ((size_t)(pos_end-pos_file+1));
+	    //tmp_length = malloc ((size_t)(pos_end-pos_file+1));
     	fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_length));
 
         memcpy(tmp_length,"1294",(size_t)(pos_end-pos_file));
