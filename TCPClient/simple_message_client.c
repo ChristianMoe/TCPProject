@@ -30,7 +30,6 @@
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
-
 /*
  * -------------------------------------------------------------- prototypes --
  */
