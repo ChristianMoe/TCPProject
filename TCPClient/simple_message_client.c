@@ -193,6 +193,8 @@ int main(int argc, const char * argv[]) {
             }
 
 	/* calling subroutine for reading message from server and managing failure case */
+		fprintf(stdout,"Buffer try to locate!");
+
 		char *readbuffer=malloc(MAX_BUF_SIZE);
 		fprintf(stdout,"Buffer successfully located!");
 
