@@ -9,7 +9,6 @@
  *
  * @version 0.1
  *
- *	@ todo Malloc fehlerbehandeln!
  */
 
 /*
@@ -148,6 +147,10 @@ int main(int argc, const char * argv[]) {
 			if (imgurl!=NULL) buffersize = (strlen(user) + strlen(imgurl) + strlen(message) + 20);
 			if (imgurl==NULL) buffersize = (strlen(user) + strlen(message) + 20);
 			sendmessage = (char*) malloc (buffersize);
+			if (sendmessage==NULL){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+				exit(EXIT_FAILURE);
+				}
 
 		/*building string to be sent */
 			strcpy(sendmessage,"user=");
@@ -163,6 +166,12 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutine for connecting to server and managing failure case */
 		socketdescriptor=malloc(sizeof(int));
+		if (socketdescriptor==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+			free(sendmessage);
+			exit(EXIT_FAILURE);
+			}
+
 		if (connectsocket(server,port,socketdescriptor,verbose)==-1){
 			free(sendmessage);
 			free(socketdescriptor);
@@ -195,6 +204,14 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutine for reading message from server and managing failure case */
 		readbuffer=malloc(MAX_BUF_SIZE);
+		if (readbuffer==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+			if (close (*socketdescriptor)!=0){
+				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+				}
+			free(socketdescriptor);
+			exit(EXIT_FAILURE);
+			}
 
 		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
@@ -233,19 +250,21 @@ int main(int argc, const char * argv[]) {
 	return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
 
-
 /**
+ *
+ * \brief Connect to socket
+ *
  * Subroutine that tries to connect to the socket!
  *
- * \param server 			server that should be connected to (IPv4 or IPv6 address or www.xyz.com)
- * \param port 				port that should be used to connect
- * \param socketdescriptor	pointer to descriptor as returnvalue for later use
- * \param verbose			tells whether subroutine should be verbose
+ * \param sever the server that should be connected to (IPv4 or IPv6 address or www.xyz.com)
+ * \param port the port that should be used to connect
+ * \param socketdescriptor the pointer to descriptor as returnvalue for later use
+ * \param verbose tells whether subroutine should be verbose
  *
- * \return int 		returns 0 on success and -1 on failure
+ * \retval 0 on success
+ * \retval -1 on failure
  *
  */
-
 
 int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose){
 
@@ -274,7 +293,7 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
 		fprintf(stdout,"%s [%s, %s(), line %d]: Obtained IP address for server %s and port %s\n",argv0,__FILE__, __func__ ,__LINE__,server,port);
 		}
 
-/* getaddrinfo() returns a list of address structures.
+/* Info: getaddrinfo() returns a list of address structures.
               Try each address until successfully connected.
               If socket (or connect) fails, close the socket
               and try the next address.
@@ -288,9 +307,7 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
          struct sockaddr *ai_addr;
          char            *ai_canonname;
          struct addrinfo *ai_next;
-     };
-
-*/
+     }; */
 
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		/* socket()  creates  an endpoint for communication and returns a descriptor */
@@ -316,6 +333,20 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
     return 0; /*return for successfully executed subroutine*/
 }
 
+/**
+ *
+ * \brief Send message to Server
+ *
+ * Subroutine that tries to send the message string to the server
+ *
+ * \param finalmessage the message to be sent
+ * \param socketdescriptor the connected socket to send the data to
+ * \param verbose tells whether to be verbose
+ *
+ * \retval 0 on success
+ * \retval -1 on error
+ *
+ */
 
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
@@ -354,10 +385,30 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
    	 return 0; /*return for successfully executed subroutine*/
 }
 
+/**
+ *
+ * \brief Reads message from Server
+ *
+ * Subroutine that tries to read response from server
+ *
+ * \param readbuffer the message string read from server
+ * \param socketdescriptor the connected socket to send the data to
+ * \param verbose tells whether to be verbose
+ *
+ * \retval 0 on success
+ * \retval -1 on error
+ *
+ */
+
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* support variables for reading */
     	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
+		if (readbuffer==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
+
     	size_t offset=0;
     	ssize_t bytesread=0;
 
@@ -389,6 +440,21 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     free (tmp_readbuffer); /* no longer needed resource */
 	return offset; /*returns bytes read upon success*/
 }
+
+/**
+ *
+ * \brief Parses and eventually call write subroutine
+ *
+ * Subroutine that tries to parse the received string and calls write subroutine upon successful parsing
+ *
+ * \param readbuffer the message string read from server
+ * \param i_offset the value to create flexible pointer to buffer
+ * \param verbose tells whether to be verbose
+ *
+ * \retval 0 on success
+ * \retval -1 on error
+ *
+ */
 
 int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
@@ -439,15 +505,23 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
     /* converting to numeric */
 		endptr=malloc ((int)(pos_end-pos_file+1));
-	    long int filelength=strtol(tmp_length, endptr, 10);
+		if (endptr==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
+		long int filelength=strtol(tmp_length, endptr, 10);
 	    free(endptr);
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	    	}
+    /* writing file up to MAX_FILE_SIZE */
+	    if (filelength>=MAX_FILE_SIZE){
+		    if (verbose==TRUE){
+		    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
+		    	}
 
     /* writing file up to MAX_FILE_SIZE */
-	    if (filelength<=MAX_FILE_SIZE){
-	    	if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
+	    if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
 	    		return -1;
 	    		}
 	    	}
@@ -455,6 +529,22 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
 
 }
+
+/**
+ *
+ * \brief Write file
+ *
+ * Subroutine that tries to write a file
+ *
+ * \param readbuffer the message string read from server
+ * \param filename the name of the file to write
+ * \param filelength number of characters/bytes to be read from readbuffer into file
+ * \param verbose tells whether to be verbose
+ *
+ * \retval 0 on success
+ * \retval -1 on error
+ *
+ */
 
 int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 
