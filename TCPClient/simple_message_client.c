@@ -462,8 +462,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    	return -1;
 	        }
 
-	    *bufferrest=*pos_end;
-	    bufferrest++;
+	    bufferrest=bufferstart+(size_t)(pos_end-bufferstart)+filelength;
+	    bufferrest--;
 
 	    if (verbose==TRUE){
 	    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Return written! \n" ,argv0,__FILE__, __func__ ,__LINE__);
