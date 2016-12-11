@@ -434,6 +434,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
        	    	}
        	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
+       	    fprintf(stdout,"%d bytes read\n",bytesread);
     		}
 
     free (tmp_readbuffer); /* no longer needed resource */
