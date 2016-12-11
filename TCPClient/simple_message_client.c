@@ -453,12 +453,10 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(tmp_length, endptr, 10);
+	    free(endptr);
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	    	}
-
-	    free(tmp_length);
-	    free(endptr);
 
 	    if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
 	    	return -1;
