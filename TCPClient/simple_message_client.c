@@ -214,7 +214,7 @@ int main(int argc, const char * argv[]) {
 
 
 	/* calling subroutines for parsing and writing and managing failure case */
-        while (offset<=bytesread){
+        while (offset<bytesread){
         	if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
         		if (close (*socketdescriptor)!=0){
         			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
@@ -455,7 +455,7 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	    	return -1;
 	        }
 
-	return ((pos_end-bufferstart)+filelength); /*return offset for next read*/
+	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
 
 }
 
