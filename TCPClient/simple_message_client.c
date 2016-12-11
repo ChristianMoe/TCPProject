@@ -207,7 +207,11 @@ int main(int argc, const char * argv[]) {
              	           	   }
 
 	/* calling subroutines for parsing and writing and managing failure case */
-		if (parsebuffer(readbuffer, offset, verbose)==-1){
+
+		fprintf(stdout,"Offset=%d",*offset);
+		fprintf(stdout,"Readbuffer=%d",(int)readbuffer);
+
+        if (parsebuffer(readbuffer, offset, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -393,7 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart, size_t *offset, int verbose){
+int parsebuffer(char *bufferstart, size_t *i_offset, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
@@ -402,9 +406,9 @@ int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 
 	/* start of logic for subroutine */
 	/* search for "file=" in substring */
-		fprintf(stdout,"Offset=%d",*offset);
+		fprintf(stdout,"Offset=%d",*i_offset);
 
-	    if((pos_file=strstr((bufferstart+(*offset)),"file="))==NULL){
+	    if((pos_file=strstr((bufferstart+(*i_offset)),"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
@@ -455,7 +459,7 @@ int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 	        }
 
     /* set offset for next read */
-	    *offset=(size_t)(pos_end-bufferstart)+filelength;
+	    *i_offset=(size_t)(pos_end-bufferstart)+filelength;
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)offset);
