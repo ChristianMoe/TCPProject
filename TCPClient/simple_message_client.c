@@ -424,10 +424,14 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
-		fprintf(stdout,"Malloc of pointer %d of %d bytes\n",(size_t)tmp_filename,(size_t)(pos_end-pos_file+1));
+		tmp_filename=malloc((size_t)(pos_end-pos_file+1));
+		fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_filename));
 
 		memcpy(tmp_filename,"test.dat",(size_t)(pos_end-pos_file));
 		tmp_filename[strlen(tmp_filename)]='\0';
+
+		fprintf(stdout,"Value of filename string: %s \n",tmp_length);
+
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
