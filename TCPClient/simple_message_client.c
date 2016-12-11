@@ -430,7 +430,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		tmp_filename[strlen(tmp_filename)]='\0';
 
 	    if (verbose==TRUE){
-	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
 	    			}
 
 	/* search for "file=" in substring */
