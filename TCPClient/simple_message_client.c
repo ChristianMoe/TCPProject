@@ -45,7 +45,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 2108907231 // 73741824
+#define MAX_BUF_SIZE SIZE_MAX
 #define READ_BUF_SIZE 1024
 
 /*
@@ -115,7 +115,7 @@ int main(int argc, const char * argv[]) {
 		/* for connecting the socket */
 			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
 		/* for reading from server */
-			//char *readbuffer=NULL;
+			char *readbuffer=NULL;
 			int bytesread=0;
 		/* for parsing subroutine */
 		 	int offset=0;
@@ -193,10 +193,7 @@ int main(int argc, const char * argv[]) {
             }
 
 	/* calling subroutine for reading message from server and managing failure case */
-		fprintf(stdout,"Buffer try to locate!");
-		fflush(stdout);
-		char *readbuffer=malloc(MAX_BUF_SIZE);
-		fprintf(stdout,"Buffer successfully located!");
+		readbuffer=malloc(MAX_BUF_SIZE);
 
 		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
@@ -387,10 +384,9 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
-       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
-       	    	free (tmp_readbuffer);
-       	    	return -1;
-    			}
+       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes. Data may be lost.\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+       	    	break; /* leave reading cycle */
+       	    	}
        	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
     		}
