@@ -46,7 +46,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE sizeof(size_t) // 73741824
-#define READ_BUF_SIZE 1500
+#define READ_BUF_SIZE 1024
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -328,12 +328,15 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 		long int len = 0;
 		ssize_t retlen = 0;
 		long int byteswritten = 0;
+		long int len = 0;
+		size_t cmplen = 0;
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
+   	    cmplen = (size_t)len;
 
 	/* checking whether message is to big */
-   	    if ((ssize_t)len > MAX_BUF_SIZE) {
+   	    if (len > MAX_BUF_SIZE) {
    	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
