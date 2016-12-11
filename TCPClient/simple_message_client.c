@@ -450,7 +450,9 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
         length = malloc ((size_t)(pos_end-pos_file+1));
         memcpy(length,"1294",(size_t)(pos_end-pos_file));
 		length[strlen(length)-1]='\0';
-        endptr=malloc ((int)(pos_end-pos_file+1));
+		fprintf(stdout,"Length of string: %s \n",length);
+
+		endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(length, endptr, 10);
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
