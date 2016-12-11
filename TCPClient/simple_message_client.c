@@ -422,7 +422,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		filename = malloc ((int)(pos_end-pos_file+1));
 
 		strncpy(filename,pos_file,(size_t)(pos_end-pos_file));
-		filename[pos_end]='\0';
+		filename[(size_t)pos_end]='\0';
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
