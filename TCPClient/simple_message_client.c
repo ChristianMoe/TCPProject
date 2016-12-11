@@ -430,7 +430,7 @@ int parsebuffer(char *bufferstart, int verbose){
 	    char *filename=NULL;
 	    char *length=NULL;
 	    char **endptr=NULL;
-
+*/
 	/* start of logic for subroutine
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
@@ -450,7 +450,7 @@ int parsebuffer(char *bufferstart, int verbose){
 	//
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
-	    			}
+	*/    			}
 	  /*find "len=" in string and parse filename
 
 	   		if((pos_file=strstr(pos_end,"len="))==NULL){
