@@ -34,12 +34,14 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
+void searchandparsestring(char*startstring, char*returnstring, const char pattern);
 
 /*
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE 10000000 /* maximum Buffer 10 MB */
 #define READ_BUF_SIZE 5000
+#define WRITE_CHUNKS /* Size of writechunks */
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -107,7 +109,7 @@ int main(int argc, const char * argv[]) {
 	  }
 
 	  if (verbose==TRUE){
-		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n",(char*) argv[0],__FILE__, __func__ ,__LINE__, (char*) server, (char*) port, (char*) user, (char*) imgurl, (char*) message);
+		 fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: server=\"%s\" port=\"%s\", user=\"%s\", img_url=\"%s\", message=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__, server, port, user, imgurl, message);
 	  }
 
 	  /*variable for string to be sent*/
@@ -145,7 +147,7 @@ int main(int argc, const char * argv[]) {
        * getaddrinfo return == 0 if success, otherwise Error-Code
        * and fills results with
        */
-      gea_ret=getaddrinfo((const char*) server, (const char*) port, &hints, &result);
+      gea_ret=getaddrinfo(server, port, &hints, &result);
 
       if (gea_ret!= 0) {
           fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gea_ret));
@@ -213,10 +215,6 @@ int main(int argc, const char * argv[]) {
             	  exit(EXIT_FAILURE);
               }
 
-              //testing line below (can be removed!)
-              fprintf(stdout,"%s, länge:%d",(char*)finalmessage, (int)len);
-
-
           /* sending message */
               while (byteswritten!= (ssize_t)len) {
 
@@ -251,14 +249,17 @@ int main(int argc, const char * argv[]) {
            /* open file for read from server */
 
            void *readbuffer=malloc(READ_BUF_SIZE);
+           char *tempbuffer=malloc(MAX_BUF_SIZE);
+           int offset=0;
 
            ssize_t bytesread=0;
 
            /*open file for write and write buffer in file */
-           FILE *write_fp = fopen("returnmessage.txt","w");
+           //FILE *write_fp = fopen("returnmessage.txt","w");
            size_t char_written=0;
            size_t char_written_sum=0;
 
+           strcpy(tempbuffer,"");
 
            while ((bytesread=read(socketdescriptor,readbuffer,READ_BUF_SIZE))!=0){
         	   if (bytesread==-1){
@@ -268,7 +269,7 @@ int main(int argc, const char * argv[]) {
         		   exit(EXIT_FAILURE);
         	   	   }
 
-        	   while (char_written_sum<(size_t)bytesread){
+        	  /* while ((char_written_sum)<(size_t)bytesread){
         			    char_written=fwrite(readbuffer, sizeof(char), bytesread ,write_fp);
         			    if ((char_written==0)&&(ferror(write_fp))){
         			            	      		                   fprintf(stderr,"fwrite failed!\n");
@@ -278,18 +279,105 @@ int main(int argc, const char * argv[]) {
         			            	              	           	    }
         			    fflush(write_fp);
         			    char_written_sum+=char_written;
+        			    fprintf(stdout,"%d bytes written\n", (int)char_written_sum);
         	   }
+*/
+        	   if ((offset+bytesread)>MAX_BUF_SIZE){
+	                   fprintf(stderr,"Server Reply exceeded Maximum Limit of 10MB! --> EXIT Error\n");
+    	       		   close (socketdescriptor);
+    	       		   exit(EXIT_FAILURE);
+    	        	   }
 
-
+               memcpy((tempbuffer+offset),readbuffer,bytesread);
+               offset+=bytesread;
            }
 
+           /*find "file=" in string and parse filename*/
+           char* pos_file=strstr(tempbuffer,"file=");
+           pos_file+=strlen("file=");
+           char* pos_end=strstr(pos_file,"\n");
+           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+           FILE *write_html = fopen(filename,"w");
+           if (write_html==NULL){
+                 fprintf(stderr,"Failed to open HTML File!\n");
+                 close (socketdescriptor);
+    	       	 exit(EXIT_FAILURE);
+    	         }
 
+           free(filename);
 
-
-
+           /*find "len=" in string and parse filename*/
+           pos_file=strstr(pos_end,"len=");
+           pos_file+=strlen("len=");
+           pos_end=strstr(pos_file,"\n");
+           char* length = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+           char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+           long int filelength=strtol(length, endptr, 10);
+           free(length);
+           free(endptr);
 
 
            /*writing bytewise*/
+           pos_end++;
+           char_written_sum=0;
+           while ((int)char_written_sum<(int)filelength){
+                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_html);
+                   	if ((char_written==0)&&(ferror(write_html))){
+                   	     fprintf(stderr,"fwrite write_html failed!\n");
+                   	     fclose(write_html);
+                   	     close (socketdescriptor);
+                   	     exit(EXIT_FAILURE);
+                   	     }
+                   	fflush(write_html);
+                   	char_written_sum+=char_written;
+           	   	   	}
+           fclose(write_html);
+
+           /*find "file=" in string and parse filename*/
+           pos_file=strstr(pos_end,"file=");
+           pos_file+=strlen("file=");
+           pos_end=strstr(pos_file,"\n");
+           filename = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+           FILE *write_png = fopen(filename,"w");
+           if (write_png==NULL){
+                 fprintf(stderr,"Failed to open PNG File!\n");
+                 close (socketdescriptor);
+    	       	 exit(EXIT_FAILURE);
+    	         }
+           free(filename);
+
+           /*find "len=" in string and parse filename*/
+           pos_file=strstr(pos_end,"len=");
+           pos_file+=strlen("len=");
+           pos_end=strstr(pos_file,"\n");
+           length = malloc ((int)pos_end-(int)pos_file+1);
+           strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+           endptr=malloc ((int)pos_end-(int)pos_file+1);
+           filelength=strtol(length, endptr, 10);
+           free(length);
+           free(endptr);
+
+
+           /*writing bytewise*/
+           pos_end++;
+           char_written_sum=0;
+           while ((int)char_written_sum<(int)filelength){
+                   	char_written=fwrite(pos_end, sizeof(char), filelength ,write_png);
+                   	if ((char_written==0)&&(ferror(write_png))){
+                   	     fprintf(stderr,"fwrite write_png failed!\n");
+                   	     fclose(write_png);
+                   	     close (socketdescriptor);
+                   	     exit(EXIT_FAILURE);
+                   	     }
+                   	fflush(write_png);
+                   	char_written_sum+=char_written;
+           	   	   	}
+           fclose(write_png);
+
+
 /*
            if ((char_written==0)&&(ferror(write_fp))){
                               fprintf(stderr,"fwrite failed!\n");
@@ -344,6 +432,5 @@ int main(int argc, const char * argv[]) {
 
       return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
-
 
 
