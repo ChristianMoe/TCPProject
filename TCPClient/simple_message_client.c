@@ -205,7 +205,7 @@ int main(int argc, const char * argv[]) {
 
 
 		/*find "file=" in string and parse filename*/
-		           char* pos_file=strstr(bufferstart,"file=");
+		           char* pos_file=strstr(readbuffer,"file=");
 		           pos_file+=strlen("file=");
 		           char* pos_end=strstr(pos_file,"\n");
 		           char* filename = malloc ((int)pos_end-(int)pos_file+1);
