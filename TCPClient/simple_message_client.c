@@ -397,14 +397,43 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
-	/* support variables for parsing */
+	/*find "file=" in string and parse filename*/
+	           char* pos_file=strstr(bufferstart,"file=");
+	           pos_file+=strlen("file=");
+	           char* pos_end=strstr(pos_file,"\n");
+	           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+	           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+	           FILE *write_html = fopen(filename,"w");
+	           if (write_html==NULL){
+	                 fprintf(stderr,"Failed to open HTML File!\n");
+	                 exit(EXIT_FAILURE);
+	                 }
+
+	           /*find "len=" in string and parse filename*/
+	                      pos_file=strstr(pos_end,"len=");
+	                      pos_file+=strlen("len=");
+	                      pos_end=strstr(pos_file,"\n");
+	                      char* length = malloc ((int)pos_end-(int)pos_file+1);
+	                      strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+	                      char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+	                      long int filelength=strtol(length, endptr, 10);
+	                      free(length);
+	                      free(endptr);
+
+	                if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
+	                     	               free(filename);
+	                     	               return -1;
+	                     	           	   }
+
+
+	/* support variables for parsing
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 	    char *filename=NULL;
 	    char *length=NULL;
 	    char **endptr=NULL;
 
-	/* start of logic for subroutine */
+	/* start of logic for subroutine
 		if((pos_file=strstr(bufferstart,"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
@@ -424,7 +453,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
 	    			}
-	  /*find "len=" in string and parse filename*/
+	  /*find "len=" in string and parse filename
 
 	   		if((pos_file=strstr(pos_end,"len="))==NULL){
 	   			fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
@@ -459,7 +488,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	           	   }
 
 	           bufferrest=pos_end;
-	           bufferrest++;
+	           bufferrest++;*/
 
 	free(filename); /* resource no longer needed */
 	return 0; /*return for successfully executed subroutine*/
