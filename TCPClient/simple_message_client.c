@@ -70,12 +70,6 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
 
 static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
-	for (long int i=MAX_BUF_SIZE;;i+=1){
-		fprintf(stdout,"going to test %ld\n",i);
-		char * test=malloc(i);
-		free(test);
-	}
-
 	fprintf(outputdevice, "usage: %s options\n", filename);
 	fprintf(outputdevice,"options:\n");
 	fprintf(outputdevice,"	-s, --server <server>   full qualified domain name or IP address of the server\n");
@@ -200,6 +194,8 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutine for reading message from server and managing failure case */
 		readbuffer=malloc(MAX_BUF_SIZE);
+		fprintf(stdout,"Buffer successfully located!");
+
 		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
