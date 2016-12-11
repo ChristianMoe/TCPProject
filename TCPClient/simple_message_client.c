@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart, char *bufferrest, int verbose);
+int parsebuffer(char *bufferstart, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -118,8 +118,7 @@ int main(int argc, const char * argv[]) {
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
 		 	char *bufferstart=NULL;
-		 	char *bufferrest=NULL;
-
+		 	//char *bufferrest=NULL;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -395,7 +394,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
+int parsebuffer(char *bufferstart, int verbose){
 
 	/*find "file=" in string and parse filename*/
 	           char* pos_file=strstr(bufferstart,"file=");
