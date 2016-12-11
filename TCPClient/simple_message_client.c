@@ -426,7 +426,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 */
 		char tmp_filename[(size_t)(pos_end-pos_file+1)];
 
-		fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_filename));
+		fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_filename,(size_t)(pos_end-pos_file+1),strlen(tmp_filename));
 
 		memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
 		tmp_filename[strlen(tmp_filename)]='\0';
