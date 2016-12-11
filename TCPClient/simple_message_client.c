@@ -372,7 +372,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     /* perform reading */
     	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
     		if (bytesread==-1){
-    			fprintf(stderr,"read failed: %s\n", strerror(errno));
+    			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
     			return -1;
     			}
@@ -418,7 +418,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		filename = malloc ((int)pos_end-(int)pos_file);
 
-		for(int i=0;pos_file<=pos_end;i++){
+		for(int i=0;pos_file<pos_end;i++){
 			*(filename+i)=*(pos_file+i);
 		}
 		//strncpy(filename,(const char*)pos_file,((int)pos_end-(int)pos_file));
