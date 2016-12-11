@@ -327,12 +327,14 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 	/* variables for sending */
 		long int len = 0;
 		long int byteswritten = 0;
+		size_t len_check= 0;
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
+   	    len_check = (size_t) len;
 
 	/* checking whether message is to big */
-   	    if (len > MAX_BUF_SIZE) {
+   	    if (len_check > MAX_BUF_SIZE) {
    	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
