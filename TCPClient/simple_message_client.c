@@ -420,10 +420,9 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			}
 
 		filename = malloc ((size_t)(pos_end-pos_file+1));
-		char fn[(size_t)(pos_end-pos_file+1)];
 
-		strncpy(fn,pos_file,(size_t)(pos_end-pos_file));
-		//filename[(size_t)pos_end]='\0';
+		strncpy(filename,"test.dat",(size_t)(pos_end-pos_file));
+		filename[(size_t)pos_end]='\0';
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
@@ -444,7 +443,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		}
 
         length = malloc ((int)(pos_end-pos_file+1));
-        strncpy(length,pos_file,(int)(pos_end-pos_file));
+        strncpy(length,"1294",(int)(pos_end-pos_file));
         strcat(length,"\0");
         endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(length, endptr, 10);
