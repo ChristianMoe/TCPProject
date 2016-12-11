@@ -45,7 +45,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 100000000
+#define MAX_BUF_SIZE 10000000
 #define READ_BUF_SIZE 1024
 
 /*
@@ -385,8 +385,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
        	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes. Data may be lost.\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
-    			free (tmp_readbuffer);
-    			return -1;
+    		//	free (tmp_readbuffer);
+    		//	return -1;
        	    	}
        	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
