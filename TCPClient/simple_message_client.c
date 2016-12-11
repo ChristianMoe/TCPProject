@@ -47,6 +47,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
  */
 #define MAX_BUF_SIZE 1074000000
 #define READ_BUF_SIZE 1024
+#define MAX_FILE_SIZE 10000000
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -452,10 +453,12 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	    	}
 
-    /* writing file */
-	    if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
-	    	return -1;
-	        }
+    /* writing file up to MAX_FILE_SIZE */
+	    if (filelength<=MAX_FILE_SIZE){
+	    	if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
+	    		return -1;
+	    		}
+	    	}
 
 	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
 
