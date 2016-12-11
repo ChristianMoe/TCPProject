@@ -454,7 +454,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    free(length);
 	    free(endptr);
 
-	    if (writefile(++pos_end, fn, (int)filelength, verbose)==-1){
+	    if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
 	    	free(filename);
 	        return -1;
 	        }
