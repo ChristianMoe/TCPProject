@@ -209,12 +209,6 @@ int main(int argc, const char * argv[]) {
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
 		   	}
 
-	    /* test writing file */
-		    if (writefile(readbuffer, "response.html", bytesread, 1)==-1){
-		    	return -1;
-		        }
-
-
 	/* calling subroutines for parsing and writing and managing failure case */
         while (offset<bytesread){
         	if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
@@ -386,9 +380,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
        	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes. Data may be lost.\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
-    		//	free (tmp_readbuffer);
-    		//	return -1;
-       	    	break;
+    			free (tmp_readbuffer);
+    			return -1;
        	    	}
        	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
