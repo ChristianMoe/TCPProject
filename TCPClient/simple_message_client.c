@@ -45,7 +45,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE (INT_MAX-1) // 73741824
+#define MAX_BUF_SIZE (INT_MAX/2) // 73741824
 #define READ_BUF_SIZE 1024
 
 /*
@@ -69,8 +69,6 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
  */
 
 static void usageinfo(FILE *outputdevice, const char *filename, int status) {
-
-	fprintf(outputdevice, "usage: %d %d\n", INT_MAX,UINT_MAX);
 
 	fprintf(outputdevice, "usage: %s options\n", filename);
 	fprintf(outputdevice,"options:\n");
