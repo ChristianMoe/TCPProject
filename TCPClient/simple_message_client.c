@@ -217,8 +217,8 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
-
-		if (parsebuffer(bufferrest, bufferrest, verbose)==-1){
+		bufferstart=bufferrest;
+		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 					}
