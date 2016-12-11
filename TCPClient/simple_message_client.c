@@ -422,7 +422,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		filename = malloc ((size_t)(pos_end-pos_file+1));
 
 		memcpy(filename,"test.dat",(size_t)(pos_end-pos_file));
-		filename[strlen(filename)-1]='\0';
+		filename[strlen(filename)]='\0';
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
