@@ -422,6 +422,8 @@ int parsebuffer(char *bufferstart, int verbose){
 	                     	               free(filename);
 	                     	               return -1;
 	                     	           	   }
+	            	free(filename); /* resource no longer needed */
+	            	return 0; /*return for successfully executed subroutine*/
 
 
 	/* support variables for parsing
@@ -488,9 +490,8 @@ int parsebuffer(char *bufferstart, int verbose){
 	           bufferrest=pos_end;
 	           bufferrest++;*/
 
-	free(filename); /* resource no longer needed */
-	return 0; /*return for successfully executed subroutine*/
 }
+
 int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 
 	/* support variables for reading */
