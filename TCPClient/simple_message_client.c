@@ -403,7 +403,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 	    //char *tmp_filename=NULL;
-	    char *tmp_length=NULL;
+	    //char *tmp_length=NULL;
 	    char **endptr=NULL;
 
 	/* start of logic for subroutine */
@@ -431,7 +431,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 		memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
 		tmp_filename[strlen(tmp_filename)]='\0';
 
-		fprintf(stdout,"Value of filename string: %s \n",tmp_length);
+		fprintf(stdout,"Value of filename string: %s \n",tmp_filename);
 
 
 	    if (verbose==TRUE){
@@ -451,6 +451,8 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		free(tmp_filename);
 	   		return -1;
 	   		}
+
+		char tmp_length[(size_t)(pos_end-pos_file+1)];
 
 	    tmp_length = malloc ((size_t)(pos_end-pos_file+1));
     	fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_length));
