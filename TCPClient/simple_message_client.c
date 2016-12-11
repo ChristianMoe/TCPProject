@@ -442,7 +442,7 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
 	/* copying value to new string */
 		char tmp_length[(size_t)(pos_end-pos_file+1)];
-        memcpy(tmp_length,"1294",(size_t)(pos_end-pos_file));
+        memcpy(tmp_length,pos_file,(size_t)(pos_end-pos_file));
         tmp_length[strlen(tmp_length)-1]='\0';
 
     /* converting to numeric */
