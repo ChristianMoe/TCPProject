@@ -45,7 +45,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 1000000 // 73741824
+#define MAX_BUF_SIZE sizeof(size_t) // 73741824
 #define READ_BUF_SIZE 1500
 
 /*
