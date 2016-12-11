@@ -421,7 +421,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 		filename = malloc ((size_t)(pos_end-pos_file+1));
 
-		memcpy(filename,pos_file,(size_t)(pos_end-pos_file));
+		memcpy(filename,"test.dat",(size_t)(pos_end-pos_file));
 		//filename[(size_t)pos_end]='\0';
 
 	    if (verbose==TRUE){
