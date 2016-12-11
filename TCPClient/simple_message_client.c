@@ -39,7 +39,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart, int verbose);
+//int parsebuffer(char *bufferstart, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
@@ -203,7 +203,38 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
-	/* calling subroutines for parsing and writing and managing failure case */
+
+		/*find "file=" in string and parse filename*/
+		           char* pos_file=strstr(bufferstart,"file=");
+		           pos_file+=strlen("file=");
+		           char* pos_end=strstr(pos_file,"\n");
+		           char* filename = malloc ((int)pos_end-(int)pos_file+1);
+		           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
+		           FILE *write_html = fopen(filename,"w");
+		           if (write_html==NULL){
+		                 fprintf(stderr,"Failed to open HTML File!\n");
+		                 exit(EXIT_FAILURE);
+		                 }
+
+		           /*find "len=" in string and parse filename*/
+		                      pos_file=strstr(pos_end,"len=");
+		                      pos_file+=strlen("len=");
+		                      pos_end=strstr(pos_file,"\n");
+		                      char* length = malloc ((int)pos_end-(int)pos_file+1);
+		                      strncpy(length,pos_file,((int)pos_end-(int)pos_file));
+		                      char **endptr=malloc ((int)pos_end-(int)pos_file+1);
+		                      long int filelength=strtol(length, endptr, 10);
+		                      free(length);
+		                      free(endptr);
+
+		                if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
+		                     	               free(filename);
+		                     	               return -1;
+		                     	           	   }
+		            	free(filename); /* resource no longer needed */
+
+
+	/* calling subroutines for parsing and writing and managing failure case
 		bufferstart=readbuffer;
 		if (parsebuffer(bufferstart, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
@@ -222,7 +253,7 @@ int main(int argc, const char * argv[]) {
 			free(socketdescriptor);
 			free(readbuffer);
 			exit(EXIT_FAILURE);
-			}
+			}*/
 
 	/*finally free resources */
 		if (close (*socketdescriptor)!=0){
@@ -393,37 +424,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	return 0; /*return for successfully executed subroutine*/
 }
 
-int parsebuffer(char *bufferstart, int verbose){
-
-	/*find "file=" in string and parse filename*/
-	           char* pos_file=strstr(bufferstart,"file=");
-	           pos_file+=strlen("file=");
-	           char* pos_end=strstr(pos_file,"\n");
-	           char* filename = malloc ((int)pos_end-(int)pos_file+1);
-	           strncpy(filename,pos_file,((int)pos_end-(int)pos_file));
-	           FILE *write_html = fopen(filename,"w");
-	           if (write_html==NULL){
-	                 fprintf(stderr,"Failed to open HTML File!\n");
-	                 exit(EXIT_FAILURE);
-	                 }
-
-	           /*find "len=" in string and parse filename*/
-	                      pos_file=strstr(pos_end,"len=");
-	                      pos_file+=strlen("len=");
-	                      pos_end=strstr(pos_file,"\n");
-	                      char* length = malloc ((int)pos_end-(int)pos_file+1);
-	                      strncpy(length,pos_file,((int)pos_end-(int)pos_file));
-	                      char **endptr=malloc ((int)pos_end-(int)pos_file+1);
-	                      long int filelength=strtol(length, endptr, 10);
-	                      free(length);
-	                      free(endptr);
-
-	                if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
-	                     	               free(filename);
-	                     	               return -1;
-	                     	           	   }
-	            	free(filename); /* resource no longer needed */
-	            	return 0; /*return for successfully executed subroutine*/
+//int parsebuffer(char *bufferstart, int verbose){
 
 
 	/* support variables for parsing
@@ -490,7 +491,7 @@ int parsebuffer(char *bufferstart, int verbose){
 	           bufferrest=pos_end;
 	           bufferrest++;*/
 
-}
+//}
 
 int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 
