@@ -45,7 +45,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE sizeof(size_t) // 73741824
+#define MAX_BUF_SIZE 100000000 // 73741824
 #define READ_BUF_SIZE 1024
 
 /*
@@ -327,14 +327,12 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 	/* variables for sending */
 		long int len = 0;
 		long int byteswritten = 0;
-		size_t cmplen = 0;
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
-   	    cmplen = (size_t)len;
 
 	/* checking whether message is to big */
-   	    if (cmplen > MAX_BUF_SIZE) {
+   	    if (len > MAX_BUF_SIZE) {
    	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
    	    	return -1;
    	    	}
@@ -364,26 +362,22 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 	/* support variables for reading */
     	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
     	size_t offset=0;
-    	ssize_t retval=0;
     	size_t bytesread=0;
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
-
 
     	if (verbose==TRUE){
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket ...\n" ,argv0,__FILE__, __func__ ,__LINE__);
 		   	}
 
     /* perform reading */
-    	while ((retval=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
-    		if (retval==-1){
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
+    		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
     			return -1;
     			}
-
-    		bytesread=(size_t)retval;
 
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
