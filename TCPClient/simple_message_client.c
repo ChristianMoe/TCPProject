@@ -448,11 +448,11 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		}
 
         length = malloc ((size_t)(pos_end-pos_file+1));
-    	fprintf(stdout,"Malloc of pointer %d of %d bytes\n",(size_t)length,(size_t)(pos_end-pos_file+1));
+    	fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)length,(size_t)(pos_end-pos_file+1),strlen(length));
 
         memcpy(length,"1294",(size_t)(pos_end-pos_file));
 		length[strlen(length)-1]='\0';
-		fprintf(stdout,"Length of string: %s \n",length);
+		fprintf(stdout,"Value of length string: %s \n",length);
 
 		endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(length, endptr, 10);
