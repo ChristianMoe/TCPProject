@@ -413,7 +413,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	int avdata;
 
     /* start of logic for subroutine */
-    	ioctl(socketdescriptor, FIONREAD, &avdata);
+    	ioctl((int)socketdescriptor, FIONREAD, &avdata);
     	strcpy(readbuffer,"");
     	fprintf(stdout, "pre-sum of bytes: %d",avdata);
 
