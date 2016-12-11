@@ -30,7 +30,6 @@
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
-
 /*
  * -------------------------------------------------------------- prototypes --
  */
@@ -519,11 +518,12 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 		    if (verbose==TRUE){
 		    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
 		    	}
-
-    /* writing file up to MAX_FILE_SIZE */
-	    if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
-	    		return -1;
-	    		}
+		    else{
+		    /* writing file up to MAX_FILE_SIZE */
+		        if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
+		        	return -1;
+		        	}
+		    	}
 	    	}
 
 	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
