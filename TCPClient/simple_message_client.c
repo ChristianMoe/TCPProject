@@ -415,13 +415,14 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     /* start of logic for subroutine */
     	ioctl(socketdescriptor, FIONREAD, &avdata);
     	strcpy(readbuffer,"");
+    	fprintf(stdout, "pre-sum of bytes: %d",avdata);
 
     	if (verbose==TRUE){
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket ...\n" ,argv0,__FILE__, __func__ ,__LINE__);
 		   	}
 
     /* perform reading */
-    	while ((bytesread=read(((*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0)||(offset==avdata))){
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
     		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
