@@ -395,7 +395,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 
-
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
@@ -403,7 +402,9 @@ int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 
 	/* start of logic for subroutine */
 	/* search for "file=" in substring */
-		if((pos_file=strstr((bufferstart+(*offset)),"file="))==NULL){
+		fprintf(stdout,"Offset=%d",*offset);
+
+	    if((pos_file=strstr((bufferstart+(*offset)),"file="))==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: String \"file=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
 			}
