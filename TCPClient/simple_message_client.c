@@ -417,21 +417,16 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
+	/* copying value to new string */
 		char tmp_filename[(size_t)(pos_end-pos_file+1)];
-
-		//fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_filename,(size_t)(pos_end-pos_file+1),strlen(tmp_filename));
-
 		memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
 		tmp_filename[strlen(tmp_filename)]='\0';
-
-	//	fprintf(stdout,"Value of filename string: %s \n",tmp_filename);
-
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
 	    			}
 
-	/* search for "file=" in substring */
+	/* search for "len=" in substring */
 		if((pos_file=strstr(pos_end,"len="))==NULL){
 	   		fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 	   		return -1;
@@ -443,14 +438,12 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	   		return -1;
 	   		}
 
+	/* copying value to new string */
 		char tmp_length[(size_t)(pos_end-pos_file+1)];
-
-//    	fprintf(stdout,"Malloc of pointer %d of %d bytes, length of string %d\n",(size_t)tmp_length,(size_t)(pos_end-pos_file+1),strlen(tmp_length));
-
         memcpy(tmp_length,"1294",(size_t)(pos_end-pos_file));
         tmp_length[strlen(tmp_length)-1]='\0';
-		fprintf(stdout,"Value of length string: %s \n",tmp_length);
 
+    /* converting to numeric */
 		endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(tmp_length, endptr, 10);
 	    free(endptr);
@@ -458,16 +451,18 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	    	}
 
+    /* writing file */
 	    if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
 	    	return -1;
 	        }
 
+    /* set pointer to new end */
 	    bufferrest=bufferstart+(size_t)(pos_end-bufferstart)+filelength;
 	    bufferrest--;
 
 	    if (verbose==TRUE){
-	    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Return written! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-	    	    	}
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Return written! \noldFP: %d\nnewFP: %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(size_t)bufferstart,(size_t)bufferrest);
+	    	}
 
 	return 0; /*return for successfully executed subroutine*/
 
