@@ -48,6 +48,7 @@ $(BIN1): $(OBJ1)
 .PHONY: clean
 clean:
 	rm -rf $(BIN1) $(OBJ1) 
+	rm -rf *.html *.png
 ##	rm -rf $(BIN2) $(OBJ2)
 	
 
