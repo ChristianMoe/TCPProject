@@ -527,7 +527,6 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 		    	}
 	    	}
 
-
 	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
 
 }
