@@ -247,7 +247,6 @@ int main(int argc, const char * argv[]) {
  */
 
 
-
 int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose){
 
 /* variables for socket */
@@ -403,7 +402,7 @@ int parsebuffer(char *bufferstart, int i_offset, int verbose){
 	/* search for "file=" in substring */
 	    if((pos_file=strstr((bufferstart+i_offset),"file="))==NULL){
 			fprintf(stdout,"%s [%s, %s(), line %d]: No filename found in Server response! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-			return 0;
+			return MAX_BUF_SIZE; /* high return value to get out of subroutine queue */
 			}
 	    pos_file+=strlen("file=");
 
