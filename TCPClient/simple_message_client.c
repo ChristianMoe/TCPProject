@@ -117,7 +117,6 @@ int main(int argc, const char * argv[]) {
 		/* for reading from server */
 			char *readbuffer=NULL;
 		/* for parsing subroutine */
-		 	char *bufferstart=NULL;
 		 	size_t *offset=0;
 	/* end of variable definition */
 
@@ -208,8 +207,7 @@ int main(int argc, const char * argv[]) {
              	           	   }
 
 	/* calling subroutines for parsing and writing and managing failure case */
-		bufferstart=readbuffer;
-		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
+		if (parsebuffer(readbuffer, offset, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -217,8 +215,7 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
-		bufferstart=bufferrest;
-		if (parsebuffer(bufferstart, bufferrest, verbose)==-1){
+		if (parsebuffer(readbuffer, offset, verbose)==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 					}
@@ -460,7 +457,7 @@ int parsebuffer(char *bufferstart, size_t *offset, int verbose){
 	    *offset=(size_t)(pos_end-bufferstart)+filelength;
 
 	    if (verbose==TRUE){
-	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Offset = %d\n" ,argv0,__FILE__, __func__ ,__LINE__,(int)offset);
 	    	}
 
 	return 0; /*return for successfully executed subroutine*/
