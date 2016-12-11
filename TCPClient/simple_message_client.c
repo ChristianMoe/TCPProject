@@ -424,7 +424,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
-		fprintf(stdout,"Malloc of pointer %d of %d bytes",(size_t)filename,(size_t)(pos_end-pos_file+1));
+		fprintf(stdout,"Malloc of pointer %d of %d bytes\n",(size_t)filename,(size_t)(pos_end-pos_file+1));
 
 		memcpy(filename,"test.dat",(size_t)(pos_end-pos_file));
 		filename[strlen(filename)]='\0';
@@ -449,7 +449,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
         length = malloc ((size_t)(pos_end-pos_file+1));
         memcpy(length,"1294",(size_t)(pos_end-pos_file));
-		length[strlen(length)]='\0';
+		length[strlen(length)-1]='\0';
         endptr=malloc ((int)(pos_end-pos_file+1));
 	    long int filelength=strtol(length, endptr, 10);
 	    if (verbose==TRUE){
