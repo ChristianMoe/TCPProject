@@ -362,8 +362,9 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* support variables for reading */
     	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
-    	int offset=0;
-    	ssize_t bytesread=0;
+    	size_t offset=0;
+    	ssize_t retval=0;
+    	size_t bytesread=0;
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
@@ -374,12 +375,14 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		   	}
 
     /* perform reading */
-    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
-    		if (bytesread==-1){
+    	while ((retval=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
+    		if (retval==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
     			return -1;
     			}
+
+    		bytesread=(size_t)retval;
 
        	/* check whether received message is exceeding maximum size */
        	    if ((offset+bytesread)>MAX_BUF_SIZE){
