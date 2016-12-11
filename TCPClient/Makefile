@@ -44,16 +44,18 @@ $(BIN1): $(OBJ1)
 ## $(BIN2): $(OBJ2)
 ##	$(CC) $(CFLAGS) -o $@ $^ 
 
+.PHONY: cleanall
+cleanall: clean clean_r
 
 .PHONY: clean
 clean:
 	rm -rf $(BIN1) $(OBJ1) 
-	rm -rf *.html *.png
 ##	rm -rf $(BIN2) $(OBJ2)
-	
 
+.PHONY: clean_r
+clean_r:
+	rm -rf *.html *.png
 	
-
 
 ##
 ## ---------------------------------------------------------- documentation --
