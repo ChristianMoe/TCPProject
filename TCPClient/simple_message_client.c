@@ -203,6 +203,10 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
+    	if (verbose==TRUE){
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
+		   	}
+
 	    /* test writing file */
 		    if (writefile(readbuffer, "response.html", bytesread, 1)==-1){
 		    	return -1;
@@ -369,6 +373,11 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
+
+
+    	if (verbose==TRUE){
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket!\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
+		   	}
 
     /* perform reading */
     	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
