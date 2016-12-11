@@ -400,11 +400,11 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 
 
 	/* support variables for parsing */
-	    char *pos_file=NULL;
-	    char *pos_end=NULL;
-	    char *filename=NULL;
-	    char *length=NULL;
-	    char **endptr=NULL;
+	    const char *pos_file=NULL;
+	    const char *pos_end=NULL;
+	    const char *filename=NULL;
+	    const char *length=NULL;
+	    const char **endptr=NULL;
 
 	/* start of logic for subroutine */
 	/* search for "file=" in substring */
