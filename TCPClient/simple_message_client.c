@@ -115,7 +115,7 @@ int main(int argc, const char * argv[]) {
 		/* for connecting the socket */
 			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
 		/* for reading from server */
-			char *readbuffer=NULL;
+			//char *readbuffer=NULL;
 			int bytesread=0;
 		/* for parsing subroutine */
 		 	int offset=0;
@@ -193,7 +193,7 @@ int main(int argc, const char * argv[]) {
             }
 
 	/* calling subroutine for reading message from server and managing failure case */
-		readbuffer=malloc(MAX_BUF_SIZE);
+		char *readbuffer=malloc(MAX_BUF_SIZE);
 		fprintf(stdout,"Buffer successfully located!");
 
 		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
