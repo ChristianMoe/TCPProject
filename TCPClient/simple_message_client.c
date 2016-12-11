@@ -46,7 +46,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
  * -------------------------------------------------------------- defines --
  */
 #define MAX_BUF_SIZE 1000000 // 73741824
-#define READ_BUF_SIZE 5000
+#define READ_BUF_SIZE 1500
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -202,6 +202,11 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
+
+        if (writefile(readbuffer, "test.txt", 5000, verbose)==-1){
+             	               return -1;
+             	           	   }
+
 
 
 		/*find "file=" in string and parse filename*/
@@ -502,7 +507,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 	/* start of logic for subroutine */
 		FILE *write_fd = fopen(filename,"w");
 		if (write_fd==NULL){
-			fprintf(stderr,"Failed to open HTML File!\n");
+			fprintf(stderr, "%s [%s, %s(), line %d]: Failed to open File %s!\n",argv0,__FILE__, __func__ ,__LINE__,filename);
 			return -1;
     		}
 		if (verbose==TRUE){
