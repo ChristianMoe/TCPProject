@@ -202,6 +202,12 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
+	    /* test writing file */
+		    if (writefile(readbuffer, "response.html", len(readbuffer), 1)==-1){
+		    	return -1;
+		        }
+
+
 	/* calling subroutines for parsing and writing and managing failure case */
         if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
