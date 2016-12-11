@@ -419,10 +419,11 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 			return -1;
 			}
 
-		filename = malloc ((int)(pos_end-pos_file+1));
+		filename = malloc ((size_t)(pos_end-pos_file+1));
+		char fn[(size_t)(pos_end-pos_file+1)];
 
-		strncpy(filename,pos_file,(size_t)(pos_end-pos_file));
-		filename[(size_t)pos_end]='\0';
+		strncpy(fn,pos_file,(size_t)(pos_end-pos_file));
+		//filename[(size_t)pos_end]='\0';
 
 	    if (verbose==TRUE){
 	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
@@ -454,7 +455,7 @@ int parsebuffer(char *bufferstart, char *bufferrest, int verbose){
 	    free(length);
 	    free(endptr);
 
-	    if (writefile(++pos_end, filename, (int)filelength, verbose)==-1){
+	    if (writefile(++pos_end, fn, (int)filelength, verbose)==-1){
 	    	free(filename);
 	        return -1;
 	        }
