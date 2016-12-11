@@ -116,6 +116,7 @@ int main(int argc, const char * argv[]) {
 			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
 		/* for reading from server */
 			char *readbuffer=NULL;
+			int bytesread=0;
 		/* for parsing subroutine */
 		 	int offset=0;
 	/* end of variable definition */
@@ -193,7 +194,7 @@ int main(int argc, const char * argv[]) {
 
 	/* calling subroutine for reading message from server and managing failure case */
 		readbuffer=malloc(MAX_BUF_SIZE);
-		if (readingmessage(readbuffer, socketdescriptor, verbose)==-1){
+		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -203,7 +204,7 @@ int main(int argc, const char * argv[]) {
 			}
 
 	    /* test writing file */
-		    if (writefile(readbuffer, "response.html", 5000, 1)==-1){
+		    if (writefile(readbuffer, "response.html", bytesread, 1)==-1){
 		    	return -1;
 		        }
 
@@ -387,12 +388,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
        	    offset+=bytesread;
     		}
 
-    	if (verbose==TRUE){
-   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
-		   	}
-
     free (tmp_readbuffer); /* no longer needed resource */
-	return 0; /*return for successfully executed subroutine*/
+	return offset; /*returns bytes read upon success*/
 }
 
 int parsebuffer(char *bufferstart, int i_offset, int verbose){
