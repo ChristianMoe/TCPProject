@@ -70,6 +70,8 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
 
 static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
+	fprintf(outputdevice, "usage: %d %d\n", INT_MAX,UINT_MAX);
+
 	fprintf(outputdevice, "usage: %s options\n", filename);
 	fprintf(outputdevice,"options:\n");
 	fprintf(outputdevice,"	-s, --server <server>   full qualified domain name or IP address of the server\n");
