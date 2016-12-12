@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
-//#include <arpa/inet.h> /* include for function inet_ntop()
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
@@ -419,7 +418,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		   	}
 
     /* perform reading */
-    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))>0){
     		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
