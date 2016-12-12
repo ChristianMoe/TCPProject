@@ -2,7 +2,7 @@
  * @file simple_message_client.c
  * Distributed Systems - Implementation of a simple TCP message client
  *
- * @author Christian Mödlhammer,ic14b027
+ * @author Christian Moedlhammer,ic14b027
  * @author Harald Partmann,ic15b039
  *
  * @date 2016-01-12

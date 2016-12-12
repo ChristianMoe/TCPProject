@@ -1,3 +1,17 @@
+/**
+ * @file simple_message_server.c
+ * Distributed Systems - Implementation of a simple TCP message server
+ *
+ * @author Christian Moedlhammer,ic14b027
+ * @author Harald Partmann,ic15b039
+ *
+ * @date 2016-12-12
+ *
+ * @version 0.1
+ *
+ */
+
+
 #include <sys/types.h>     	
 /* POSIX.1-2001 does not require the inclusion of <sys/types.h>, and this header file is not required on Linux.
  portable applications are probably wise to include it. */
