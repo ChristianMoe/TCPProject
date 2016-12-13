@@ -444,7 +444,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	   else {
    			/* converting to numeric */
     		   parseposition=retparse;
-    		   fprintf(stdout,"Parse OK\n");
+    		   fprintf(stdout,"Parse OK - parseposition ist %d \n", parseposition);
     		   char **endptr=malloc(10);
    				if (endptr==NULL){
    					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
