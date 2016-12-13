@@ -423,6 +423,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			free (tmp_readbuffer);
     			return -1;
     			}
+    		if (bytesread==0) break;
+
             memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
     		}
@@ -441,6 +443,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 							free (tmp_readbuffer);
 							return -1;
 		    				}
+						if (bytesread==0) break;
 		            memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
 		       	    offset+=bytesread;
 		    		}
@@ -459,7 +462,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    			    }
     	   	   	   }
     		}
-		}
+}
+}
 	return parseposition; /*returns bytes read upon success*/
 }
 
