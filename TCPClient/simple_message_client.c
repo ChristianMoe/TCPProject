@@ -389,7 +389,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* support variables for reading */
-    	void tmp_readbuffer[READ_BUF_SIZE]={0};
+    	void *tmp_readbuffer=malloc[READ_BUF_SIZE];
 		if (readbuffer==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
 			return -1;
@@ -414,7 +414,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     /* perform reading */
 
-    while bytesread=!0{
+    while (bytesread=!0){
 
     	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))<=READ_BUF_SIZE)){
     		if (bytesread==-1){
