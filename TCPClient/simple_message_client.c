@@ -38,6 +38,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose);
 int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
+int readandthrowaway(int *socketdescriptor, int amount, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -406,6 +407,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	int newend=READ_BUF_SIZE;
     	ssize_t bytesread=1;
     	int retparse=0;
+    	int diffmissing=0: /* the bytes missing till next file= and yet not read */
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
@@ -454,39 +456,40 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
-    		   while (offset<=(parseposition+filelength)){
-						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
-						if (bytesread==-1){
-							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
-							free (tmp_readbuffer);
-							return -1;
-		    				}
-						if (bytesread==0) break;
+   				diffmissing=(parseposition+filelength)-offset
 
-
-					memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
-		       	    offset+=bytesread;
-		    		}
-
-    	    		/* writing file up to MAX_FILE_SIZE */
-    	    		    if (filelength>=MAX_FILE_SIZE){
-    	    			    if (verbose==TRUE){
-    	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
-    	    			    	}
+    		/* Comparing filelength to MAX_FILE_SIZE */
+	    		    if (filelength>=MAX_FILE_SIZE){
+  	    			    if (verbose==TRUE){
+  	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
+   	    			    	}
     	    		    	}
-    	    		/* writing file up to MAX_FILE_SIZE */
-    	    			else{
-    	    	            if ((writefile(readbuffer, parseposition, filename, filelength, verbose))==-1){
-    	    	            	return -1;
-    	    		        	}
-    	    	            parseposition+=filelength;
-    	    				}
-    	   	   	   }
+   						readandthrowaway(socketdescriptor,diffread,verbose);
+   						parseposition+=filelength;
+   			 /* reading data and writing to file saving  */
+   		   			else{
+
+   						while (offset<=diffmissing){
+   							bytesread=read(*socketdescriptor,tmp_readbuffer,1);
+   								if (bytesread==-1){
+   										fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
+   										free (tmp_readbuffer);
+   										return -1;
+   										}
+   								if (bytesread==0) break;
+
+
+   								memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+   								offset+=bytesread;
+   							}
+   						if ((writefile(readbuffer, parseposition, filename, filelength, verbose))==-1){
+   							return -1;
+   						   	}
+   						parseposition+=filelength;
+
+    	   	   			}
     	   	   newend+=READ_BUF_SIZE;
-
-
     		}
-
 
 	return offset; /*returns bytes read upon success*/
 }
@@ -569,6 +572,50 @@ int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *fi
 
 	return (i_parseposition+(pos_end-bufferstart)+1);
 }
+
+
+/**
+ *
+ * \brief Reads from socket and throws data away
+ *
+ * Subroutine that tries to write a file
+ *
+ * \param socketdescriptor
+ * \param amount the bytes to throw away
+ * \param verbose tells whether to be verbose
+ *
+ * \retval bytes read and thrown away on success
+ * \retval -1 on error
+ *
+ */
+
+int readandthrowaway(int *socketdescriptor, int amount, int verbose){
+
+	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
+	int offset=0;
+
+	while (offset<=amount){
+    		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
+    		fprintf(stdout,"read %d bytes\n", bytesread);
+         	if (bytesread==-1){
+    			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
+    			free (tmp_readbuffer);
+    			return -1;
+    			}
+    		if (bytesread==0) break;
+
+            offset+=bytesread;
+    		}
+
+	if (verbose==TRUE){
+		fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read and thrown away! \n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
+		}
+
+	return offset;
+
+}
+
+
 
 /**
  *
