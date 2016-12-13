@@ -444,7 +444,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	   if (retparse>0) {
    			/* converting to numeric */
-    		   parseposition=retparse;
+    		   parseposition+=retparse;
     		   fprintf(stdout,"Parse OK - parseposition ist %d \n", parseposition);
     		   char **endptr=malloc(10);
    				if (endptr==NULL){
@@ -479,7 +479,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    	            if ((writefile(readbuffer, parseposition, filename, filelength, verbose))==-1){
     	    	            	return -1;
     	    		        	}
-    	    			    }
+    	    	            parseposition+=filelength;
+    	    				}
     	   	   	   }
     	   	   newend+=READ_BUF_SIZE;
 
