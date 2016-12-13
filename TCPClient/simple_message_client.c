@@ -500,7 +500,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char
 	    char *pos_end=NULL;
 	    char **endptr=NULL;
 	    char tmp_filename[FN_MAX];
-	    char tmp_filename[10];
+	    char tmp_length[10];
 
 	/* start of logic for subroutine */
 
