@@ -36,7 +36,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,size_t i_parseposition, char *file_name, size_t *file_length, int verbose);
+int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size_t *file_length, int verbose);
 int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
 
 /*
