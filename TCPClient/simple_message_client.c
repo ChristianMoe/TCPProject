@@ -435,7 +435,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			return -1;
     	   		}
     	   else {
-    		    while offset<=(parseposition+fi_length){
+    		    while (offset<=(parseposition+*fi_length)){
 						bytesread=read(*socketdescriptor,tmp_readbuffer,1));
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
@@ -447,14 +447,14 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		    		}
 
     	    		/* writing file up to MAX_FILE_SIZE */
-    	    		    if (fi_length>=MAX_FILE_SIZE){
+    	    		    if (*fi_length>=MAX_FILE_SIZE){
     	    			    if (verbose==TRUE){
     	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
     	    			    	}
     	    		    	}
     	    		/* writing file up to MAX_FILE_SIZE */
     	    			else{
-    	    	            if (writefile((readbuffer, parseposition, &filename, fi_length, verbose)==-1){
+    	    	            if (writefile((readbuffer, parseposition, filename, *fi_length, verbose)==-1){
     	    	            	return -1;
     	    		        	}
     	    			    }
