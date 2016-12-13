@@ -407,7 +407,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	int newend=READ_BUF_SIZE;
     	ssize_t bytesread=1;
     	int retparse=0;
-    	int diffmissing=0: /* the bytes missing till next file= and yet not read */
+    	int diffmissing=0; /* the bytes missing till next file= and yet not read */
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
@@ -463,9 +463,10 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
   	    			    if (verbose==TRUE){
   	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
    	    			    	}
-    	    		    	}
+
    						readandthrowaway(socketdescriptor,diffread,verbose);
    						parseposition+=filelength;
+	    		    	}
    			 /* reading data and writing to file saving  */
    		   			else{
 
