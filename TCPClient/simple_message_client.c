@@ -36,7 +36,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size_t *file_length, int verbose);
+int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char *file_length, int verbose);
 int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
 
 /*
@@ -435,8 +435,18 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     		   free(tmp_readbuffer);
     			return -1;
     	   		}
+
     	   else {
-    		    while (offset<=(*parseposition+*fi_length)){
+   			/* converting to numeric */
+   				endptr=malloc ((int)(pos_end-pos_file+1));
+   				if (endptr==NULL){
+   					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+   					return -1;
+   					}
+   				long int filelength=strtol(tmp_length, endptr, 10);
+   				free(endptr);
+
+    		   while (offset<=(*parseposition+filelength)){
 						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
@@ -483,14 +493,14 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
  *
  */
 
-int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size_t *file_length, int verbose){
+int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char *file_length, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 	    char **endptr=NULL;
 	    char tmp_filename[FN_MAX];
-	    long int filelength=0;
+	    char tmp_filename[10];
 
 	/* start of logic for subroutine */
 
@@ -530,27 +540,18 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 					}
 
 			/* copying value to new string */
-				char tmp_length[(size_t)(pos_end-pos_file+1)];
 				memcpy(tmp_length,pos_file,(size_t)(pos_end-pos_file));
 				tmp_length[strlen(tmp_length)-1]='\0';
 
-			/* converting to numeric */
-				endptr=malloc ((int)(pos_end-pos_file+1));
-				if (endptr==NULL){
-					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
-					return -1;
-					}
-				filelength=strtol(tmp_length, endptr, 10);
-				free(endptr);
 				if (verbose==TRUE){
-					fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
+					fprintf(stdout,"%s [%s, %s(), line %d]: File length %s parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_length);
 					}
 				}
 	    	}
 
 	    *i_parseposition=(*i_parseposition+(pos_end-bufferstart)+1);
 	    memcpy(file_name,tmp_filename,sizeof(tmp_filename));
-	    memcpy(file_length,(size_t)filelength,sizeof(filelength));
+	    memcpy(file_length,tmp_length,sizeof(tmp_length));
 
 	return 1; /*return 1 on filename found*/
 }
