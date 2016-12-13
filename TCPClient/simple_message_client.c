@@ -420,8 +420,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	while (offset<=READ_BUF_SIZE){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
     		fprintf(stdout,"read %d bytes\n", bytesread);
-     		fprintf(stdout,"read %s bytes\n", readbuffer);
-    		if (bytesread==-1){
+         		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
     			return -1;
@@ -433,6 +432,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     		}
 
 
+		fprintf(stdout,"FR OK\n", bytesread);
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
@@ -440,6 +440,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     		   free(tmp_readbuffer);
     			return -1;
     	   		}
+
+   		fprintf(stdout,"Parse OK\n", bytesread);
 
     	   else {
    			/* converting to numeric */
