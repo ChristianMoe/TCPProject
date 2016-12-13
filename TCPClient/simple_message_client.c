@@ -462,7 +462,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		    				}
 						if (bytesread==0) break;
 
-						fprintf(stdout,"read %d bytes\n", bytesread);
 
 					memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
 		       	    offset+=bytesread;
@@ -481,6 +480,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		        	}
     	    			    }
     	   	   	   }
+    	   fprintf(stdout,"sum of %d bytes read\n", offset);
+
     		}
 
 
