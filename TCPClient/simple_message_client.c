@@ -496,6 +496,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    						parseposition+=filelength;
 
     	   	   			}
+    	   	   	   	   }
     	   	   newend+=READ_BUF_SIZE;
     		}
 
