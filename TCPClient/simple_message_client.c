@@ -415,7 +415,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     /* perform reading */
 
-    while (bytesread=!0){
+    while (bytesread!=0){
 
     	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))<=READ_BUF_SIZE)){
     		if (bytesread==-1){
