@@ -432,7 +432,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     		}
 
 
-		fprintf(stdout,"FR OK\n", bytesread);
+		fprintf(stdout,"FR OK\n");
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
@@ -441,7 +441,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			return -1;
     	   		}
 
-   		fprintf(stdout,"Parse OK\n", bytesread);
+   		fprintf(stdout,"Parse OK\n");
 
     	   else {
    			/* converting to numeric */
