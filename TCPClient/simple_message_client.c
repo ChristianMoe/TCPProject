@@ -403,7 +403,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		 	char fi_length[10]={0};
 
     	int offset=0;
-    	int newend=READ_BUF_SIZE
+    	int newend=READ_BUF_SIZE;
     	ssize_t bytesread=1;
     	int retparse=0;
 
