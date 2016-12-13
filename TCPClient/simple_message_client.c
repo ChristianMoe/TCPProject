@@ -397,7 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		/* test*/
 		/* for parsing subroutine */
-			size_t *parseposition=0;
+			size_t parseposition=0;
 		/* for file writing and parsing subroutine */
 		 	char filename[FN_MAX]={0};
 		 	char fi_length[10]={0};
@@ -436,7 +436,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
-    	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
+    	   if ((retparse=parsebuffer(readbuffer, &parseposition, filename, fi_length, verbose))==-1){
     		   free(tmp_readbuffer);
     			return -1;
     	   		}
@@ -452,7 +452,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
-    		   while (offset<=(*parseposition+filelength)){
+    		   while (offset<=(parseposition+filelength)){
 						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
@@ -472,7 +472,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		    	}
     	    		/* writing file up to MAX_FILE_SIZE */
     	    			else{
-    	    	            if ((writefile(readbuffer, *parseposition, filename, *fi_length, verbose))==-1){
+    	    	            if ((writefile(readbuffer, &parseposition, filename, *fi_length, verbose))==-1){
     	    	            	return -1;
     	    		        	}
     	    			    }
@@ -516,7 +516,6 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char
 			}
 	    else{
 	    	pos_file+=strlen("file=");
-	    	fprintf(stdout,"Filename found\n");
 			if((pos_end=strstr(pos_file,"\n"))==NULL){
 				fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 				return -1;
