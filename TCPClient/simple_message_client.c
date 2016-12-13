@@ -39,6 +39,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose);
 int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
 int readandthrowaway(int *socketdescriptor, int amount, int verbose);
+int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -418,7 +419,12 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     /* perform reading */
 
-    while (bytesread!=0){
+    	readtillEOL(readbuffer,socketdescriptor,verbose);
+
+
+
+
+    	while (bytesread!=0){
 
     	while (offset<=newend){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
@@ -616,6 +622,36 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 	return offset;
 
 }
+
+
+
+
+
+int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
+
+	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
+	int offset=0;
+
+	while (strstr(readbuffer)==NULL){
+    		bytesread=read(*socketdescriptor,tmp_readbuffer,1);
+    		if (bytesread==-1){
+    			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
+    			free (tmp_readbuffer);
+    			return -1;
+    			}
+    		if (bytesread==0) break;
+            memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+       	    offset+=bytesread;
+			}
+
+	if (verbose==TRUE){
+		fprintf(stdout,"%s [%s, %s(), line %d]: Readline: %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
+		}
+	return 0;
+
+}
+
+
 
 
 
