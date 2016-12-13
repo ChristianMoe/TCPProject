@@ -512,8 +512,8 @@ int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *fi
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
-	    char tmp_filename[FN_MAX];
-	    char tmp_length[10];
+	    char tmp_filename[FN_MAX]={""];
+	    char tmp_length[10]={""];
 
 	/* start of logic for subroutine */
 
