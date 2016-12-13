@@ -36,7 +36,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char *file_length, int verbose);
+int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose);
 int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
 
 /*
@@ -397,7 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		/* test*/
 		/* for parsing subroutine */
-			size_t parseposition=0;
+			int parseposition=0;
 		/* for file writing and parsing subroutine */
 		 	char filename[FN_MAX]={0};
 		 	char fi_length[10]={0};
@@ -436,13 +436,14 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
-    	   if ((retparse=parsebuffer(readbuffer, &parseposition, filename, fi_length, verbose))==-1){
+    	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
     		   free(tmp_readbuffer);
     			return -1;
     	   		}
 
     	   else {
    			/* converting to numeric */
+    		   parseposition=retparse;
     		   fprintf(stdout,"Parse OK\n");
     		   char **endptr=malloc(10);
    				if (endptr==NULL){
@@ -499,7 +500,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
  *
  */
 
-int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char *file_length, int verbose){
+int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
