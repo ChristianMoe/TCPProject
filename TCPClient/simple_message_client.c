@@ -400,7 +400,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			size_t parseposition=0;
 		/* for file writing and parsing subroutine */
 		 	char filename[FN_MAX]={0};
-		 	int *fi_length=0;
+		 	size_t *fi_length=0;
 
 		 size_t difftoread=0;
     	size_t offset=0;
