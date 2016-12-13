@@ -403,6 +403,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		 	char fi_length[10]={0};
 
     	int offset=0;
+    	int newend=READ_BUF_SIZE
     	ssize_t bytesread=1;
     	int retparse=0;
 
@@ -417,7 +418,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     while (bytesread!=0){
 
-    	while (offset<=READ_BUF_SIZE){
+    	while (offset<=newend){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
     		fprintf(stdout,"read %d bytes\n", bytesread);
          		if (bytesread==-1){
@@ -480,7 +481,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		        	}
     	    			    }
     	   	   	   }
-    	   fprintf(stdout,"sum of %d bytes read\n", offset);
+    	   	   newend+=READ_BUF_SIZE;
+
 
     		}
 
