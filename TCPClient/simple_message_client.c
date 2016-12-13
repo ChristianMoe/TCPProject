@@ -443,7 +443,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
    					return -1;
    					}
-   				long int filelength=strtol(tmp_length, endptr, 10);
+   				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
     		   while (offset<=(*parseposition+filelength)){
@@ -459,7 +459,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		    		}
 
     	    		/* writing file up to MAX_FILE_SIZE */
-    	    		    if (*fi_length>=MAX_FILE_SIZE){
+    	    		    if (filelength>=MAX_FILE_SIZE){
     	    			    if (verbose==TRUE){
     	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
     	    			    	}
