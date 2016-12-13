@@ -459,6 +459,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    			    }
     	   	   	   }
     		}
+		}
     free (tmp_readbuffer); /* no longer needed resource */
 	return parseposition; /*returns bytes read upon success*/
 }
