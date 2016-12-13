@@ -417,7 +417,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     while (bytesread!=0){
 
-    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))<=READ_BUF_SIZE)){
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))<=READ_BUF_SIZE){
     		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
