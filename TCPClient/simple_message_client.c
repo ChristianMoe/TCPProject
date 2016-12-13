@@ -431,12 +431,12 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	/* calling subroutines for parsing and writing and managing failure case */
 
     	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
-    		   free(tmp_readbuffer)
+    		   free(tmp_readbuffer);
     			return -1;
     	   		}
     	   else {
     		    while (offset<=(parseposition+*fi_length)){
-						bytesread=read(*socketdescriptor,tmp_readbuffer,1));
+						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
 							free (tmp_readbuffer);
@@ -449,7 +449,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		/* writing file up to MAX_FILE_SIZE */
     	    		    if (*fi_length>=MAX_FILE_SIZE){
     	    			    if (verbose==TRUE){
-    	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
+    	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
     	    			    	}
     	    		    	}
     	    		/* writing file up to MAX_FILE_SIZE */
