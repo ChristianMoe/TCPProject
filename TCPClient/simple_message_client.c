@@ -430,6 +430,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
        	    offset+=bytesread;
     		}
 
+    	fprintf(stdout,"First read OK");
+
     	/* calling subroutines for parsing and writing and managing failure case */
 
     	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
