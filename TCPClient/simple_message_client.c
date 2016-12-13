@@ -402,7 +402,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		 	char filename[FN_MAX]={0};
 		 	size_t *fi_length=0;
 
-		 size_t difftoread=0;
     	size_t offset=0;
     	ssize_t bytesread=1;
     	int retparse=0;
@@ -461,7 +460,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	   	   	   }
     		}
 		}
-    free (tmp_readbuffer); /* no longer needed resource */
 	return parseposition; /*returns bytes read upon success*/
 }
 
