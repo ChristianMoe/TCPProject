@@ -441,11 +441,10 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			return -1;
     	   		}
 
-   		fprintf(stdout,"Parse OK\n");
-
     	   else {
    			/* converting to numeric */
-    		   	char **endptr=malloc(10);
+    		   fprintf(stdout,"Parse OK\n");
+    		   char **endptr=malloc(10);
    				if (endptr==NULL){
    					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
    					return -1;
