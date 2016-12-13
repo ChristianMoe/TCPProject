@@ -397,7 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		/* test*/
 		/* for parsing subroutine */
-			size_t parseposition=0;
+			size_t *parseposition=0;
 		/* for file writing and parsing subroutine */
 		 	char filename[FN_MAX]={0};
 		 	size_t *fi_length=0;
@@ -405,6 +405,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		 size_t difftoread=0;
     	size_t offset=0;
     	ssize_t bytesread=1;
+    	int retparse=0;
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
@@ -429,7 +430,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
-    	   if ((parseposition=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
+    	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
     		   free(tmp_readbuffer)
     			return -1;
     	   		}
