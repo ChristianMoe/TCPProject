@@ -400,7 +400,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			size_t *parseposition=0;
 		/* for file writing and parsing subroutine */
 		 	char filename[FN_MAX]={0};
-		 	size_t *fi_length=0;
+		 	char fi_length[10]={0};
 
     	size_t offset=0;
     	ssize_t bytesread=1;
@@ -438,7 +438,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	   else {
    			/* converting to numeric */
-   				endptr=malloc ((int)(pos_end-pos_file+1));
+    		   	char **endptr=malloc(10);
    				if (endptr==NULL){
    					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
    					return -1;
@@ -498,7 +498,6 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
-	    char **endptr=NULL;
 	    char tmp_filename[FN_MAX];
 	    char tmp_length[10];
 
