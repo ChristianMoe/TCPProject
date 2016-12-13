@@ -464,7 +464,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     		}
 
 
-	return parseposition; /*returns bytes read upon success*/
+	return offset; /*returns bytes read upon success*/
 }
 
 /**
@@ -547,7 +547,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 				}
 	    	}
 
-	    *i_parseposition=(i_parseposition+(pos_end-bufferstart)+1);
+	    *i_parseposition=(*i_parseposition+(pos_end-bufferstart)+1);
 	    memcpy(*file_name,tmp_filename,sizeof(tmp_filename);
 	    memcpy(*file_length,(size_t)filelength,sizeof(filelength));
 
