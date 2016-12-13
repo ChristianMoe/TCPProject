@@ -441,7 +441,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     			return -1;
     	   		}
 
-    	   else {
+    	   if (retparse>0) {
    			/* converting to numeric */
     		   parseposition=retparse;
     		   fprintf(stdout,"Parse OK - parseposition ist %d \n", parseposition);
