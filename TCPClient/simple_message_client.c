@@ -402,7 +402,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		 	char filename[FN_MAX]={0};
 		 	char fi_length[10]={0};
 
-    	size_t offset=0;
+    	int offset=0;
     	ssize_t bytesread=1;
     	int retparse=0;
 
@@ -453,7 +453,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
-    		   while (offset<=((size_t)parseposition+filelength)){
+    		   while (offset<=(parseposition+filelength)){
 						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
@@ -461,7 +461,10 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 							return -1;
 		    				}
 						if (bytesread==0) break;
-		            memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+
+						fprintf(stdout,"read %d bytes\n", bytesread);
+
+					memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
 		       	    offset+=bytesread;
 		    		}
 
