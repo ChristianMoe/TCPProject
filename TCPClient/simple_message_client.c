@@ -473,7 +473,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		    	}
     	    		/* writing file up to MAX_FILE_SIZE */
     	    			else{
-    	    	            if ((writefile(readbuffer, &parseposition, filename, *fi_length, verbose))==-1){
+    	    	            if ((writefile(readbuffer, parseposition, filename, *fi_length, verbose))==-1){
     	    	            	return -1;
     	    		        	}
     	    			    }
@@ -511,7 +511,7 @@ int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *fi
 	/* start of logic for subroutine */
 
 	/* search for "file=" in substring */
-	    if((pos_file=strstr((bufferstart+*i_parseposition),"file="))==NULL){
+	    if((pos_file=strstr((bufferstart+i_parseposition),"file="))==NULL){
 			fprintf(stdout,"%s [%s, %s(), line %d]: No filename found in Server response! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return 0;
 			}
@@ -554,11 +554,10 @@ int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *fi
 				}
 	    	}
 
-	    *i_parseposition=(*i_parseposition+(pos_end-bufferstart)+1);
 	    memcpy(file_name,tmp_filename,sizeof(tmp_filename));
 	    memcpy(file_length,tmp_length,sizeof(tmp_length));
 
-	return 1; /*return 1 on filename found*/
+	return (i_parseposition+(pos_end-bufferstart)+1);
 }
 
 /**
