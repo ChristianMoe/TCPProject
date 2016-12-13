@@ -456,7 +456,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
-   				diffmissing=(parseposition+filelength)-offset
+   				diffmissing=(parseposition+filelength)-offset;
 
     		/* Comparing filelength to MAX_FILE_SIZE */
 	    		    if (filelength>=MAX_FILE_SIZE){
