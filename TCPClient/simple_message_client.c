@@ -490,7 +490,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 	    char *pos_end=NULL;
 	    char **endptr=NULL;
 	    char tmp_filename[FN_MAX];
-	    long int *filelength=0;
+	    long int filelength=0;
 
 	/* start of logic for subroutine */
 
@@ -540,7 +540,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
 					return -1;
 					}
-				*filelength=strtol(tmp_length, endptr, 10);
+				filelength=strtol(tmp_length, endptr, 10);
 				free(endptr);
 				if (verbose==TRUE){
 					fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
