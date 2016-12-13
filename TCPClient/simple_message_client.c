@@ -395,6 +395,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			return -1;
 			}
 
+		/* test*/
 		/* for parsing subroutine */
 			size_t parseposition=0;
 		/* for file writing and parsing subroutine */
