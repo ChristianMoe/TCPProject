@@ -429,7 +429,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
     	/* calling subroutines for parsing and writing and managing failure case */
 
-    	   if ((parseposition=parsebuffer(readbuffer, parseposition, &filename, fi_length, verbose))==-1){
+    	   if ((parseposition=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
     		   free(tmp_readbuffer)
     			return -1;
     	   		}
