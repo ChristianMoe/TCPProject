@@ -548,7 +548,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 	    	}
 
 	    *i_parseposition=(*i_parseposition+(pos_end-bufferstart)+1);
-	    memcpy(*file_name,tmp_filename,sizeof(tmp_filename);
+	    memcpy(*file_name,*tmp_filename,sizeof(tmp_filename);
 	    memcpy(*file_length,(size_t)filelength,sizeof(filelength));
 
 	return 1; /*return 1 on filename found*/
