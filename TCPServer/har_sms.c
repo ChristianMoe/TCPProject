@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 //    my_addr.sa_family = AF_INET;
     my_addr.sin_family = AF_INET;
  //   strncpy(my_addr.sun_path, MY_SOCK_PATH, sizeof(my_addr.sun_path) - 1);
-   ?? strncpy(my_addr.sin_path, MY_SOCK_PATH, sizeof(my_addr.sun_path) - 1);
+  ? ?? strncpy(my_addr.sin_path, MY_SOCK_PATH, sizeof(my_addr.sun_path) - 1);
 
     if (bind(sock_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_un)) == -1)
         handle_error("bind");
