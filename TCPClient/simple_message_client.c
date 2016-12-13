@@ -453,7 +453,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
    				long int filelength=strtol(fi_length, endptr, 10);
    				free(endptr);
 
-    		   while (offset<=(parseposition+filelength)){
+    		   while (offset<=((size_t)parseposition+filelength)){
 						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
 						if (bytesread==-1){
 							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
