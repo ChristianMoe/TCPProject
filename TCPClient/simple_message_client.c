@@ -544,8 +544,8 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, size
 	    	}
 
 	    *i_parseposition=(i_parseposition+(pos_end-bufferstart)+1);
-	    *file_name=tmp_filename;
-		*file_length=(size_t) tmp_length;
+	    *file_name=*tmp_filename;
+		*file_length=(size_t) *tmp_length;
 
 	return 1; /*return 1 on filename found*/
 }
