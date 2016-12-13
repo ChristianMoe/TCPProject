@@ -454,7 +454,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    		    	}
     	    		/* writing file up to MAX_FILE_SIZE */
     	    			else{
-    	    	            if ((writefile(readbuffer, parseposition, filename, *fi_length, verbose))==-1){
+    	    	            if ((writefile(readbuffer, *parseposition, filename, *fi_length, verbose))==-1){
     	    	            	return -1;
     	    		        	}
     	    			    }
