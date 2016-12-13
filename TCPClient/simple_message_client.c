@@ -462,8 +462,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	    			    }
     	   	   	   }
     		}
-}
-}
+
+
 	return parseposition; /*returns bytes read upon success*/
 }
 
