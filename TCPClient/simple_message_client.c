@@ -516,7 +516,7 @@ int parsebuffer(char *bufferstart,size_t *i_parseposition, char *file_name, char
 			}
 	    else{
 	    	pos_file+=strlen("file=");
-
+	    	fprintf(stdout,"Filename found\n");
 			if((pos_end=strstr(pos_file,"\n"))==NULL){
 				fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 				return -1;
