@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+//#include <arpa/inet.h> /* include for function inet_ntop()
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
@@ -36,8 +37,8 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose);
-int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose);
+int parsebuffer(char *bufferstart,int offset, int verbose);
+int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -45,7 +46,6 @@ int writefile(char *bufferstart, size_t offset, char *filename, int filelength, 
 #define MAX_BUF_SIZE 1074000000
 #define READ_BUF_SIZE 1024
 #define MAX_FILE_SIZE 10000000
-#define FN_MAX 256
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -116,6 +116,8 @@ int main(int argc, const char * argv[]) {
 		/* for reading from server */
 			char *readbuffer=NULL;
 			int bytesread=0;
+		/* for parsing subroutine */
+		 	int offset=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -223,6 +225,17 @@ int main(int argc, const char * argv[]) {
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
 		   	}
 
+	/* calling subroutines for parsing and writing and managing failure case */
+        while (offset<bytesread){
+        	if ((offset=parsebuffer(readbuffer, offset, verbose))==-1){
+        		if (close (*socketdescriptor)!=0){
+        			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
+					}
+        		free(socketdescriptor);
+        		free(readbuffer);
+        		exit(EXIT_FAILURE);
+				}
+        	}
 
 	/*finally free resources */
         if (close (*socketdescriptor)!=0){
@@ -381,7 +394,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
  * \param socketdescriptor the connected socket to send the data to
  * \param verbose tells whether to be verbose
  *
- * \retval bytes read upon success
+ * \retval 0 on success
  * \retval -1 on error
  *
  */
@@ -395,99 +408,35 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			return -1;
 			}
 
-		/* test*/
-		/* for parsing subroutine */
-			int parseposition=0;
-		/* for file writing and parsing subroutine */
-		 	char filename[FN_MAX]={0};
-		 	char fi_length[10]={0};
-
-    	int offset=0;
-    	int newend=READ_BUF_SIZE;
-    	ssize_t bytesread=1;
-    	int retparse=0;
+    	size_t offset=0;
+    	ssize_t bytesread=0;
 
     /* start of logic for subroutine */
     	strcpy(readbuffer,"");
 
     	if (verbose==TRUE){
-   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Start reading from socket ...\n" ,argv0,__FILE__, __func__ ,__LINE__);
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Starting reading from socket ...\n" ,argv0,__FILE__, __func__ ,__LINE__);
 		   	}
 
     /* perform reading */
-
-    while (bytesread!=0){
-
-    	while (offset<=newend){
-    		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
-    		fprintf(stdout,"read %d bytes\n", bytesread);
-         		if (bytesread==-1){
+    	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
+    		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
     			return -1;
     			}
-    		if (bytesread==0) break;
 
-            memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
+       	/* check whether received message is exceeding maximum size */
+       	    if ((offset+bytesread)>MAX_BUF_SIZE){
+       	    	fprintf(stdout,"%s [%s, %s(), line %d]: Server Reply exceeded Maximum Limit of %d bytes. Data may be lost.\n" ,argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+    			free (tmp_readbuffer);
+    			return -1;
+       	    	}
+       	    memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
     		}
 
-
-		fprintf(stdout,"FR OK\n");
-
-    	/* calling subroutines for parsing and writing and managing failure case */
-
-    	   if ((retparse=parsebuffer(readbuffer, parseposition, filename, fi_length, verbose))==-1){
-    		   free(tmp_readbuffer);
-    			return -1;
-    	   		}
-
-    	   if (retparse>0) {
-   			/* converting to numeric */
-    		   parseposition+=retparse;
-    		   fprintf(stdout,"Parse OK - parseposition ist %d \n", parseposition);
-    		   char **endptr=malloc(10);
-   				if (endptr==NULL){
-   					fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
-   					return -1;
-   					}
-   				long int filelength=strtol(fi_length, endptr, 10);
-   				free(endptr);
-
-    		   while (offset<=(parseposition+filelength)){
-						bytesread=read(*socketdescriptor,tmp_readbuffer,1);
-						if (bytesread==-1){
-							fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
-							free (tmp_readbuffer);
-							return -1;
-		    				}
-						if (bytesread==0) break;
-
-
-					memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
-		       	    offset+=bytesread;
-		    		}
-
-    	    		/* writing file up to MAX_FILE_SIZE */
-    	    		    if (filelength>=MAX_FILE_SIZE){
-    	    			    if (verbose==TRUE){
-    	    			    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
-    	    			    	}
-    	    		    	}
-    	    		/* writing file up to MAX_FILE_SIZE */
-    	    			else{
-    	    	            if ((writefile(readbuffer, parseposition, filename, filelength, verbose))==-1){
-    	    	            	return -1;
-    	    		        	}
-    	    	            parseposition+=filelength;
-    	    				}
-    	   	   	   }
-    	   	   newend+=READ_BUF_SIZE;
-
-
-    		}
-
-
+    free (tmp_readbuffer); /* no longer needed resource */
 	return offset; /*returns bytes read upon success*/
 }
 
@@ -498,75 +447,88 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
  * Subroutine that tries to parse the received string and calls write subroutine upon successful parsing
  *
  * \param readbuffer the message string read from server
- * \param i_parseposition the value to create flexible pointer to buffer
+ * \param i_offset the value to create flexible pointer to buffer
  * \param verbose tells whether to be verbose
  *
- * \retval 1 on filename found
- * \retval 0 on filename or length not found
+ * \retval 0 on success
  * \retval -1 on error
  *
  *
  */
 
-
-int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *file_length, int verbose){
+int parsebuffer(char *bufferstart, int i_offset, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
-	    char tmp_filename[FN_MAX]={""];
-	    char tmp_length[10]={""];
+	    char **endptr=NULL;
 
 	/* start of logic for subroutine */
 
 	/* search for "file=" in substring */
-	    if((pos_file=strstr((bufferstart+i_parseposition),"file="))==NULL){
+	    if((pos_file=strstr((bufferstart+i_offset),"file="))==NULL){
 			fprintf(stdout,"%s [%s, %s(), line %d]: No filename found in Server response! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-			return 0;
+			return MAX_BUF_SIZE; /* high return value to get out of subroutine queue */
 			}
-	    else{
-	    	pos_file+=strlen("file=");
-			if((pos_end=strstr(pos_file,"\n"))==NULL){
-				fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-				return -1;
-				}
+	    pos_file+=strlen("file=");
 
-		/* copying value to new string */
-			memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
-			tmp_filename[strlen(tmp_filename)]='\0';
+		if((pos_end=strstr(pos_file,"\n"))==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
 
-			if (verbose==TRUE){
-				fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
+	/* copying value to new string */
+		char tmp_filename[(size_t)(pos_end-pos_file+1)];
+		memcpy(tmp_filename,pos_file,(size_t)(pos_end-pos_file));
+		tmp_filename[strlen(tmp_filename)]='\0';
+
+	    if (verbose==TRUE){
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: Filename %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
 	    			}
 
-		/* search for "len=" in substring */
-			if((pos_file=strstr(pos_end,"len="))==NULL){
-				fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-				return 0;
-				}
-			else{
+	/* search for "len=" in substring */
+		if((pos_file=strstr(pos_end,"len="))==NULL){
+	   		fprintf(stderr,"%s [%s, %s(), line %d]: String \"len=\" not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   		return 0;
+	   		}
+		pos_file+=strlen("len=");
 
-				pos_file+=strlen("len=");
+	    if((pos_end=strstr(pos_file,"\n"))==NULL){
+	    	fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
+	   		return -1;
+	   		}
 
-				if((pos_end=strstr(pos_file,"\n"))==NULL){
-					fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
-					return -1;
-					}
+	/* copying value to new string */
+		char tmp_length[(size_t)(pos_end-pos_file+1)];
+        memcpy(tmp_length,pos_file,(size_t)(pos_end-pos_file));
+        tmp_length[strlen(tmp_length)-1]='\0';
 
-			/* copying value to new string */
-				memcpy(tmp_length,pos_file,(size_t)(pos_end-pos_file)+1);
-				tmp_length[strlen(tmp_length)-1]='\0';
-
-				if (verbose==TRUE){
-					fprintf(stdout,"%s [%s, %s(), line %d]: File length %s parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_length);
-					}
-				}
+    /* converting to numeric */
+		endptr=malloc ((int)(pos_end-pos_file+1));
+		if (endptr==NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+			return -1;
+			}
+		long int filelength=strtol(tmp_length, endptr, 10);
+	    free(endptr);
+	    if (verbose==TRUE){
+	    	fprintf(stdout,"%s [%s, %s(), line %d]: File length %d parsed! \n" ,argv0,__FILE__, __func__ ,__LINE__,(int)filelength);
 	    	}
+    /* writing file up to MAX_FILE_SIZE */
+	    if (filelength>=MAX_FILE_SIZE){
+		    if (verbose==TRUE){
+		    	fprintf(stdout,"%s [%s, %s(), line %d]: Skipping to write %s because of exceeding file size! \n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_filename);
+		    	}
+	    	}
+	/* writing file up to MAX_FILE_SIZE */
+		else{
+            if (writefile(++pos_end, tmp_filename, (int)filelength, verbose)==-1){
+            	return -1;
+	        	}
+		    }
 
-	    memcpy(file_name,tmp_filename,sizeof(tmp_filename));
-	    memcpy(file_length,tmp_length,sizeof(tmp_length));
+	return (i_offset+(pos_end-bufferstart)+filelength); /*return offset for next read*/
 
-	return (i_parseposition+(pos_end-bufferstart)+1);
 }
 
 /**
@@ -585,7 +547,7 @@ int parsebuffer(char *bufferstart,int i_parseposition, char *file_name, char *fi
  *
  */
 
-int writefile(char *bufferstart, size_t offset, char *filename, int filelength, int verbose){
+int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 
 	/* support variables for reading */
 		size_t char_written=0;
@@ -603,7 +565,7 @@ int writefile(char *bufferstart, size_t offset, char *filename, int filelength, 
 			}
 	/* perform writing to file */
 	    while ((int)char_written_sum<(int)filelength){
-	    	char_written=fwrite((bufferstart+offset), sizeof(char), filelength ,write_fd);
+	    	char_written=fwrite(bufferstart, sizeof(char), filelength ,write_fd);
 	    	if ((char_written==0)&&(ferror(write_fd))){
 	    		fprintf(stderr,"%s [%s, %s(), line %d]: Write to %s failed !\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
 	            fclose(write_fd);
