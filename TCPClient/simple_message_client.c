@@ -602,7 +602,6 @@ int readtillFIN(int *socketdescriptor, int verbose){
 	ssize_t bytesread=0;
 
 	while ((bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE))!=0){
-    		fprintf(stdout,"read %d bytes\n", bytesread);
          	if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
