@@ -538,7 +538,7 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 	int offset=0;
 	ssize_t bytesread=0;
 	int rest=0;
-	int maxread=0;
+	int maxread=READ_BUF_SIZE;
 
 	rest=amount; /* rest of bytes to read in */
 
@@ -635,7 +635,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 	int offset=0;
 	ssize_t bytesread=0;
 	int rest=0;
-	int maxread=0;
+	int maxread=READ_BUF_SIZE;
 
 	rest=amount;
 
