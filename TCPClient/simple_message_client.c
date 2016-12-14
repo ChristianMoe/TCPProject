@@ -202,7 +202,7 @@ int main(int argc, const char * argv[]) {
 			fprintf(stdout,"%s [%s, %s(), line %d]: Shutdown SHUT_WR successful! \n",argv0,__FILE__, __func__ ,__LINE__);
             }
 
-	/* calling subroutine for reading message from server and managing failure case */
+	/* calling subroutine for reading message and parsing from server and managing failure case */
 		readbuffer=malloc(MAX_BUF_SIZE);
 		if (readbuffer==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
@@ -221,11 +221,6 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
-
-    	if (verbose==TRUE){
-   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Total of %d bytes read from server!\n" ,argv0,__FILE__, __func__ ,__LINE__,bytesread);
-		   	}
-
 
 	/*finally free resources */
         if (close (*socketdescriptor)!=0){
@@ -564,6 +559,7 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 		fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read and thrown away! \n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
 		}
 
+	free(tmp_readbuffer);
 	return offset; /* return bytes read from socket on success */
 
 }
@@ -588,6 +584,7 @@ int readtillFIN(int *socketdescriptor, int verbose){
 		fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read and not saved till FIN! \n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
 		}
 
+	free(tmp_readbuffer);
 	return offset; /* return bytes read from socket on success */
 
 }
@@ -618,6 +615,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 	if (verbose==TRUE){
 		fprintf(stdout,"%s [%s, %s(), line %d]: Readline: %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
 		}
+	free(tmp_readbuffer);
 	return offset; /*return bytes read into buffer on success*/
 
 }
@@ -649,7 +647,6 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 		fprintf(stdout,"%s [%s, %s(), line %d]: Read %d bytes into buffer. \n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
 		}
 	free(tmp_readbuffer);
-
 	return offset; /* return bytes read into buffer on success */
 
 }
