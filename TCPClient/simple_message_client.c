@@ -25,7 +25,6 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
-#include <limits.h>
 
 #include <simple_message_client_commandline_handling.h> /* Include external Parser Functions */
 
@@ -36,7 +35,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *readbuffer, char *returnvalue, char pattern, int verbose);
+int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 int readandthrowaway(int *socketdescriptor, int amount, int verbose);
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose);
@@ -398,6 +397,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	long int filelength=0;
     	int amountread=1;
     	int parselength=0;
+
 	/* logic */
 
 		readtillEOL(readbuffer,socketdescriptor,verbose);
@@ -483,7 +483,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
  */
 
 
-int parsebuffer(char *readbuffer, char *returnvalue, const pattern, int verbose){
+int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
@@ -582,8 +582,6 @@ int readtillFIN(int *socketdescriptor, int verbose){
 	return offset; /* return bytes read from socket on success */
 
 }
-
-
 
 
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
