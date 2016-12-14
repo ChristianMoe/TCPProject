@@ -350,7 +350,6 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 	/* variables for sending */
 		int len = 0;
 		int byteswritten = 0;
-		size_t len_check= 0;
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
