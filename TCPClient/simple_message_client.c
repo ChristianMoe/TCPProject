@@ -45,7 +45,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 1074000000
+#define MAX_BUF_SIZE 10000000
 #define READ_BUF_SIZE 1024
 #define MAX_FILE_SIZE 10000000
 #define FN_MAX 256
@@ -203,7 +203,7 @@ int main(int argc, const char * argv[]) {
             }
 
 	/* calling subroutine for reading message and parsing from server and managing failure case */
-		readbuffer=malloc(MAX_BUF_SIZE);
+		readbuffer=malloc(MAX_FILE_SIZE);
 		if (readbuffer==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
 			if (close (*socketdescriptor)!=0){
@@ -596,7 +596,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 	int offset=0;
 	ssize_t bytesread=0;
 
-	memset(readbuffer,'\0',MAX_BUF_SIZE);
+	memset(readbuffer,'\0',MAX_FILE_SIZE);
 
 	while (strstr(readbuffer,"\n")==NULL){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,1);
