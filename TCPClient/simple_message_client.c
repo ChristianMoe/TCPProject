@@ -36,11 +36,12 @@ int connectsocket(const char *server,const char *port, int *socketdescriptor, in
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
 int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose);
-int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 int readandthrowaway(int *socketdescriptor, int amount, int verbose);
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose);
 int readtillFIN(int *socketdescriptor, int verbose);
 int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose);
+int writefile(char *bufferstart, char *filename, int filelength, int verbose);
+
 
 /*
  * -------------------------------------------------------------- defines --
@@ -54,36 +55,6 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose);
  * -------------------------------------------------------------- global resource variables --
  */
 const char* argv0; /* necessary for verbose for not handing parameter to every function */
-
-/**
- *
- * \brief The usageinfo for the Client
- *
- * This subroutine prints the usageinfo for the client and exits
- *
- * \param outputdevice the outputdevice for usage message
- * \param filename the file for which the usage info is valid
- * \param suc_or_fail the exit status
- *
- * \return void
- * \retval none
- *
- */
-
-static void usageinfo(FILE *outputdevice, const char *filename, int status) {
-
-	fprintf(outputdevice, "usage: %s options\n", filename);
-	fprintf(outputdevice,"options:\n");
-	fprintf(outputdevice,"	-s, --server <server>   full qualified domain name or IP address of the server\n");
-	fprintf(outputdevice,"	-p, --port <port>       well-known port of the server [0..65535]\n");
-	fprintf(outputdevice,"	-u, --user <name>       name of the posting user\n");
-	fprintf(outputdevice,"	-i, --image <URL>       URL pointing to an image of the posting user\n");
-	fprintf(outputdevice,"	-m, --message <message> message to be added to the bulletin board\n");
-	fprintf(outputdevice,"	-v, --verbose           verbose output\n");
-	fprintf(outputdevice,"	-h, --help\n");
-
-	exit(status);
-}
 
 
 /**
@@ -116,9 +87,10 @@ int main(int argc, const char * argv[]) {
 			char *sendmessage = NULL;
 		/* for connecting the socket */
 			int *socketdescriptor=NULL; /* pointer to socket descriptor for subroutine*/
+		/* for writing the socket */
+			int byteswritten=0;
 		/* for reading from server */
 			char *readbuffer=NULL;
-			int bytesread=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -179,13 +151,21 @@ int main(int argc, const char * argv[]) {
 			}
 
 	/* calling subroutine for sending message to server and managing failure case */
-		if (sendingmessage(sendmessage, socketdescriptor, verbose)==-1){
+		byteswritten=sendingmessage(sendmessage, socketdescriptor, verbose);
+
+		if (byteswritten==-1){
+			free(sendmessage);
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
 			free(socketdescriptor);
 		 	exit(EXIT_FAILURE);
 			}
+
+		if (verbose==TRUE){
+			fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes sent to server! \n",argv0,__FILE__, __func__ ,__LINE__,byteswritten);
+            }
+
 		free(sendmessage); /*resource no longer needed*/
 
 	/* shutdown Write from Client side and manage failure case */
@@ -213,7 +193,7 @@ int main(int argc, const char * argv[]) {
 			exit(EXIT_FAILURE);
 			}
 
-		if ((bytesread=readingmessage(readbuffer, socketdescriptor, verbose))==-1){
+		if ((readingmessage(readbuffer, socketdescriptor, verbose))==-1){
 			if (close (*socketdescriptor)!=0){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to close socket! \n",argv0,__FILE__, __func__ ,__LINE__);
 				}
@@ -221,6 +201,7 @@ int main(int argc, const char * argv[]) {
 			free(readbuffer);
 			exit(EXIT_FAILURE);
 			}
+
 
 	/*finally free resources */
         if (close (*socketdescriptor)!=0){
@@ -230,9 +211,44 @@ int main(int argc, const char * argv[]) {
 			fprintf(stdout,"%s [%s, %s(), line %d]: Socket closed - Connection to server successfully terminated! \n", argv[0],__FILE__, __func__ ,__LINE__);
 			}
 		free(socketdescriptor);
+		free(readbuffer);
 
 	return (EXIT_SUCCESS); /* 0 if execution was successful */
 }
+
+
+
+
+/**
+ *
+ * \brief The usageinfo for the Client
+ *
+ * This subroutine prints the usageinfo for the client and exits
+ *
+ * \param outputdevice the outputdevice for usage message
+ * \param filename the file for which the usage info is valid
+ * \param suc_or_fail the exit status
+ *
+ * \return void
+ * \retval none
+ *
+ */
+
+static void usageinfo(FILE *outputdevice, const char *filename, int status) {
+
+	fprintf(outputdevice, "usage: %s options\n", filename);
+	fprintf(outputdevice,"options:\n");
+	fprintf(outputdevice,"	-s, --server <server>   full qualified domain name or IP address of the server\n");
+	fprintf(outputdevice,"	-p, --port <port>       well-known port of the server [0..65535]\n");
+	fprintf(outputdevice,"	-u, --user <name>       name of the posting user\n");
+	fprintf(outputdevice,"	-i, --image <URL>       URL pointing to an image of the posting user\n");
+	fprintf(outputdevice,"	-m, --message <message> message to be added to the bulletin board\n");
+	fprintf(outputdevice,"	-v, --verbose           verbose output\n");
+	fprintf(outputdevice,"	-h, --help\n");
+
+	exit(status);
+}
+
 
 /**
  *
@@ -253,15 +269,13 @@ int main(int argc, const char * argv[]) {
 int connectsocket(const char* server,const char* port, int* socketdescriptor, int verbose){
 
 /* variables for socket */
-	struct addrinfo hints; /* struct for parameters for getaddrinfo*/
-	struct addrinfo *result, *rp;
+	struct addrinfo hints,*result, *respointer; /*parameters for getaddrinfo and socket/connect*/
 	int gea_ret; /* variable for getaddrinfo return */
 
 /* Obtain address matching host/port */
 	memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
 	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
 	hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
-	hints.ai_flags = 0;
 	hints.ai_protocol = 0;          /* Any protocol */
 
 /*
@@ -293,17 +307,17 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
          struct addrinfo *ai_next;
      }; */
 
-	for (rp = result; rp != NULL; rp = rp->ai_next) {
+	for (respointer = result; respointer != NULL; respointer = respointer->ai_next) {
 		/* socket()  creates  an endpoint for communication and returns a descriptor */
-		*socketdescriptor=socket(rp->ai_family, rp->ai_socktype,rp->ai_protocol);
+		*socketdescriptor=socket(respointer->ai_family, respointer->ai_socktype,respointer->ai_protocol);
 		if (*socketdescriptor == -1) continue;
         if (verbose==TRUE) fprintf(stdout,"%s [%s, %s(), line %d]: Socket successfully created!\n" ,argv0,__FILE__, __func__ ,__LINE__);
-        if (connect(*socketdescriptor, rp->ai_addr, rp->ai_addrlen) != -1)  break; /* Success */
+        if (connect(*socketdescriptor, respointer->ai_addr, respointer->ai_addrlen) != -1)  break; /* Success */
         close(*socketdescriptor);
         }
 
 	/* No address could be successfully connected */
-    if (rp == NULL) {
+    if (respointer == NULL) {
     	fprintf(stderr, "Could not connect to socket: %s\n", strerror(errno));
     	freeaddrinfo(result); 		/* result of getaddrinfo no longer needed */
     	return -1;			/* return failure to main */
@@ -327,7 +341,7 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
  * \param socketdescriptor the connected socket to send the data to
  * \param verbose tells whether to be verbose
  *
- * \retval 0 on success
+ * \retval byteswritten the amount of bytes written to server on success
  * \retval -1 on error
  *
  */
@@ -335,8 +349,8 @@ int connectsocket(const char* server,const char* port, int* socketdescriptor, in
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* variables for sending */
-		long int len = 0;
-		long int byteswritten = 0;
+		int len = 0;
+		int byteswritten = 0;
 		size_t len_check= 0;
 
 	/* start of logic for subroutine */
@@ -355,18 +369,18 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* sending message */
    	    while (byteswritten!=len) {
-   	    	len=write((int)*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
+   	    	len=write((*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
    	    	if (len==-1){
    	    		fprintf(stderr, "%s [%s, %s(), line %d]: Write failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
    	    		return -1;
    	    		}
-   	    	byteswritten+=(long int)len; /* counting the sum of written bytes */
+   	    	byteswritten+=len; /* counting the sum of written bytes */
    	    	}
    	    if (verbose==TRUE){
    	    	fprintf(stdout,"%s [%s, %s(), line %d]: Message sent to server!\n" ,argv0,__FILE__, __func__ ,__LINE__);
 		   }
 
-   	 return 0; /*return for successfully executed subroutine*/
+   	 return byteswritten; /*return for successfully executed subroutine*/
 }
 
 /**
@@ -414,8 +428,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			    }
 			filename=malloc(parselength);
 			strncpy(filename,returnvalue,parselength+1); /* copy value into filename */
-
-			fprintf(stdout,"check: %s, parselength %d",filename,parselength);
 
 		/* read and parse file length */
 			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
@@ -465,21 +477,21 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		if (readtillFIN(socketdescriptor,verbose)==-1) return -1;
 
-		return 0; /*returns 0 upon success*/
+	return 0; /*returns 0 upon success*/
 }
 
 /**
  *
- * \brief Parses and eventually call write subroutine
+ * \brief Parses character string
  *
- * Subroutine that tries to parse the received string and calls write subroutine upon successful parsing
+ * Subroutine that tries to parse the received for a pattern and returns a value
  *
  * \param readbuffer the message string read from server
- * \param i_parseposition the value to create flexible pointer to buffer
+ * \param returnvalue the return of the value field for further proceeding
+ * \param pattern the string for the field to search for
  * \param verbose tells whether to be verbose
  *
- * \retval 1 on filename found
- * \retval 0 on filename or length not found
+ * \retval characters in return value on successfully found pattern
  * \retval -1 on error
  *
  */
@@ -514,6 +526,7 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 				fprintf(stdout,"%s [%s, %s(), line %d]: Value %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,returnvalue);
 	    			}
 	    	}
+
 	return (int)(pos_end-pos_file); /* return amount of characters in tmp_return on success */
 
 }
@@ -523,13 +536,14 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
  *
  * \brief Reads from socket and throws data away
  *
- * Subroutine that tries to write a file
+ * Subroutine that tries read from socket and throws away the data
  *
  * \param socketdescriptor
  * \param amount the bytes to throw away
  * \param verbose tells whether to be verbose
  *
  * \retval bytes read and thrown away on success
+ * \retval 0 on end(FIN)
  * \retval -1 on error
  *
  */
@@ -571,6 +585,21 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 
 }
 
+
+/**
+ *
+ * \brief Reads from socket till the End
+ *
+ * Subroutine that tries read from socket till the end (FIN)
+ *
+ * \param socketdescriptor the socket connected to server
+ * \param verbose tells whether to be verbose
+ *
+ * \retval bytes read from socket
+ * \retval -1 on error
+ *
+ */
+
 int readtillFIN(int *socketdescriptor, int verbose){
 
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
@@ -597,6 +626,22 @@ int readtillFIN(int *socketdescriptor, int verbose){
 
 }
 
+
+/**
+ *
+ * \brief Reads from socket till the End of Line
+ *
+ * Subroutine that tries read from socket till the end of the line
+ *
+ * \param readbuffer the buffer for the read in data
+ * \param socketdescriptor the socket connected to server
+ * \param verbose tells whether to be verbose
+ *
+ * \retval bytes read from socket
+ * \retval 0 on end(FIN)
+ * \retval -1 on error
+ *
+ */
 
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 
@@ -629,6 +674,22 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 
 }
 
+/**
+ *
+ * \brief Reads X bytes from socket
+ *
+ * Subroutine that tries read a specified amount of bytes from socket
+ *
+ * \param readbuffer the buffer for the read in data
+ * \param socketdescriptor the socket connected to server
+ * \param amount the amount of bytes that should be read
+ * \param verbose tells whether to be verbose
+ *
+ * \retval bytes read from socket
+ * \retval 0 on end(FIN)
+ * \retval -1 on error
+ *
+ */
 
 
 int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
@@ -665,8 +726,6 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 	return offset; /* return bytes read into buffer on success */
 
 }
-
-
 
 
 /**
