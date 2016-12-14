@@ -490,7 +490,7 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 
-	    memset(returnalue,'\0',sizeof(returnvalue));
+	    memset(returnvalue,'\0',sizeof(returnvalue));
 	/* start of logic for subroutine */
 
 	/* search for "file=" in substring */
@@ -510,7 +510,7 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 			returnvalue[strlen(returnvalue)]='\0';
 
 			if (verbose==TRUE){
-				fprintf(stdout,"%s [%s, %s(), line %d]: Value %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,tmp_return);
+				fprintf(stdout,"%s [%s, %s(), line %d]: Value %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,returnvalue);
 	    			}
 
 	return (int)(pos_end-pos_file); /* return amount of characters in tmp_return on success */
@@ -536,6 +536,7 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
+	ssize_t bytesread=0;
 
 	while (offset<=amount){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
@@ -565,6 +566,7 @@ int readtillFIN(int *socketdescriptor, int verbose){
 
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
+	ssize_t bytesread=0;
 
 	while (bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE)!=0){
     		fprintf(stdout,"read %d bytes\n", bytesread);
@@ -589,6 +591,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
+	ssize_t bytesread=0;
 
 	while (strstr(readbuffer,"\n")==NULL){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,1);
@@ -618,6 +621,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
+	ssize_t bytesread=0;
 
 	while (offset<=amount){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
