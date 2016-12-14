@@ -637,7 +637,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 	int rest=0;
 	int maxread=0;
 
-	rest=amount
+	rest=amount;
 
 	while (rest>0){
 			if (rest<READ_BUF_SIZE) maxread=rest;
