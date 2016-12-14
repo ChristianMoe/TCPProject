@@ -405,6 +405,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		while(1){
 		/* read and parse filename */
+			fprintf(stdout,"in while...\n");
 			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
 				return -1;
 				}
