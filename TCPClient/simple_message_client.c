@@ -490,7 +490,7 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 	    char *pos_file=NULL;
 	    char *pos_end=NULL;
 
-	    memset(returnvalue,'\0',sizeof(returnvalue));
+	    memset(returnvalue,'\0',FN_MAX);
 	/* start of logic for subroutine */
 
 	/* search for "file=" in substring */
@@ -512,8 +512,9 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 			if (verbose==TRUE){
 				fprintf(stdout,"%s [%s, %s(), line %d]: Value %s parsed!\n" ,argv0,__FILE__, __func__ ,__LINE__,returnvalue);
 	    			}
-
+	    	}
 	return (int)(pos_end-pos_file); /* return amount of characters in tmp_return on success */
+
 }
 
 
