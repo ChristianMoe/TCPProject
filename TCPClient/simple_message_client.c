@@ -578,7 +578,8 @@ int readtillFIN(int *socketdescriptor, int verbose){
     			return -1;
     			}
             offset+=bytesread;
-    		}
+    		fprintf(stdout,"%s",(char*)tmp_readbuffer);
+			}
 
 	if (verbose==TRUE){
 		fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes read and not saved till FIN! \n" ,argv0,__FILE__, __func__ ,__LINE__,offset);
@@ -614,7 +615,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 			}
 
 	if (verbose==TRUE){
-		fprintf(stdout,"%s [%s, %s(), line %d]: readtillEOF returns value %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
+		fprintf(stdout,"%s [%s, %s(), line %d]: readtillEOL returns value %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
 		}
 	free(tmp_readbuffer);
 	return offset; /*return bytes read into buffer on success*/
