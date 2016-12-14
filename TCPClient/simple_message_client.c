@@ -558,7 +558,6 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 	while (rest>0){
     		if (rest<READ_BUF_SIZE) maxread=rest;
 			bytesread=read(*socketdescriptor,tmp_readbuffer,maxread);
-    		fprintf(stdout,"read %d bytes\n", bytesread);
          	if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free (tmp_readbuffer);
