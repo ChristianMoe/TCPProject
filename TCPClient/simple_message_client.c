@@ -596,6 +596,8 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 	int offset=0;
 	ssize_t bytesread=0;
 
+	memset(readbuffer,'\0',MAX_BUF_SIZE);
+
 	while (strstr(readbuffer,"\n")==NULL){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,1);
     		if (bytesread==-1){
