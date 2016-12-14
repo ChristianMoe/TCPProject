@@ -401,12 +401,16 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* logic */
 
-		readtillEOL(readbuffer,socketdescriptor,verbose);
+    	if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
+    		return -1;
+    		}
+    	if (amountread==0) return 0; /*return 0 and continue in main if FIN from Server*/
 
 		while(1){
 		/* read and parse filename */
 			fprintf(stdout,"in while...\n");
-			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
+			(amountread=readtillEOL(readbuffer,socketdescriptor,verbose);
+			if (amountread==-1){
 				return -1;
 				}
 			if (amountread==0) return 0; /*return 0 and continue in main if FIN from Server*/
