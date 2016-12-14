@@ -415,6 +415,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			filename=malloc(parselength);
 			strncpy(filename,returnvalue,parselength); /* copy value into filename */
 
+			fprintf(stdout,"check: %s, parselength %d",filename,parselength);
+
 		/* read and parse file length */
 			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
 				free(filename);
