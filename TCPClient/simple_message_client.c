@@ -463,6 +463,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		it (readtillFIN(socketdescriptor,verbose)==-1) return -1;
 
+
+		da
 		return 0; /*returns 0 upon success*/
 }
 
