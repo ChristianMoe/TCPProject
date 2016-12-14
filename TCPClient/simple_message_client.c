@@ -36,7 +36,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 int connectsocket(const char *server,const char *port, int *socketdescriptor, int verbose);
 int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose);
 int readingmessage(char *readbuffer, int *socketdescriptor, int verbose);
-int parsebuffer(char *readbuffer, char *returnvalue, const char pattern, int verbose);
+int parsebuffer(char *readbuffer, char *returnvalue, const char *pattern, int verbose);
 int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 int readandthrowaway(int *socketdescriptor, int amount, int verbose);
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose);
@@ -483,7 +483,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
  */
 
 
-int parsebuffer(char *readbuffer, char *returnvalue, const char pattern, int verbose){
+int parsebuffer(char *readbuffer, char *returnvalue, const char *pattern, int verbose){
 
 	/* support variables for parsing */
 	    char *pos_file=NULL;
@@ -493,12 +493,12 @@ int parsebuffer(char *readbuffer, char *returnvalue, const char pattern, int ver
 	/* start of logic for subroutine */
 
 	/* search for "file=" in substring */
-	    if((pos_file=strstr(readbuffer,pattern))==NULL){
+	    if((pos_file=strstr(readbuffer,*pattern))==NULL){
 			fprintf(stdout,"%s [%s, %s(), line %d]: Pattern not found in buffer! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 			return -1; /* return -1 if pattern was not found */
 			}
 	    else{
-	    	pos_file+=strlen(pattern);
+	    	pos_file+=strlen(*pattern);
 			if((pos_end=strstr(pos_file,"\n"))==NULL){
 				fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 				return -1;
