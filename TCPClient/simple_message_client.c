@@ -396,15 +396,15 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
     	char **endptr=NULL;
     	char *filename=NULL;
     	long int filelength=0;
-    	int amoutread=0;
+    	int amountread=1;
     	int parselength=0;
 	/* logic */
 
 		readtillEOL(readbuffer,socketdescriptor,verbose);
 
-		while(){
+		while(amountread!=0){
 		/* read and parse filename */
-			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose)==-1){
+			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
 				return -1;
 				}
 			if (amountread==0) return 0; /*return 0 and continue in main if FIN from Server*/
@@ -416,7 +416,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			strncpy(filename,returnvalue,parselength); /* copy value into filename */
 
 		/* read and parse file length */
-			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose)==-1){
+			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
 				free(filename);
 				return -1;
 				}
@@ -438,7 +438,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		/* checking size */
 			if (filelength<=MAX_FILE_SIZE){ /*file length OK*/
-				if ((amountread=readXbytes(readbuffer,socketdescriptor,filelength,verbose)==-1){
+				if ((amountread=readXbytes(readbuffer,socketdescriptor,filelength,verbose))==-1){
 					free(filename);
 					return -1;
 					}
@@ -463,8 +463,6 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		it (readtillFIN(socketdescriptor,verbose)==-1) return -1;
 
-
-		da
 		return 0; /*returns 0 upon success*/
 }
 
