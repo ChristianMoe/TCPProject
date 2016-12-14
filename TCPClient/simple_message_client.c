@@ -403,7 +403,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 		readtillEOL(readbuffer,socketdescriptor,verbose);
 
-		while(amountread!=0){
+		while(1){
 		/* read and parse filename */
 			if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
 				return -1;
