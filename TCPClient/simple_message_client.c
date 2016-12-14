@@ -608,7 +608,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
     			}
             memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
-       	    fprintf(stdout,"read EOL %s\n",tmp_readbuffer);
+       	    fprintf(stdout,"read EOL %s\n",readbuffer);
 			}
 
 	if (verbose==TRUE){
