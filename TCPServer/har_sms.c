@@ -63,8 +63,6 @@ int main(int argc, char *argv[])
     // struct sockaddr_in sa; // IPv4
     struct sockaddr_in my_addr;
 
-
-
   //  sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	sock_fd = socket(hints.ai_family, hints.ai_socktype, hints.ai_protocol);
     if (sock_fd == -1)
