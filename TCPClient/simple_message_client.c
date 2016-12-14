@@ -609,7 +609,6 @@ int readtillFIN(int *socketdescriptor, int verbose){
     			return -1;
     			}
             offset+=bytesread;
-    		fprintf(stdout,"%s",(char*)tmp_readbuffer);
 			}
 
 	if (verbose==TRUE){
