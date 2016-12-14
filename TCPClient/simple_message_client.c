@@ -40,6 +40,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 int readandthrowaway(int *socketdescriptor, int amount, int verbose);
 int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose);
 int readtillFIN(int *socketdescriptor, int verbose);
+int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose);
 
 /*
  * -------------------------------------------------------------- defines --
