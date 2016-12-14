@@ -537,9 +537,14 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
 	ssize_t bytesread=0;
+	int rest=0;
+	int maxread=0;
+
+	rest=amount; /* rest of bytes to read in */
 
 	while (offset<=amount){
-    		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
+    		if (rest<READ_BUF_SSIZE) maxread=rest;
+			bytesread=read(*socketdescriptor,tmp_readbuffer,maxread);
     		fprintf(stdout,"read %d bytes\n", bytesread);
          	if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
@@ -552,6 +557,7 @@ int readandthrowaway(int *socketdescriptor, int amount, int verbose){
     		}
 
             offset+=bytesread;
+            rest-=bytesread;
     		}
 
 	if (verbose==TRUE){
@@ -628,9 +634,14 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
 	void *tmp_readbuffer=malloc(READ_BUF_SIZE);
 	int offset=0;
 	ssize_t bytesread=0;
+	int rest=0;
+	int maxread=0;
+
+	rest=amount
 
 	while (offset<=amount){
-    		bytesread=read(*socketdescriptor,tmp_readbuffer,READ_BUF_SIZE);
+			if (rest<READ_BUF_SSIZE) maxread=rest;
+			bytesread=read(*socketdescriptor,tmp_readbuffer,maxread);
     		if (bytesread==-1){
     			fprintf(stderr,"%s [%s, %s(), line %d]: Read from Server failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
     			free(tmp_readbuffer);
@@ -642,6 +653,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
     			}
             memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
+       	    rest-=bytesread;
 			}
 
 	if (verbose==TRUE){
