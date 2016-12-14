@@ -413,7 +413,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			    break; /* break while + read till EOF + return to main to close */
 			    }
 			filename=malloc(parselength);
-			strncpy(filename,returnvalue,parselength); /* copy value into filename */
+			strncpy(filename,returnvalue,parselength+1); /* copy value into filename */
 
 			fprintf(stdout,"check: %s, parselength %d",filename,parselength);
 
