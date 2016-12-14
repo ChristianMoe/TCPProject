@@ -611,11 +611,10 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
     			}
             memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
-       	    fprintf(stdout,"read EOL %s\n",readbuffer);
 			}
 
 	if (verbose==TRUE){
-		fprintf(stdout,"%s [%s, %s(), line %d]: Readline: %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
+		fprintf(stdout,"%s [%s, %s(), line %d]: readtillEOF returns value %s  \n" ,argv0,__FILE__, __func__ ,__LINE__,readbuffer);
 		}
 	free(tmp_readbuffer);
 	return offset; /*return bytes read into buffer on success*/
