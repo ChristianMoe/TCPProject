@@ -46,9 +46,8 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_BUF_SIZE 10000000
+#define MAX_SIZE 10000000
 #define READ_BUF_SIZE 1024
-#define MAX_FILE_SIZE 10000000
 #define FN_MAX 256
 
 /*
@@ -183,7 +182,7 @@ int main(int argc, const char * argv[]) {
             }
 
 	/* calling subroutine for reading message and parsing from server and managing failure case */
-		readbuffer=malloc(MAX_FILE_SIZE);
+		readbuffer=malloc(MAX_SIZE);
 		if (readbuffer==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
 			if (close (*socketdescriptor)!=0){
@@ -355,21 +354,20 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* start of logic for subroutine */
    	    len = strlen(finalmessage);
-   	    len_check = (size_t) len;
 
 	/* checking whether message is to big */
-   	    if (len_check > MAX_BUF_SIZE) {
-   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_BUF_SIZE);
+   	    if (len > MAX_SIZE) {
+   	    	fprintf(stderr, "%s [%s, %s(), line %d]: Message to send is too big - Maximum is %d!\n",argv0,__FILE__, __func__ ,__LINE__,MAX_SIZE);
    	    	return -1;
    	    	}
 
    	    if (verbose==TRUE){
-   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Going to send the following message consisting of %ld bytes ...\n %s\n" ,argv0,__FILE__, __func__ ,__LINE__,len,finalmessage);
+   	    	fprintf(stdout,"%s [%s, %s(), line %d]: Going to send the following message consisting of %d bytes ...\n %s\n" ,argv0,__FILE__, __func__ ,__LINE__,len,finalmessage);
    	    }
 
 	/* sending message */
    	    while (byteswritten!=len) {
-   	    	len=write((*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
+   	    	len=write((*socketdescriptor, finalmessage, (size_t)len); /*adding bytes written if partial write is performed */
    	    	if (len==-1){
    	    		fprintf(stderr, "%s [%s, %s(), line %d]: Write failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
    	    		return -1;
@@ -451,7 +449,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			free(endptr);
 
 		/* checking size */
-			if (filelength<=MAX_FILE_SIZE){ /*file length OK*/
+			if (filelength<=MAX_SIZE){ /*file length OK*/
 				if ((amountread=readXbytes(readbuffer,socketdescriptor,filelength,verbose))==-1){
 					free(filename);
 					return -1;
@@ -649,7 +647,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
 	int offset=0;
 	ssize_t bytesread=0;
 
-	memset(readbuffer,'\0',MAX_FILE_SIZE);
+	memset(readbuffer,'\0',MAX_SIZE);
 
 	while (strstr(readbuffer,"\n")==NULL){
     		bytesread=read(*socketdescriptor,tmp_readbuffer,1);
