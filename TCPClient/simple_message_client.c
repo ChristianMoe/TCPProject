@@ -706,6 +706,7 @@ int readXbytes(char *readbuffer,int *socketdescriptor, int amount, int verbose){
     			return -1;
     			}
     		if (bytesread==0){
+    			fprintf(stderr,"%s [%s, %s(), line %d]: Not enough data to read --> not all files written!\n",argv0,__FILE__, __func__ ,__LINE__);
     			free(tmp_readbuffer);
     			return 0; /* return 0 when FIN */
     			}
