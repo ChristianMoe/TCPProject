@@ -433,7 +433,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
 				return -1;
 				}
-			filelength=strtol(returnvale, endptr, 10);
+			filelength=strtol(returnvalue, endptr, 10);
 			free(endptr);
 
 		/* checking size */
@@ -461,7 +461,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 		} /* end of while*/
 		free(filename);
 
-		it (readtillFIN(socketdescriptor,verbose)==-1) return -1;
+		if (readtillFIN(socketdescriptor,verbose)==-1) return -1;
 
 		return 0; /*returns 0 upon success*/
 }
