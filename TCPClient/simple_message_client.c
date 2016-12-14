@@ -367,7 +367,7 @@ int sendingmessage(char *finalmessage, int *socketdescriptor, int verbose){
 
 	/* sending message */
    	    while (byteswritten!=len) {
-   	    	len=write((*socketdescriptor, finalmessage, (size_t)len); /*adding bytes written if partial write is performed */
+   	    	len=write(*socketdescriptor, finalmessage, len); /*adding bytes written if partial write is performed */
    	    	if (len==-1){
    	    		fprintf(stderr, "%s [%s, %s(), line %d]: Write failed: %s\n",argv0,__FILE__, __func__ ,__LINE__, strerror(errno));
    	    		return -1;
