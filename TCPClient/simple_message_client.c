@@ -410,7 +410,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 				return -1;
 				}
 			if (amountread==0) return 0; /*return 0 and continue in main if FIN from Server*/
-
+			fprintf(stdout,"first amount read %d\n",amountread);
 			if ((parselength=parsebuffer(readbuffer, returnvalue, "file=", verbose))==-1){
 			    break; /* break while + read till EOF + return to main to close */
 			    }
@@ -608,6 +608,7 @@ int readtillEOL(char *readbuffer,int *socketdescriptor, int verbose){
     			}
             memcpy((readbuffer+offset),tmp_readbuffer,bytesread); /* append read bytes to readbuffer */
        	    offset+=bytesread;
+       	    fprintf(stdout,"read EOL %s\n",tmp_readbuffer);
 			}
 
 	if (verbose==TRUE){
