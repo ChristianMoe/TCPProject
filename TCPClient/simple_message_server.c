@@ -39,7 +39,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-void parsecommandline(int argc, const char * argv[], long int *port);
+char* parsecommandline(int argc, const char * argv[]);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -71,7 +71,7 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
 int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
-		long int *port=0;
+		char *port=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -79,7 +79,7 @@ int main(int argc, const char * argv[]) {
 		parsecommandline(argc, argv, port);
 
 		if (DEBUG){
-			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%ld\"\n", argv[0],__FILE__, __func__ ,__LINE__,*port);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,*port);
 			}
 
 }
@@ -112,29 +112,15 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 
 
-void parsecommandline(int argc, const char * argv[], long int *port){
+char* parsecommandline(int argc, const char * argv[]){
 
 	int opt=0;
-	char *optval=NULL;
-	char **endptr=NULL;
 
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					errno = 0;    /* To distinguish success/failure after call */
-					optval=optarg;
-					*port=strtol(optval, endptr, 10);
-					/* Check for various possible errors */
-					           if ((errno == ERANGE && (*port == LONG_MAX || *port == LONG_MIN))
-					                   || (errno != 0 && *port == 0)) {
-					               perror("strtol failed!");
-					               exit(EXIT_FAILURE);
-					           }
-					           if (*endptr == optval) {
-					               fprintf(stderr, "No digits were found\n");
-					               exit(EXIT_FAILURE);
-					           }
+					return optarg;
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
