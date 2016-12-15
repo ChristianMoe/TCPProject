@@ -20,8 +20,8 @@ LDFLAGS=-lsimple_message_client_commandline_handling
 
 OBJ1=simple_message_client.o
 BIN1=simple_message_client
-## OBJ2=simple_message_server.o
-## BIN2=simple_message_server
+OBJ2=simple_message_server.o
+BIN2=simple_message_server
 
 
 
@@ -37,13 +37,13 @@ BIN1=simple_message_client
 ##
 
 .PHONY: all
-all: $(BIN1) ## $(BIN2)
+all: $(BIN1)  $(BIN2)
 
 $(BIN1): $(OBJ1)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) 
 
-## $(BIN2): $(OBJ2)
-##	$(CC) $(CFLAGS) -o $@ $^ 
+$(BIN2): $(OBJ2)
+	$(CC) $(CFLAGS) -o $@ $^ 
 
 .PHONY: cleanall
 cleanall: clean clean_r
@@ -51,7 +51,7 @@ cleanall: clean clean_r
 .PHONY: clean
 clean:
 	rm -rf $(BIN1) $(OBJ1) 
-##	rm -rf $(BIN2) $(OBJ2)
+	rm -rf $(BIN2) $(OBJ2)
 
 .PHONY: clean_r
 clean_r:
