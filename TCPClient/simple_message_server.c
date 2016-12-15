@@ -131,7 +131,7 @@ void parsecommandline(int argc, const char * argv[], long int *port){
 					               perror("strtol failed!");
 					               exit(EXIT_FAILURE);
 					           }
-					           if (endptr == optval) {
+					           if (*endptr == optval) {
 					               fprintf(stderr, "No digits were found\n");
 					               exit(EXIT_FAILURE);
 					           }
