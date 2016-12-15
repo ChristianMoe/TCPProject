@@ -122,11 +122,10 @@ char* parsecommandline(int argc, const char * argv[]){
 	int opt=0;
 	char *tmp=NULL;
 
-	/* checking whether -ph is a parameter of command line */
+	/* checking whether -p <value> or -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "p:h")) != -1) {
 				switch (opt) {
 				case 'p':
-					//tmp=malloc(strlen(optarg));
 					tmp=optarg;
 					break;
 		        case 'h':
