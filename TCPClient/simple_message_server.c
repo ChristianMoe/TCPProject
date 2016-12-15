@@ -70,7 +70,7 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
 int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
-		int *port=0;
+		long int *port=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
 		parsecommandline(argc, argv, port);
 
 		if (DEBUG){
-			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%ld\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
 			}
 
 }
@@ -118,7 +118,7 @@ void parsecommandline(int argc, const char * argv[], long int *port){
 				switch (opt) {
 				case 'p':
 					char **endptr=NULL;
-					port=strtol(returnvalue, endptr, 6);
+					port=strtol(optarg, endptr, 6);
 					if (endptr!=NULL){
 						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__,port);
 						exit(EXIT_FAILURE);
