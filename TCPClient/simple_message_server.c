@@ -78,6 +78,10 @@ int main(int argc, const char * argv[]) {
 
 		port=parsecommandline(argc, argv);
 
+		if (port=NULL){
+			fprintf(stderr,"%s [%s, %s(), line %d]: no valid arguments in command line found!\n", argv[0],__FILE__, __func__ ,__LINE__);
+			}
+
 		if (DEBUG){
 			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
 			}
