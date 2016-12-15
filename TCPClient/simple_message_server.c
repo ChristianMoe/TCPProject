@@ -80,6 +80,7 @@ int main(int argc, const char * argv[]) {
 
 		if (port==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: no valid arguments in command line found!\n", argv[0],__FILE__, __func__ ,__LINE__);
+        	usageinfo(stderr,argv[0],EXIT_FAILURE);
 			}
 
 		if (DEBUG){
