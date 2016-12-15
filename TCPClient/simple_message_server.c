@@ -76,7 +76,7 @@ int main(int argc, const char * argv[]) {
 
 		argv0=argv[0]; /*copy prog name to global variable*/
 
-		parsecommandline(argc, argv, port);
+		port=parsecommandline(argc, argv);
 
 		if (DEBUG){
 			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,*port);
