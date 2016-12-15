@@ -117,7 +117,6 @@ void parsecommandline(int argc, const char * argv[], char *port){
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					char *port[strlen(optarg)];
 					port=optarg;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
