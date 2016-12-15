@@ -38,7 +38,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-void parsecommandline(int argc, const char * argv[], char *port);
+void parsecommandline(int argc, const char * argv[], long int *port);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -109,7 +109,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 }
 
 
-void parsecommandline(int argc, const char * argv[], char *port){
+void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
 
@@ -117,7 +117,13 @@ void parsecommandline(int argc, const char * argv[], char *port){
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					port=optarg;
+					char **endptr=NULL;
+					port=strtol(returnvalue, endptr, 6);
+					if (endptr!=NULL){
+						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__,port);
+						exit(EXIT_FAILURE);
+						}
+					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
 		        	break;
