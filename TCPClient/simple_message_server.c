@@ -38,11 +38,13 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-int parsecommandline(char *readbuffer, char *returnvalue, char *pattern, int verbose);
+void parsecommandline(int argc, const char * argv[], char *port);
 
 /*
  * -------------------------------------------------------------- defines --
  */
+
+#define DEBUG 1  /* 1 for debugging mode, 0 if it is turned off */
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -73,9 +75,9 @@ int main(int argc, const char * argv[]) {
 
 		argv0=argv[0]; /*copy prog name to global variable*/
 
-		parsecommandline(argc, argv[], port);
+		parsecommandline(argc, argv, port);
 
-		if (verbose==TRUE){
+		if (DEBUG){
 			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
 			}
 
