@@ -114,17 +114,24 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
-	char **endptr=NULL;
+	char *endptr=NULL;
 
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					*port=strtol(optarg, endptr, 6);
-					if (endptr!=NULL){
-						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__);
-						exit(EXIT_FAILURE);
-						}
+					errno = 0;    /* To distinguish success/failure after call */
+					*port=strtol(optarg, endptr, 10);
+					/* Check for various possible errors */
+					           if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
+					                   || (errno != 0 && val == 0)) {
+					               perror("strtol failed!");
+					               exit(EXIT_FAILURE);
+					           }
+					           if (endptr == str) {
+					               fprintf(stderr, "No digits were found\n");
+					               exit(EXIT_FAILURE);
+					           }
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
