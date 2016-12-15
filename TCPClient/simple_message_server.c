@@ -78,7 +78,7 @@ int main(int argc, const char * argv[]) {
 		parsecommandline(argc, argv, port);
 
 		if (DEBUG){
-			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%ld\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%ld\"\n", argv[0],__FILE__, __func__ ,__LINE__,*port);
 			}
 
 }
@@ -114,12 +114,13 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
+	char **endptr=NULL;
 
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					char **endptr=NULL;
+
 					port=strtol(optarg, endptr, 6);
 					if (endptr!=NULL){
 						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__,port);
