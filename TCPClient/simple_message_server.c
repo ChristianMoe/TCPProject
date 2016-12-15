@@ -70,7 +70,7 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
 int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
-		char *port=NULL;
+		int *port=0;
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
