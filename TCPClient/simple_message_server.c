@@ -109,6 +109,8 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 }
 
 
+
+
 void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
