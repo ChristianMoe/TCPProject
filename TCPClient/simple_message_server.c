@@ -111,12 +111,14 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 void parsecommandline(int argc, const char * argv[], char *port){
 
+	int opt=0;
+
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
 					char *port[strlen(optarg)];
-					*port=optarg;
+					port=optarg;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
 		        	break;
