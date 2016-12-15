@@ -126,6 +126,7 @@ char* parsecommandline(int argc, const char * argv[]){
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
+					tmp=malloc(strlen(optarg));
 					tmp=optarg;
 					fprintf(stdout,"%s",optarg);
 					break;
