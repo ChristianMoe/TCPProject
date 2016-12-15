@@ -79,7 +79,7 @@ int main(int argc, const char * argv[]) {
 		port=parsecommandline(argc, argv);
 
 		if (DEBUG){
-			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,*port);
+			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
 			}
 
 }
@@ -115,12 +115,13 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 char* parsecommandline(int argc, const char * argv[]){
 
 	int opt=0;
+	char *tmp=NULL;
 
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-					return optarg;
+					tmp=optarg;
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
@@ -130,4 +131,7 @@ char* parsecommandline(int argc, const char * argv[]){
 		        	break;
 				}
 			} /* end of while */
+
+	return tmp;
+
 }
