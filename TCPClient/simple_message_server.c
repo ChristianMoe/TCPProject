@@ -114,7 +114,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
-	char *endptr=NULL;
+	char **endptr=NULL;
 
 	/* checking whether -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
@@ -123,8 +123,8 @@ void parsecommandline(int argc, const char * argv[], long int *port){
 					errno = 0;    /* To distinguish success/failure after call */
 					*port=strtol(optarg, endptr, 10);
 					/* Check for various possible errors */
-					           if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-					                   || (errno != 0 && val == 0)) {
+					           if ((errno == ERANGE && (*port == LONG_MAX || *port == LONG_MIN))
+					                   || (errno != 0 && *port == 0)) {
 					               perror("strtol failed!");
 					               exit(EXIT_FAILURE);
 					           }
