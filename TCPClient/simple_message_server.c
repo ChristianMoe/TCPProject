@@ -115,6 +115,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 void parsecommandline(int argc, const char * argv[], long int *port){
 
 	int opt=0;
+	char *optval=NULL;
 	char **endptr=NULL;
 
 	/* checking whether -h is a parameter of command line */
@@ -122,14 +123,15 @@ void parsecommandline(int argc, const char * argv[], long int *port){
 				switch (opt) {
 				case 'p':
 					errno = 0;    /* To distinguish success/failure after call */
-					*port=strtol(optarg, endptr, 10);
+					optval=optarg;
+					*port=strtol(optval, endptr, 10);
 					/* Check for various possible errors */
 					           if ((errno == ERANGE && (*port == LONG_MAX || *port == LONG_MIN))
 					                   || (errno != 0 && *port == 0)) {
 					               perror("strtol failed!");
 					               exit(EXIT_FAILURE);
 					           }
-					           if (endptr == otparg) {
+					           if (endptr == optval) {
 					               fprintf(stderr, "No digits were found\n");
 					               exit(EXIT_FAILURE);
 					           }
