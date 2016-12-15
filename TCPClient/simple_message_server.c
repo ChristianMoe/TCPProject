@@ -127,6 +127,7 @@ char* parsecommandline(int argc, const char * argv[]){
 				switch (opt) {
 				case 'p':
 					tmp=optarg;
+					fprintf(stdout,"%s",optarg);
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
