@@ -120,10 +120,9 @@ void parsecommandline(int argc, const char * argv[], long int *port){
 			while ((opt = getopt(argc,(char **) argv, "ph:")) != -1) {
 				switch (opt) {
 				case 'p':
-
-					port=strtol(optarg, endptr, 6);
+					*port=strtol(optarg, endptr, 6);
 					if (endptr!=NULL){
-						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__,port);
+						fprintf(stderr,"%s [%s, %s(), line %d]: no valid port number!\n", argv[0],__FILE__, __func__ ,__LINE__);
 						exit(EXIT_FAILURE);
 						}
 					break;
