@@ -187,7 +187,7 @@ int acceptConnectRequest(int listen_sock_fd){
 	int connected_sock_fd;
 	struct sockaddr_in conneted_sock_addr;
 
-	if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, sizeof(struct sockaddr))) == -1)
+	if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, (socklen_t*) sizeof(struct sockaddr))) == -1)
 		error_handle("Connect: ");
 	if (DEBUG) print_verbose("Successfully connected to client!\n");
 
