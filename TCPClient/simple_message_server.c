@@ -166,9 +166,10 @@ int main(int argc, const char * argv[]) {
 		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
 		else print_verbose("Successfully bound to socket!");
 
+		while (1){
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
 		else print_verbose("Listening on socket!");
-
+		}
 
 	return 0;
 }
