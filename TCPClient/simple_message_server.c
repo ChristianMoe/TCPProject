@@ -186,7 +186,7 @@ int main(int argc, const char * argv[]) {
 				close(listen_sock_fd);
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1) handle_error("Dup2 stdin: "); /* umleiten stdin */
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1) handle_error("Dup2 stout: "); /* umleiten stdout */
-				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+				//if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
 				exit(EXIT_SUCCESS);
 				}
