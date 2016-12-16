@@ -45,7 +45,6 @@ char* parsecommandline(int argc, const char * argv[]);
 void handle_error(const char *msg);
 void print_verbose(const char *msg);
 int createsocket(const char* port);
-int acceptConnectRequest(int listen_sock_fd);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -174,15 +173,22 @@ int main(int argc, const char * argv[]) {
 
 		while (1){
 
-			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
+			int connected_sock_fd;
+			struct sockaddr_in conneted_sock_addr;
+
+			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, (socklen_t*) sizeof(struct sockaddr))) == -1)
+				handle_error("Connect: ");
+			if (DEBUG) print_verbose("Successfully connected to client!\n");
+			flush(stdout);
+
 			if((child_pid = fork()) ==-1) handle_error("Fork: ");
 
 			/* 0 is for child process */
 			if(child_pid == 0){
 				close(listen_sock_fd);
-				dup2(connected_sock_fd, STDIN_FILENO); /* umleiten stdin */
-				dup2(connected_sock_fd, STDOUT_FILENO); /* umleiten stdout */
-				close(connected_sock_fd);
+				if (dup2(connected_sock_fd, STDIN_FILENO)==-1) handle_error("Dup2 stdin: "); /* umleiten stdin */
+				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1) handle_error("Dup2 stout: "); /* umleiten stdout */
+				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
 				}
 			/* parent process */
@@ -193,19 +199,6 @@ int main(int argc, const char * argv[]) {
 		}
 
 	return 0;
-}
-
-
-int acceptConnectRequest(int listen_sock_fd){
-
-	int connected_sock_fd;
-	struct sockaddr_in conneted_sock_addr;
-
-	if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, (socklen_t*) sizeof(struct sockaddr))) == -1)
-		handle_error("Connect: ");
-	if (DEBUG) print_verbose("Successfully connected to client!\n");
-
-	return connected_sock_fd; /* return connected socket on success */
 }
 
 
