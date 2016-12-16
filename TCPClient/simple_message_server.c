@@ -151,14 +151,14 @@ int main(int argc, const char * argv[]) {
 
 		if (DEBUG) print_verbose("successfully parsed port value!");
 
-		int listen_sock_fd,
+		int listen_sock_fd;
 		//conn_fd;
 
 		struct sockaddr *listen_sock_addr;
 
 		listen_sock_fd = createsocket(port);
 
-		memset(&my_addr, 0, sizeof(struct sockaddr));
+		memset(&listen_sock_addr, 0, sizeof(struct sockaddr));
 		                        /* Clear structure */
 
 		if ((bind(listen_sock_fd, listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
