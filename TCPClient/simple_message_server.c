@@ -141,8 +141,9 @@ int main(int argc, const char * argv[]) {
 		char *port=0;
 		int optval=1;
 		int listen_sock_fd, connected_sock_fd;
-		struct sockaddr_in listen_sock_addr;
+		struct sockaddr_in listen_sock_addr, conneted_sock_addr;
 		pid_t child_pid;
+
 
 	/* end of variable definition */
 
@@ -173,13 +174,10 @@ int main(int argc, const char * argv[]) {
 
 		while (1){
 
-			int connected_sock_fd;
-			struct sockaddr_in conneted_sock_addr;
-
 			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, (socklen_t*) sizeof(struct sockaddr))) == -1)
 				handle_error("Connect: ");
 			if (DEBUG) print_verbose("Successfully connected to client!\n");
-			flush(stdout);
+			fflush(stdout);
 
 			if((child_pid = fork()) ==-1) handle_error("Fork: ");
 
