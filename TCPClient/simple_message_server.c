@@ -143,7 +143,6 @@ int main(int argc, const char * argv[]) {
 		int optval=1;
 		int listen_sock_fd, connected_sock_fd;
 		struct sockaddr_in listen_sock_addr;
-		int connections=0;
 		pid_t child_pid;
 
 	/* end of variable definition */
@@ -178,9 +177,7 @@ int main(int argc, const char * argv[]) {
 			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
 			if((child_pid = fork()) ==-1) handle_error("Fork: ");
 
-			fork() == 0; /* for child process */
-
-			/* child process*/
+			/* fork() == 0 for child process */
 
 			if(child_pid == 0){
 				close(listen_sock_fd);
