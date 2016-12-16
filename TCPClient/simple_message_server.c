@@ -186,7 +186,7 @@ unsigned long int parsecommandline(int argc, const char * argv[]){
 			while ((opt = getopt(argc,(char **) argv, "p:h")) != -1) {
 				switch (opt) {
 				case 'p':
-					port strtoul(optarg,NULL,10);
+					port=strtoul(optarg,NULL,10);
 					if ((port>65535)) usageinfo(stderr,argv[0],EXIT_FAILURE);
 					break;
 		        case 'h':
