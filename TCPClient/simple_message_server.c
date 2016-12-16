@@ -178,7 +178,7 @@ int main(int argc, const char * argv[]) {
 			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
 			if((child_pid = fork()) ==-1) handle_error("Fork: ");
 
-			fork() == 0 /* for child process */
+			fork() == 0; /* for child process */
 
 			/* child process*/
 
