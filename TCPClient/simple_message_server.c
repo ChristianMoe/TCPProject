@@ -165,7 +165,7 @@ int main(int argc, const char * argv[]) {
 		listen_sock_addr.sin_port=htons(6816);
 		listen_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* set address to any interface */
 
-		listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+		listen_sock_fd = createsocket(port);
 		setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
 		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
@@ -188,7 +188,7 @@ int main(int argc, const char * argv[]) {
 				close(listen_sock_fd);
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1) handle_error("Dup2 stdin: "); /* umleiten stdin */
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1) handle_error("Dup2 stout: "); /* umleiten stdout */
-				//if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
 				exit(EXIT_SUCCESS);
 				}
@@ -196,8 +196,7 @@ int main(int argc, const char * argv[]) {
 			else{
 				close(connected_sock_fd);
 			    }
-
-		}
+			}
 
 	return 0;
 }
