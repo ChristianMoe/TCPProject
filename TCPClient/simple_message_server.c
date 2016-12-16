@@ -46,7 +46,6 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status);
 char* parsecommandline(int argc, const char * argv[]);
 void handle_error(const char *msg);
 void print_verbose(const char *msg);
-int createsocket(const char* port);
 
 /*
  * -------------------------------------------------------------- defines --
@@ -89,53 +88,6 @@ void print_verbose(const char *msg){
 	fprintf(stdout,"%s [%s, %s(), line %d]: %s\n", argv0,__FILE__, __func__ ,__LINE__,msg);
 }
 
-int createsocket(const char* port){
-
-/* variables for socket */
-	struct addrinfo hints,*result, *respointer; /*parameters for getaddrinfo and socket/connect*/
-	int gea_ret; /* variable for getaddrinfo return */
-	int socketdescriptor;
-
-/* Obtain address matching host/port */
-	memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
-	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-	hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
-	hints.ai_protocol = 0;	/* Any protocol */
-	hints.ai_flags = AI_PASSIVE;
-
-/*
- * getaddrinfo return == 0 if success, otherwise Error-Code
- * and fills results with
- */
-
-	if ((gea_ret=getaddrinfo(NULL, port, &hints, &result))!= 0) handle_error("Get Address Info: ");
-	if (DEBUG) print_verbose("getaddrinfo() successful!\n");
-
-/* Info: getaddrinfo() returns a list of address structures.
-              Try each address until successfully connected.
-              If socket (or connect) fails, close the socket
-              and try the next address.
-
-   struct addrinfo {
-         int              ai_flags;
-         int              ai_family;
-         int              ai_socktype;
-         int              ai_protocol;
-         size_t           ai_addrlen;
-         struct sockaddr *ai_addr;
-         char            *ai_canonname;
-         struct addrinfo *ai_next;
-     }; */
-
-	respointer = result;
-
-	socketdescriptor=socket(respointer->ai_family, respointer->ai_socktype,respointer->ai_protocol);
-	if (DEBUG) print_verbose("Socket successfully created!\n");
-	if (socketdescriptor == -1) handle_error("Could not connect to socket: ");
-    freeaddrinfo(result); 		/* result of getaddrinfo no longer needed */
-
-    return socketdescriptor; /*returns socketdescriptor on successfully executed subroutine*/
-}
 
 int main(int argc, const char * argv[]) {
 
@@ -165,7 +117,7 @@ int main(int argc, const char * argv[]) {
 		listen_sock_addr.sin_port=htons(6816);
 		listen_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* set address to any interface */
 
-		listen_sock_fd = createsocket(port);
+		listen_sock_fd = socket(AF_INET,SOCK_STREAM,0);
 		setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
 		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
