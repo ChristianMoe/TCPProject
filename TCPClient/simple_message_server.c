@@ -144,6 +144,7 @@ int main(int argc, const char * argv[]) {
 		int listen_sock_fd, connected_sock_fd;
 		struct sockaddr_in listen_sock_addr;
 		int connections=0;
+		pid_t child_pid;
 
 	/* end of variable definition */
 
@@ -172,12 +173,26 @@ int main(int argc, const char * argv[]) {
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
 		else print_verbose("Listening on socket!");
 
-		while (connections<=LISTEN_BACKLOG){
+		while (1){
 
 			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
-			dup2(connected_sock_fd, STDIN_FILENO); /* umleiten stdin */
-			dup2(connected_sock_fd, STDOUT_FILENO); /* umleiten stdout */
-			execlp("simple_message_server_logic","simple_message_server_logic",NULL);
+			if((child_pid = fork()) ==-1) handle_error("Fork: ");
+
+			fork() == 0 /* for child process */
+
+			/* child process*/
+
+			if(child_pid == 0){
+				close(listen_sock_fd);
+				dup2(connected_sock_fd, STDIN_FILENO); /* umleiten stdin */
+				dup2(connected_sock_fd, STDOUT_FILENO); /* umleiten stdout */
+				close(connected_sock_fd);
+				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
+				}
+			/* parent process */
+			else{
+				close(connected_sock_fd);
+			    }
 
 		}
 
