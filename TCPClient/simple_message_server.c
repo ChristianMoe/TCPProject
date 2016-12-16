@@ -141,7 +141,7 @@ int main(int argc, const char * argv[]) {
 	/* define the program variables */
 		char *port=0;
 		int optval=1;
-		int listen_sock_fd;
+		int listen_sock_fd, connected_sock_fd;
 		struct sockaddr_in listen_sock_addr;
 		int connections=0;
 
@@ -174,7 +174,10 @@ int main(int argc, const char * argv[]) {
 
 		while (connections<=LISTEN_BACKLOG){
 
-			acceptConnectRequest(listen_sock_fd);
+			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
+			dup2(connected_sock_fd, STDIN_FILEN); /* umleiten stdin */
+			dup2(connected_sock_fd, STDOUT_FILENO); /* umleiten stdout */
+			execlp("simple_message_server_logic");
 
 		}
 
@@ -191,7 +194,7 @@ int acceptConnectRequest(int listen_sock_fd){
 		handle_error("Connect: ");
 	if (DEBUG) print_verbose("Successfully connected to client!\n");
 
-	return 0;
+	return connected_sock_fd; /* return connected socket on success */
 }
 
 
