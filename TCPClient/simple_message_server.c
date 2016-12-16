@@ -104,13 +104,7 @@ int main(int argc, const char * argv[]) {
 		argv0=argv[0]; /*copy prog name to global variable*/
 
 		port=parsecommandline(argc, argv);
-
-		if (port==NULL){
-			fprintf(stderr,"%s [%s, %s(), line %d]: no valid arguments in command line found!\n", argv[0],__FILE__, __func__ ,__LINE__);
-        	usageinfo(stderr,argv[0],EXIT_FAILURE);
-		}
-
-		if (DEBUG) print_verbose("successfully parsed port value!");
+		if ((port>0)&&(DEBUG)) print_verbose("successfully parsed port value!");
 
 		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in)); /* Clear structure */
 		listen_sock_addr.sin_family=AF_INET;
@@ -185,16 +179,15 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 unsigned long int parsecommandline(int argc, const char * argv[]){
 
 	int opt=0;
-	char *tmp=NULL;
+	//char *tmp=NULL;
 	unsigned long int port=0;
 
 	/* checking whether -p <value> or -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "p:h")) != -1) {
 				switch (opt) {
 				case 'p':
-					tmp=optarg;
-					port strtoul(*tmp,NULL,10);
-					if ((port<0)|(port>65535)) usageinfo(stderr,argv[0],EXIT_FAILURE);
+					port strtoul(optarg,NULL,10);
+					if ((port>65535)) usageinfo(stderr,argv[0],EXIT_FAILURE);
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
