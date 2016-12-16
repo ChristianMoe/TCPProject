@@ -58,7 +58,7 @@ int createsocket(const char* port);
  * -------------------------------------------------------------- global resource variables --
  */
 
-const char* argv0; /* necessary for verbose for not handing parameter to every function */
+const char* argv0; /* necessary for DEBUG for not handing parameter to every function */
 
 
 /**
@@ -83,7 +83,7 @@ void handle_error(const char *msg){
 
 
 void print_verbose(const char *msg){
-	fprintf(stdout,"%s [%s, %s(), line %d]: %s\n", argv[0],__FILE__, __func__ ,__LINE__,msg)
+	fprintf(stdout,"%s [%s, %s(), line %d]: %s\n", argv0,__FILE__, __func__ ,__LINE__,msg);
 }
 
 int createsocket(const char* port){
@@ -106,7 +106,7 @@ int createsocket(const char* port){
  */
 
 	if ((gea_ret=getaddrinfo(NULL, port, &hints, &result))!= 0) handle_error("Get Address Info: ");
-	if (VERBOSE) print_verbose("getaddrinfo() successful!\n");
+	if (DEBUG) print_verbose("getaddrinfo() successful!\n");
 
 /* Info: getaddrinfo() returns a list of address structures.
               Try each address until successfully connected.
@@ -127,7 +127,7 @@ int createsocket(const char* port){
 	respointer = result;
 
 	socketdescriptor=socket(respointer->ai_family, respointer->ai_socktype,respointer->ai_protocol);
-	if (VERBOSE) print_verbose("Socket successfully created!\n");
+	if (DEBUG) print_verbose("Socket successfully created!\n");
 	if (socketdescriptor == -1) handle_error("Could not connect to socket: ");
     freeaddrinfo(result); 		/* result of getaddrinfo no longer needed */
 
