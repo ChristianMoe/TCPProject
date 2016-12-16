@@ -30,6 +30,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/un.h> /* definitions for UNIX domain sockets --> socket.h sollte ausreichen? */
+
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
@@ -40,12 +42,17 @@
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
 char* parsecommandline(int argc, const char * argv[]);
-
+void handle_error(const char *msg);
+void print_verbose(const char *msg);
+int createsocket(const char* port);
 /*
  * -------------------------------------------------------------- defines --
  */
 
 #define DEBUG 1  /* 1 for debugging mode, 0 if it is turned off */
+
+#define MY_SOCK_PATH "/home/ic15b039/TCPProject/TCPServer" /* wofür das?*/
+#define LISTEN_BACKLOG 50
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -68,6 +75,65 @@ const char* argv0; /* necessary for verbose for not handing parameter to every f
  *
  */
 
+
+void handle_error(const char *msg){
+	perror(msg);
+	exit(EXIT_FAILURE);
+}
+
+
+void print_verbose(const char *msg){
+	fprintf(stdout,"%s [%s, %s(), line %d]: %s\n", argv[0],__FILE__, __func__ ,__LINE__,msg)
+}
+
+int createsocket(const char* port){
+
+/* variables for socket */
+	struct addrinfo hints,*result, *respointer; /*parameters for getaddrinfo and socket/connect*/
+	int gea_ret; /* variable for getaddrinfo return */
+	int socketdescriptor;
+
+/* Obtain address matching host/port */
+	memset(&hints, 0, sizeof(struct addrinfo)); /* allocate memory and set all values to 0 */
+	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+	hints.ai_socktype = SOCK_STREAM; /* TCP Stream socket */
+	hints.ai_protocol = 0;	/* Any protocol */
+	hints.ai_flags = AI_PASSIVE;
+
+/*
+ * getaddrinfo return == 0 if success, otherwise Error-Code
+ * and fills results with
+ */
+
+	if ((gea_ret=getaddrinfo(NULL, port, &hints, &result))!= 0) handle_error("Get Address Info: ");
+	if (VERBOSE) print_verbose("getaddrinfo() successful!\n");
+
+/* Info: getaddrinfo() returns a list of address structures.
+              Try each address until successfully connected.
+              If socket (or connect) fails, close the socket
+              and try the next address.
+
+   struct addrinfo {
+         int              ai_flags;
+         int              ai_family;
+         int              ai_socktype;
+         int              ai_protocol;
+         size_t           ai_addrlen;
+         struct sockaddr *ai_addr;
+         char            *ai_canonname;
+         struct addrinfo *ai_next;
+     }; */
+
+	respointer = result;
+
+	socketdescriptor=socket(respointer->ai_family, respointer->ai_socktype,respointer->ai_protocol);
+	if (VERBOSE) print_verbose("Socket successfully created!\n");
+	if (socketdescriptor == -1) handle_error("Could not connect to socket: ");
+    freeaddrinfo(result); 		/* result of getaddrinfo no longer needed */
+
+    return socketdescriptor; /*returns socketdescriptor on successfully executed subroutine*/
+}
+
 int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
@@ -81,12 +147,27 @@ int main(int argc, const char * argv[]) {
 		if (port==NULL){
 			fprintf(stderr,"%s [%s, %s(), line %d]: no valid arguments in command line found!\n", argv[0],__FILE__, __func__ ,__LINE__);
         	usageinfo(stderr,argv[0],EXIT_FAILURE);
-			}
+		}
 
-		if (DEBUG){
-			fprintf(stdout,"%s [%s, %s(), line %d]: Using the following options: port=\"%s\"\n", argv[0],__FILE__, __func__ ,__LINE__,port);
-			}
+		if (DEBUG)print_verbose("parsed port value %s",port);
 
+		int listen_sock_fd, conn_fd;
+
+		struct sockaddr *listen_sock_addr;
+
+		listen_sock_fd = createsocket(port);
+
+		memset(&my_addr, 0, sizeof(struct sockaddr));
+		                        /* Clear structure */
+
+		if ((bind(listen_sock_fd, listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
+		else print_verbose("Successfully bind to socket!");
+
+		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
+		else print_verbose("Listening on socket!");
+
+
+	return 0;
 }
 
 /**
