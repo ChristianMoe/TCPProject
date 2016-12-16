@@ -43,7 +43,7 @@
  * -------------------------------------------------------------- prototypes --
  */
 static void usageinfo(FILE *outputdevice, const char *filename, int status);
-char* parsecommandline(int argc, const char * argv[]);
+unsigned long int parsecommandline(int argc, const char * argv[]);
 void handle_error(const char *msg);
 void print_verbose(const char *msg);
 
@@ -92,7 +92,7 @@ void print_verbose(const char *msg){
 int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
-		char *port=0;
+	 	unsigned long int port=0;
 		int optval=1;
 		int listen_sock_fd, connected_sock_fd;
 		struct sockaddr_in listen_sock_addr, conneted_sock_addr;
@@ -114,7 +114,7 @@ int main(int argc, const char * argv[]) {
 
 		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in)); /* Clear structure */
 		listen_sock_addr.sin_family=AF_INET;
-		listen_sock_addr.sin_port=htons(6816);
+		listen_sock_addr.sin_port=htons(port);
 		listen_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* set address to any interface */
 
 		listen_sock_fd = socket(AF_INET,SOCK_STREAM,0);
@@ -186,12 +186,15 @@ char* parsecommandline(int argc, const char * argv[]){
 
 	int opt=0;
 	char *tmp=NULL;
+	unsigned long int port=0;
 
 	/* checking whether -p <value> or -h is a parameter of command line */
 			while ((opt = getopt(argc,(char **) argv, "p:h")) != -1) {
 				switch (opt) {
 				case 'p':
 					tmp=optarg;
+					port strtoul(*tmp,NULL,10);
+					if ((port<0)|(port>65535)) usageinfo(stderr,argv[0],EXIT_FAILURE);
 					break;
 		        case 'h':
 		        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
