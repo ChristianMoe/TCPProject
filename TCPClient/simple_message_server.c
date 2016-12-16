@@ -149,9 +149,10 @@ int main(int argc, const char * argv[]) {
         	usageinfo(stderr,argv[0],EXIT_FAILURE);
 		}
 
-		if (DEBUG)print_verbose("parsed port value %s",port);
+		if (DEBUG) print_verbose("successfully parsed port value!);
 
-		int listen_sock_fd, conn_fd;
+		int listen_sock_fd,
+		//conn_fd;
 
 		struct sockaddr *listen_sock_addr;
 
