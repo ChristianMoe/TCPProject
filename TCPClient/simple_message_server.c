@@ -175,9 +175,9 @@ int main(int argc, const char * argv[]) {
 		while (connections<=LISTEN_BACKLOG){
 
 			connected_sock_fd=acceptConnectRequest(listen_sock_fd);
-			dup2(connected_sock_fd, STDIN_FILEN); /* umleiten stdin */
+			dup2(connected_sock_fd, STDIN_FILENO); /* umleiten stdin */
 			dup2(connected_sock_fd, STDOUT_FILENO); /* umleiten stdout */
-			execlp("simple_message_server_logic");
+			execlp("simple_message_server_logic",NULL);
 
 		}
 
