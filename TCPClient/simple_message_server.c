@@ -158,12 +158,12 @@ int main(int argc, const char * argv[]) {
 		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in)); /* Clear structure */
 		listen_sock_addr.sin_family=AF_INET;
 		listen_sock_addr.sin_port=htons(6816);
-		listen_sock_addr.sin_addr=INADDR_ANY;
+		listen_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* set address to any interface */
 
 		listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 		setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
-		if ((bind(listen_sock_fd, &listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
+		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
 		else print_verbose("Successfully bound to socket!");
 
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
