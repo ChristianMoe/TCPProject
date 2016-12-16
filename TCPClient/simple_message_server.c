@@ -155,7 +155,7 @@ int main(int argc, const char * argv[]) {
 
 		if (DEBUG) print_verbose("successfully parsed port value!");
 
-		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in); /* Clear structure */
+		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in)); /* Clear structure */
 		listen_sock_addr.sin_family=AF_INET;
 		listen_sock_addr.sin_port=htons(6816);
 		listen_sock_addr.sin_addr=INADDR_ANY;
