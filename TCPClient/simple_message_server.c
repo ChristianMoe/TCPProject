@@ -45,6 +45,8 @@ char* parsecommandline(int argc, const char * argv[]);
 void handle_error(const char *msg);
 void print_verbose(const char *msg);
 int createsocket(const char* port);
+int acceptConnectRequest(int listen_sock_fd);
+
 /*
  * -------------------------------------------------------------- defines --
  */
@@ -141,6 +143,7 @@ int main(int argc, const char * argv[]) {
 		int optval=1;
 		int listen_sock_fd;
 		struct sockaddr_in listen_sock_addr;
+		int connections=0;
 
 	/* end of variable definition */
 
@@ -166,13 +169,31 @@ int main(int argc, const char * argv[]) {
 		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
 		else print_verbose("Successfully bound to socket!");
 
-		while (1){
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
 		else print_verbose("Listening on socket!");
+
+		while (connections<=LISTEN_BACKLOG){
+
+			acceptConnectRequest(listen_sock_fd);
+
 		}
 
 	return 0;
 }
+
+
+int acceptConnectRequest(int listen_sock_fd){
+
+	int connected_sock_fd;
+	struct sockaddr_in conneted_sock_addr;
+
+	if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, sizeof(struct sockaddr))) == -1)
+		error_handle("Connect: ");
+	if (DEBUG) print_verbose("Successfully connected to client!\n");
+
+	return 0;
+}
+
 
 /**
  *
