@@ -138,6 +138,10 @@ int main(int argc, const char * argv[]) {
 
 	/* define the program variables */
 		char *port=0;
+		int optval=1;
+		int listen_sock_fd;
+		struct sockaddr_in listen_sock_addr;
+
 	/* end of variable definition */
 
 		argv0=argv[0]; /*copy prog name to global variable*/
@@ -151,18 +155,16 @@ int main(int argc, const char * argv[]) {
 
 		if (DEBUG) print_verbose("successfully parsed port value!");
 
-		int listen_sock_fd;
-		//conn_fd;
+		memset(&listen_sock_addr, 0, sizeof(struct sockaddr_in); /* Clear structure */
+		listen_sock_addr.sin_family=AF_INET;
+		listen_sock_addr.sin_port=htons(6816);
+		listen_sock_addr.sin_addr=INADDR_ANY;
 
-		struct sockaddr *listen_sock_addr;
+		listen_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+		setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
-		listen_sock_fd = createsocket(port);
-
-		memset(&listen_sock_addr, 0, sizeof(struct sockaddr));
-		                        /* Clear structure */
-
-		if ((bind(listen_sock_fd, listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
-		else print_verbose("Successfully bind to socket!");
+		if ((bind(listen_sock_fd, &listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
+		else print_verbose("Successfully bound to socket!");
 
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
 		else print_verbose("Listening on socket!");
