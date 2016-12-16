@@ -182,7 +182,7 @@ static void usageinfo(FILE *outputdevice, const char *filename, int status) {
 
 
 
-char* parsecommandline(int argc, const char * argv[]){
+unsigned long int parsecommandline(int argc, const char * argv[]){
 
 	int opt=0;
 	char *tmp=NULL;
@@ -205,6 +205,6 @@ char* parsecommandline(int argc, const char * argv[]){
 				}
 			} /* end of while */
 
-	return tmp;
+	return port;
 
 }
