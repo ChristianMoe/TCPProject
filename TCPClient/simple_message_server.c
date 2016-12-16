@@ -149,7 +149,7 @@ int main(int argc, const char * argv[]) {
         	usageinfo(stderr,argv[0],EXIT_FAILURE);
 		}
 
-		if (DEBUG) print_verbose("successfully parsed port value!);
+		if (DEBUG) print_verbose("successfully parsed port value!");
 
 		int listen_sock_fd,
 		//conn_fd;
