@@ -132,6 +132,7 @@ int main(int argc, const char * argv[]) {
 			print_verbose("Successfully connected to client!\n");
 			fflush(stdout);
 
+
 			if((child_pid = fork()) ==-1) {
 				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
 				handle_error("Fork: ");
