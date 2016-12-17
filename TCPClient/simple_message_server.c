@@ -122,7 +122,6 @@ int main(int argc, const char * argv[]) {
 
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) {
 			if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
-			free (&listen_sock_addr);
 			handle_error("Listen: ");
 			}
 
@@ -134,7 +133,6 @@ int main(int argc, const char * argv[]) {
 
 			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, &conneted_sock_addr_len)) == -1){
 				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
-				free (&listen_sock_addr);
 				handle_error("Accept: ");
 				}
 
@@ -146,17 +144,12 @@ int main(int argc, const char * argv[]) {
 				if (close(listen_sock_fd)==-1){
 					handle_error("Close listen socket: ");
 					}
-				free (&listen_sock_addr);
 				handle_error("Fork: ");
 				}
 
 			/* 0 is for child process */
 			if(child_pid == 0){
-				if (close(listen_sock_fd)==-1){
-					free (&listen_sock_addr);
-					handle_error("Close listen socket: ");
-					}
-				free (&listen_sock_addr);
+				if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
 
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1){  /* umleiten stdin */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
@@ -166,34 +159,28 @@ int main(int argc, const char * argv[]) {
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 					handle_error("Dup2 stout: ");
 					}
-				if (close(connected_sock_fd)==-1){
-					handle_error("Close connected socket: ");
-					}
-				if (execlp(SMSPATH,SMSNAME,NULL)==-1){
-					handle_error("Server Logic: ");
-					}
+				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+
+				if (execlp(SMSPATH,SMSNAME,NULL)==-1) handle_error("Server Logic: ");
+
 				exit(EXIT_SUCCESS);
 				} /* end child if */
 			/* parent process */
 			else{
 				if (close(connected_sock_fd)==-1){
 					if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
-					free(&listen_sock_addr);
 					handle_error("Close connected socket: ");
 					}
 
 			    }
 			} /* end while */
 
+		/* should never be reached */
 
-		if (close(listen_sock_fd)==-1){
-			free (&listen_sock_addr);
-			handle_error("Close listen socket: ");
-			}
-		free (&listen_sock_addr);
+		if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
 
 
-return 0;
+return 0; /* return 0 on success */
 
 }
 
