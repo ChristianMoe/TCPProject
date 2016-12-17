@@ -122,8 +122,13 @@ int main(int argc, const char * argv[]) {
 
 		while (1){
 
-			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, (socklen_t*) sizeof(struct sockaddr))) == -1)
+			conneted_sock_addr_len= sizeof(struct sockaddr);
+
+			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, conneted_sock_addr_len)) == -1){
+				if (close(liosten_sock_fd)==-1) handle_error("Close connected socket: ");
 				handle_error("Connect: ");
+				}
+
 			if (DEBUG) print_verbose("Successfully connected to client!\n");
 			fflush(stdout);
 
@@ -132,8 +137,15 @@ int main(int argc, const char * argv[]) {
 			/* 0 is for child process */
 			if(child_pid == 0){
 				close(listen_sock_fd);
-				if (dup2(connected_sock_fd, STDIN_FILENO)==-1) handle_error("Dup2 stdin: "); /* umleiten stdin */
-				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1) handle_error("Dup2 stout: "); /* umleiten stdout */
+				if (dup2(connected_sock_fd, STDIN_FILENO)==-1){  /* umleiten stdin */
+					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+					handle_error("Dup2 stdin: ");
+				}
+
+				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1){  /* umleiten stdout */
+					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+					handle_error("Dup2 stout: ");
+				}
 				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
 				exit(EXIT_SUCCESS);
