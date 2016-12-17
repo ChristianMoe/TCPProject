@@ -162,20 +162,15 @@ int main(int argc, const char * argv[]) {
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 					handle_error("Dup2 stdin: ");
 					}
-
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1){  /* umleiten stdout */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
 					handle_error("Dup2 stout: ");
 					}
-
 				if (close(connected_sock_fd)==-1){
 					handle_error("Close connected socket: ");
 					}
-
-				free (&connected_sock_addr);
-
 				if (execlp(SMSPATH,SMSNAME,NULL)==-1){
-
+					handle_error("Server Logic: ");
 					}
 				exit(EXIT_SUCCESS);
 				} /* end child if */
