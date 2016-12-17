@@ -54,7 +54,7 @@ void print_verbose(const char *msg);
 #define DEBUG 1  /* 1 for debugging mode, 0 if it is turned off */
 
 #define LISTEN_BACKLOG 50
-#define SMSNAME "simple_message_server_logic"
+#define SMSNAME "simple_message_server_sdlogic"
 #define SMSPATH "/usr/local/bin/simple_message_server_logic"
 
 /*
