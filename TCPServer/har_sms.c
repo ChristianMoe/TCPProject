@@ -23,6 +23,8 @@
 
 #define MY_SOCK_PATH "/home/ic15b039/TCPProject/TCPServer"
 #define LISTEN_BACKLOG 50
+#define SMSNAME "simple_message_server_logic"
+#define SMSPATH "/usr/local/bin/simple_message_server_logic"
 
 #define handle_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
     };
    */
     struct addrinfo hints; /* struct for parameters for getaddrinfo*/
+    //struct addrinfo hints, *res;
 
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
@@ -65,6 +68,7 @@ int main(int argc, char *argv[])
 
   //  sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	sock_fd = socket(hints.ai_family, hints.ai_socktype, hints.ai_protocol);
+	// with pointer res: sock_fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (sock_fd == -1)
         handle_error("socket");
 
@@ -78,7 +82,11 @@ int main(int argc, char *argv[])
  //   strncpy(my_addr.sun_path, MY_SOCK_PATH, sizeof(my_addr.sun_path) - 1);
   ? ?? strncpy(my_addr.sin_path, MY_SOCK_PATH, sizeof(my_addr.sun_path) - 1);
 
-    if (bind(sock_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_un)) == -1)
+  // New way: bind(sockfd, res->ai_addr, res->ai_addrlen);
+  // Old way:
+
+ //   if (bind(sock_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_un)) == -1)
+  if (bind(sock_fd, (struct sockaddr *) &my_addr, sizeof(struct sockaddr_in)) == -1)
         handle_error("bind");
 
     if (listen(sock_fd, LISTEN_BACKLOG) == -1)
@@ -91,6 +99,15 @@ int main(int argc, char *argv[])
 	   
 // loop until shutdown() from client
 
+    sa.sa_handler = sigchld_handler; // reap all dead processes
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+    perror("sigaction");
+    exit(1);
+    }
+    printf("server: waiting for connections...\n");
+// while(1)
 do {
     peer_addr_size = sizeof(struct sockaddr_un);
     conn_fd = accept(sock_fd, (struct sockaddr *) &peer_addr,
@@ -106,17 +123,34 @@ do {
 	conn_pid = fork();
     if (conn_pid == -1) {
         perror("fork");
+        // gehört nicht: close(sock_fd); ?? // laut Beejs guide
+        close(conn_fd);
         exit(EXIT_FAILURE);
     }
 
     if (conn_pid == 0) {
 	
 		printf( "printout from the child process\n" );
-		exec read(conn_fd, &buf, 1);
 		
-		// process request - MISSING
+		// close listening socket process in child
+
+		close(sock_fd);
+
+		// redirect stdin and stdout from forked child daemon to connected socket
+		dup2(conn_fd, STDIN_FILENO);
+		dup2(conn_fd, STDOUT_FILENO);
+
+		close(conn_fd);
+
+		// executes simple_message_server_logic
+		(void) execl(SMSPATH, SMSNAME, (char*)NULL);
+
+		// implemented by sms logic:
+		// exec read(conn_fd, &buf, 1);
+
 		
-		exec write(conn_fd, &buf, 1);
+		// implemented by sms logic:
+		// exec write(conn_fd, &buf, 1);
 	
 		
         // execve executes program - example:
@@ -150,7 +184,7 @@ do {
     }
 	
 // end of do loop
-} while (NO_SHUTDOWN); /* no shutdown received from client */
+} while(1); // SMSLOGIC: (NO_SHUTDOWN); /* no shutdown received from client */
 	
     /* When no longer required, the socket pathname, MY_SOCK_PATH
        should be deleted using unlink(2) or remove(3) */
