@@ -152,7 +152,7 @@ int main(int argc, const char * argv[]) {
 
 			/* 0 is for child process */
 			if(child_pid == 0){
-				if (close(listen_sock_fd)==-1{
+				if (close(listen_sock_fd)==-1){
 					free (&listen_sock_addr);
 					handle_error("Close listen socket: ");
 					}
