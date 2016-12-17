@@ -53,8 +53,9 @@ void print_verbose(const char *msg);
 
 #define DEBUG 1  /* 1 for debugging mode, 0 if it is turned off */
 
-#define MY_SOCK_PATH "/home/ic15b039/TCPProject/TCPServer" /* wofür das?*/
 #define LISTEN_BACKLOG 50
+#define SMSNAME "simple_message_server_logic"
+#define SMSPATH "/usr/local/bin/simple_message_server_logic"
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -116,10 +117,16 @@ int main(int argc, const char * argv[]) {
 		setsockopt(listen_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
 		if ((bind(listen_sock_fd, (struct sockaddr *)&listen_sock_addr, sizeof(struct sockaddr))) == -1) handle_error("Bind: ");
-		else print_verbose("Successfully bound to socket!");
 
-		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) handle_error("Listen: ");
-		else print_verbose("Listening on socket!");
+		if (DEBUG) print_verbose("Successfully bound to socket!");
+
+		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) {
+			if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
+			free (listen_sock_fd);
+			handle_error("Listen: ");
+			}
+
+		if (DEBUG) print_verbose("Listening on socket!");
 
 		while (1){
 
@@ -127,41 +134,75 @@ int main(int argc, const char * argv[]) {
 
 			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, &conneted_sock_addr_len)) == -1){
 				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
-				handle_error("Connect: ");
+				free (listen_sock_addr);
+				handle_error("Accept: ");
 				}
 
-			print_verbose("Successfully connected to client!\n");
+			if (DEBUG) print_verbose("Successfully connected to client!\n");
 			fflush(stdout);
 
 
 			if((child_pid = fork()) ==-1) {
-				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
+				if (close(listen_sock_fd)==-1){
+					handle_error("Close listen socket: ");
+					}
+				free (listen_sock_addr);
 				handle_error("Fork: ");
-			}
+				}
 
 			/* 0 is for child process */
 			if(child_pid == 0){
-				close(listen_sock_fd);
+				if (close(listen_sock_fd)==-1{
+					free (listen_sock_addr);
+					handle_error("Close listen socket: ");
+					}
+				free (listen_sock_addr);
+
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1){  /* umleiten stdin */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+					free (connected_sock_addr);
 					handle_error("Dup2 stdin: ");
-				}
+					}
 
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1){  /* umleiten stdout */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
+					free (connected_sock_addr);
 					handle_error("Dup2 stout: ");
-				}
-				if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
-				execlp("simple_message_server_logic","simple_message_server_logic",NULL);
+					}
+
+				if (close(connected_sock_fd)==-1){
+					free (connected_sock_addr);
+					handle_error("Close connected socket: ");
+					}
+
+				free (connected_sock_addr);
+
+				if (execlp(SMSPATH,SMSNAME,NULL)==-1){
+
+					}
 				exit(EXIT_SUCCESS);
-				}
+				} /* end child if */
 			/* parent process */
 			else{
-				close(connected_sock_fd);
-			    }
-			}
+				if (close(connected_sock_fd)==-1){
+					if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
+					free(listen_sock_addr);
+					handle_error("Close connected socket: ");
+					}
 
-	return 0;
+			    }
+			} /* end while */
+
+
+		if (close(listen_sock_fd)==-1{
+			free (listen_sock_addr);
+			handle_error("Close listen socket: ");
+			}
+		free (listen_sock_addr);
+
+
+return 0;
+
 }
 
 
