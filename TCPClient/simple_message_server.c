@@ -122,7 +122,7 @@ int main(int argc, const char * argv[]) {
 
 		if (listen(listen_sock_fd, LISTEN_BACKLOG) == -1) {
 			if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
-			free (listen_sock_fd);
+			free (&listen_sock_addr);
 			handle_error("Listen: ");
 			}
 
@@ -134,7 +134,7 @@ int main(int argc, const char * argv[]) {
 
 			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, &conneted_sock_addr_len)) == -1){
 				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
-				free (listen_sock_addr);
+				free (&listen_sock_addr);
 				handle_error("Accept: ");
 				}
 
@@ -146,36 +146,36 @@ int main(int argc, const char * argv[]) {
 				if (close(listen_sock_fd)==-1){
 					handle_error("Close listen socket: ");
 					}
-				free (listen_sock_addr);
+				free (&listen_sock_addr);
 				handle_error("Fork: ");
 				}
 
 			/* 0 is for child process */
 			if(child_pid == 0){
 				if (close(listen_sock_fd)==-1{
-					free (listen_sock_addr);
+					free (&listen_sock_addr);
 					handle_error("Close listen socket: ");
 					}
-				free (listen_sock_addr);
+				free (&listen_sock_addr);
 
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1){  /* umleiten stdin */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
-					free (connected_sock_addr);
+					free (&connected_sock_addr);
 					handle_error("Dup2 stdin: ");
 					}
 
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1){  /* umleiten stdout */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
-					free (connected_sock_addr);
+					free (&connected_sock_addr);
 					handle_error("Dup2 stout: ");
 					}
 
 				if (close(connected_sock_fd)==-1){
-					free (connected_sock_addr);
+					free (&connected_sock_addr);
 					handle_error("Close connected socket: ");
 					}
 
-				free (connected_sock_addr);
+				free (&connected_sock_addr);
 
 				if (execlp(SMSPATH,SMSNAME,NULL)==-1){
 
@@ -186,7 +186,7 @@ int main(int argc, const char * argv[]) {
 			else{
 				if (close(connected_sock_fd)==-1){
 					if (close(listen_sock_fd)==-1) handle_error("Close listen socket: ");
-					free(listen_sock_addr);
+					free(&listen_sock_addr);
 					handle_error("Close connected socket: ");
 					}
 
@@ -195,10 +195,10 @@ int main(int argc, const char * argv[]) {
 
 
 		if (close(listen_sock_fd)==-1{
-			free (listen_sock_addr);
+			free (&listen_sock_addr);
 			handle_error("Close listen socket: ");
 			}
-		free (listen_sock_addr);
+		free (&listen_sock_addr);
 
 
 return 0;
