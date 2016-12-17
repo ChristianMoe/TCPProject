@@ -125,14 +125,17 @@ int main(int argc, const char * argv[]) {
 			conneted_sock_addr_len= sizeof(struct sockaddr);
 
 			if ((connected_sock_fd = accept(listen_sock_fd, (struct sockaddr*)&conneted_sock_addr, conneted_sock_addr_len)) == -1){
-				if (close(liosten_sock_fd)==-1) handle_error("Close connected socket: ");
+				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
 				handle_error("Connect: ");
 				}
 
-			if (DEBUG) print_verbose("Successfully connected to client!\n");
+			print_verbose("Successfully connected to client!\n");
 			fflush(stdout);
 
-			if((child_pid = fork()) ==-1) handle_error("Fork: ");
+			if((child_pid = fork()) ==-1) {
+				if (close(listen_sock_fd)==-1) handle_error("Close connected socket: ");
+				handle_error("Fork: ");
+			}
 
 			/* 0 is for child process */
 			if(child_pid == 0){
