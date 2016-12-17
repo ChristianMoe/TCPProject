@@ -160,18 +160,15 @@ int main(int argc, const char * argv[]) {
 
 				if (dup2(connected_sock_fd, STDIN_FILENO)==-1){  /* umleiten stdin */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
-					free (&connected_sock_addr);
 					handle_error("Dup2 stdin: ");
 					}
 
 				if (dup2(connected_sock_fd, STDOUT_FILENO)==-1){  /* umleiten stdout */
 					if (close(connected_sock_fd)==-1) handle_error("Close connected socket: ");
-					free (&connected_sock_addr);
 					handle_error("Dup2 stout: ");
 					}
 
 				if (close(connected_sock_fd)==-1){
-					free (&connected_sock_addr);
 					handle_error("Close connected socket: ");
 					}
 
