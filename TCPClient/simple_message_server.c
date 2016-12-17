@@ -97,6 +97,7 @@ int main(int argc, const char * argv[]) {
 		int listen_sock_fd, connected_sock_fd;
 		struct sockaddr_in listen_sock_addr, conneted_sock_addr;
 		pid_t child_pid;
+		socklen_t conneted_sock_addr_len;
 
 
 	/* end of variable definition */
