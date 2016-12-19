@@ -5,9 +5,9 @@
  * @author Christian Moedlhammer,ic14b027
  * @author Harald Partmann,ic15b039
  *
- * @date 2016-14-12
+ * @date 2016-19-12
  *
- * @version 0.1
+ * @version 0.1 (Abgabeversion)
  *
  */
 
@@ -46,9 +46,9 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose);
 /*
  * -------------------------------------------------------------- defines --
  */
-#define MAX_SIZE 10000000
-#define READ_BUF_SIZE 1024
-#define FN_MAX 256
+#define MAX_SIZE 10000000 /* defines maximum size that can be written into a file */
+#define READ_BUF_SIZE 1024 /* defines maximum chunk that can be read or written at once by read/write */
+#define FN_MAX 256 /* defines maximum name length of file */
 
 /*
  * -------------------------------------------------------------- global resource variables --
@@ -98,7 +98,7 @@ int main(int argc, const char * argv[]) {
 		smc_parsecommandline(argc, argv, &usageinfo, &server, &port, &user, &message, &imgurl, &verbose);
 
 	/* checking whether -h is a parameter of command line */
-		while ((opt = getopt(argc,(char **) argv, "h")) != -1) {
+		while ((opt = getopt(argc,argv, "h")) != -1) {
 			switch (opt) {
 	        case 'h':
 	        	usageinfo(stdout,argv[0],EXIT_SUCCESS);
