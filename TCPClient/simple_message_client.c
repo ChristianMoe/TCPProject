@@ -764,12 +764,12 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 	            fclose(write_fd);
 	            return -1;
 	    		}
-	    	if (fflush(write_fd)=EOF){
+	    	if (fflush(write_fd)=)EOF){
 	    		fprintf(stderr,"%s [%s, %s(), line %d]: fflush() failed %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
-	    		if (fclose(write_fd)=EOF) {
+	    		if (fclose(write_fd)==EOF) {
 	    			fprintf(stderr,"%s [%s, %s(), line %d]: fclose() failed: %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
 	    			}
-	    		return -1
+	    		return -1;
 	    		}
 	    	char_written_sum+=char_written;
 	    	}
@@ -778,7 +778,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 			fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes written to %s!\n" ,argv0,__FILE__, __func__ ,__LINE__,char_written_sum,filename);
 			}
 
-	if (fclose(write_fd)=EOF) {
+	if (fclose(write_fd)==EOF) {
 		fprintf(stderr,"%s [%s, %s(), line %d]: fclose() failed: %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
 	    }
 
