@@ -764,7 +764,7 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 	            fclose(write_fd);
 	            return -1;
 	    		}
-	    	if (fflush(write_fd)=)EOF){
+	    	if (fflush(write_fd)==EOF){
 	    		fprintf(stderr,"%s [%s, %s(), line %d]: fflush() failed %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
 	    		if (fclose(write_fd)==EOF) {
 	    			fprintf(stderr,"%s [%s, %s(), line %d]: fclose() failed: %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
