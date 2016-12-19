@@ -399,7 +399,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* support variables for reading */
     	char returnvalue[FN_MAX];
-    	char **endptr=NULL;
+    	char **endptr=NULL; /* return for strtol function when not only numbers */
     	char *filename=NULL;
     	long int filelength=0;
     	int amountread=1;
@@ -407,6 +407,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 
 	/* logic */
 
+    	/* first read that returns status=0 or status=1 */
     	if ((amountread=readtillEOL(readbuffer,socketdescriptor,verbose))==-1){
     		return -1;
     		}
@@ -441,6 +442,7 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 			endptr=malloc(10);
 			if (endptr==NULL){
 				fprintf(stderr,"%s [%s, %s(), line %d]: Failed to allocate memory! \n",argv0,__FILE__, __func__ ,__LINE__);
+				free(filename);
 				return -1;
 				}
 			filelength=strtol(returnvalue, endptr, 10);
@@ -469,8 +471,8 @@ int readingmessage(char *readbuffer, int *socketdescriptor, int verbose){
 				} /* end else */
 
 		} /* end of while*/
-		free(filename);
 
+		free(filename);
 		if (readtillFIN(socketdescriptor,verbose)==-1) return -1;
 
 	return 0; /*returns 0 upon success*/
@@ -508,7 +510,7 @@ int parsebuffer(char *readbuffer, char *returnvalue, char *pattern, int verbose)
 			return -1; /* return -1 if pattern was not found */
 			}
 	    else{
-	    	pos_file+=strlen(pattern);
+	    	pos_file+=strlen(pattern); /* sets pointer from beginning of pattern to end of pattern */
 			if((pos_end=strstr(pos_file,"\n"))==NULL){
 				fprintf(stderr,"%s [%s, %s(), line %d]: End of Line not found! \n" ,argv0,__FILE__, __func__ ,__LINE__);
 				return -1;
@@ -762,7 +764,13 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 	            fclose(write_fd);
 	            return -1;
 	    		}
-	    	fflush(write_fd);
+	    	if (fflush(write_fd)=EOF){
+	    		fprintf(stderr,"%s [%s, %s(), line %d]: fflush() failed %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
+	    		if (fclose(write_fd)=EOF) {
+	    			fprintf(stderr,"%s [%s, %s(), line %d]: fclose() failed: %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
+	    			}
+	    		return -1
+	    		}
 	    	char_written_sum+=char_written;
 	    	}
 
@@ -770,7 +778,10 @@ int writefile(char *bufferstart, char *filename, int filelength, int verbose){
 			fprintf(stdout,"%s [%s, %s(), line %d]: %d bytes written to %s!\n" ,argv0,__FILE__, __func__ ,__LINE__,char_written_sum,filename);
 			}
 
-    fclose(write_fd); /* file descriptor not needed anymore */
+	if (fclose(write_fd)=EOF) {
+		fprintf(stderr,"%s [%s, %s(), line %d]: fclose() failed: %s\n" ,argv0,__FILE__, __func__ ,__LINE__,strerror(errno));
+	    }
+
     if (verbose==TRUE){
 			fprintf(stdout,"%s [%s, %s(), line %d]: File %s closed!\n" ,argv0,__FILE__, __func__ ,__LINE__,filename);
 			}
